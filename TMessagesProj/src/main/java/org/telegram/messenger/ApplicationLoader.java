@@ -289,6 +289,7 @@ public class ApplicationLoader extends Application implements CameraXConfig.Prov
         OpenExteraConfig.init();
         app.exteraless.icons.IconPacksConfig.init();
         app.exteraless.pillstack.PillStackConfig.init();
+        app.lumine.ios.IosStyleConfig.init();
         app.exteraless.appearance.AppearanceConfig.init();
         app.exteraless.chats.ChatsConfig.init();
         app.exteraless.general.GeneralConfig.init();
