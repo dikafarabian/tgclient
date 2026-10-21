@@ -367,8 +367,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             });
         }
 
+        final boolean marquee = app.lumine.ios.IosStyleConfig.chatTitleMarquee.Bool();
         titleTextView = new SimpleTextConnectedView(context, titleTextLargerCopyView);
-        titleTextView.setEllipsizeByGradient(true);
+        titleTextView.setEllipsizeByGradient(!marquee, false);
         titleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultTitle));
         titleTextView.setTextSize(18);
         titleTextView.setGravity(isCentered() ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT);
@@ -376,8 +377,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         titleTextView.setLeftDrawableTopPadding(-dp(1.3f));
         // titleTextView.setCanHideRightDrawable(false);
         // titleTextView.setRightDrawableOutside(true);
-        titleTextView.setRightDrawableOutside(!isCentered());
-        titleTextView.setScrollNonFitText(isCentered());
+        titleTextView.setRightDrawableOutside(!isCentered() && !marquee);
+        titleTextView.setScrollNonFitText(isCentered() || marquee);
         titleTextView.setPadding(0, dp(6), 0, dp(12));
         addView(titleTextView);
 
@@ -394,7 +395,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             addView(animatedSubtitleTextView);
         } else {
             subtitleTextView = new SimpleTextConnectedView(context, subtitleTextLargerCopyView);
-            subtitleTextView.setEllipsizeByGradient(true);
+            subtitleTextView.setScrollNonFitText(marquee);
+            subtitleTextView.setEllipsizeByGradient(!marquee);
             subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
             subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
             subtitleTextView.setTextSize(14);
@@ -1179,8 +1181,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
         }
 
+        final boolean marquee = app.lumine.ios.IosStyleConfig.chatTitleMarquee.Bool();
+        titleTextView.setEllipsizeByGradient(!marquee, false);
+        titleTextView.setRightDrawableOutside(!isCentered() && !marquee);
         titleTextView.setText(value);
-        titleTextView.setScrollNonFitText(scrollable || isCentered());
+        titleTextView.setScrollNonFitText(scrollable || isCentered() || marquee);
         rightDrawableIsScam = false;
         if (scam || fake) {
             rightDrawableIsScam = true;

@@ -26,6 +26,13 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter?) {
         val context = context ?: return
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatHeader)))
+        items.add(
+            UItem.asCheck(TOGGLE_CHAT_TITLE_MARQUEE, LocaleController.getString(R.string.LumineChatTitleMarquee))
+                .setChecked(IosStyleConfig.chatTitleMarquee.Bool())
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineChatTitleMarqueeInfo)))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlass)))
         items.add(UItem.asCustom(angleSlider(context), SLIDER_HEIGHT_DP))
         items.add(UItem.asCustom(intensitySlider(context), SLIDER_HEIGHT_DP))
@@ -33,7 +40,14 @@ class IosStyleSettingsActivity : UniversalFragment() {
         items.add(UItem.asShadow())
     }
 
-    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) = Unit
+    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        when (item.id) {
+            TOGGLE_CHAT_TITLE_MARQUEE -> {
+                IosStyleConfig.chatTitleMarquee.setConfigBool(!IosStyleConfig.chatTitleMarquee.Bool())
+                listView.adapter.update(true)
+            }
+        }
+    }
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean = false
 
@@ -111,5 +125,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     private companion object {
         const val SLIDER_HEIGHT_DP = 112
+        const val TOGGLE_CHAT_TITLE_MARQUEE = 1
     }
 }

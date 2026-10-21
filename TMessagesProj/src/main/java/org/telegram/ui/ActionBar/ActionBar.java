@@ -590,6 +590,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             return;
         }
         titleTextView[i] = new SimpleTextView(getContext());
+        if (app.lumine.ios.IosStyleConfig.chatTitleMarquee.Bool()) {
+            titleTextView[i].setScrollNonFitText(true);
+            titleTextView[i].setEllipsizeByGradient(false, false);
+        }
         titleTextView[i].setGravity(/*isCenterTitle*/isCentered() ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
         if (titleColorToSet != 0) {
             titleTextView[i].setTextColor(titleColorToSet);

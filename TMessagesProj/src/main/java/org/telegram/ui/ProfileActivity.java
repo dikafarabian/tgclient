@@ -5854,6 +5854,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             nameTextView[a].setPivotX(0);
             nameTextView[a].setPivotY(0);
             nameTextView[a].setAlpha(a == 0 ? 0.0f : 1.0f);
+            if (a == 0 && app.lumine.ios.IosStyleConfig.chatTitleMarquee.Bool()) {
+                nameTextView[a].setScrollNonFitText(true);
+            }
             if (a == 1) {
                 nameTextView[a].setScrollNonFitText(true);
                 nameTextView[a].setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);

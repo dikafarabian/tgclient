@@ -6,4 +6,7 @@
     <string name="LumineLiquidGlassAngle">Liquid Glass angle</string>
     <string name="LumineLiquidGlassIntensity">Liquid Glass intensity</string>
     <string name="LumineLiquidGlassTint">Liquid Glass tint</string>
+    <string name="LumineChatHeader">Chat header</string>
+    <string name="LumineChatTitleMarquee">Text marquee for long titles</string>
+    <string name="LumineChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
 </resources>
