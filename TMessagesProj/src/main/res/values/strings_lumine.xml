@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="LumineIosStyle">iOS style</string>
+    <string name="LumineIosStyleInfo">Liquid Glass and iOS-style interface</string>
+    <string name="LumineLiquidGlass">Liquid Glass</string>
+    <string name="LumineLiquidGlassAngle">Liquid Glass angle</string>
+    <string name="LumineLiquidGlassIntensity">Liquid Glass intensity</string>
+    <string name="LumineLiquidGlassTint">Liquid Glass tint</string>
+</resources>
