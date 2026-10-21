@@ -140,6 +140,7 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
     private int iconPacksRow;
     private int emojiSetsRow;
     private int pillStackRow;
+    private int lumineIosStyleRow;
     private int playerStyleRow;
     private int hidingRow;
     private int linksDividerRow;
@@ -198,6 +199,7 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
         iconPacksRow = addRow("iconPacks");
         emojiSetsRow = addRow("emojiSets", "EmojiSets");
         pillStackRow = addRow("pillStack");
+        lumineIosStyleRow = addRow("lumineIosStyle");
         playerStyleRow = addRow("playerStyle");
         hidingRow = addRow("hiding");
         linksDividerRow = addRow();
@@ -550,6 +552,9 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
             return;
         } else if (position == pillStackRow) {
             presentFragment(new PillStackSettingsActivity());
+            return;
+        } else if (position == lumineIosStyleRow) {
+            presentFragment(new app.lumine.ios.IosStyleSettingsActivity());
             return;
         } else if (position == playerStyleRow) {
             app.exteraless.player.PlayerSheet.openStyleEditor(this);
@@ -1030,6 +1035,8 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
                                 ? R.string.OEAppearanceUseSystemEmoji : R.string.OEAppearanceEmojiSetsInfo), R.drawable.msg_emoji_smiles, true);
                     } else if (position == pillStackRow) {
                         cell.setTextAndValueAndIcon(getString(R.string.OEAppearancePillStack), getString(R.string.OEAppearancePillStackInfo), R.drawable.outline_header_search, true);
+                    } else if (position == lumineIosStyleRow) {
+                        cell.setTextAndValueAndIcon(getString(R.string.LumineIosStyle), getString(R.string.LumineIosStyleInfo), R.drawable.msg_theme, true);
                     } else if (position == playerStyleRow) {
                         cell.setTextAndValueAndIcon(getString(R.string.OEPlayerStyleTitle), getString(R.string.OEPlayerStyleInfo), R.drawable.msg_filled_data_music, true);
                     } else if (position == hidingRow) {
@@ -1102,7 +1109,7 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
             } else if (position == fabShapeRow) {
                 return TYPE_FAB_SHAPE;
             } else if (position == appNavigationRow || position == iconPacksRow
-                    || position == emojiSetsRow || position == pillStackRow || position == playerStyleRow || position == hidingRow) {
+                    || position == emojiSetsRow || position == pillStackRow || position == lumineIosStyleRow || position == playerStyleRow || position == hidingRow) {
                 return TYPE_DETAIL_SETTINGS;
             } else if (position == md3GroupRow || position == iosGroupRow) {
                 return TYPE_EXPANDABLE_SWITCH;
