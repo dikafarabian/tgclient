@@ -18,8 +18,12 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.blur3.LiquidGlassEffect;
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSource;
 
+import me.vkryl.core.reference.ReferenceList;
+
 @RequiresApi(api = Build.VERSION_CODES.Q)
 public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawable {
+    private static final ReferenceList<BlurredBackgroundDrawableRenderNode> liquidGlassDrawables = new ReferenceList<>();
+
     private final BlurredBackgroundSource source;
     private final Outline outline = new Outline();
     private final Rect outlineRect = new Rect();
@@ -60,6 +64,14 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     public void setLiquidGlassEffectAllowed() {
         liquidGlassEffect = new LiquidGlassEffect(renderNodeFill);
+        liquidGlassDrawables.add(this);
+    }
+
+    public static void invalidateLiquidGlassDrawables() {
+        for (BlurredBackgroundDrawableRenderNode drawable : liquidGlassDrawables) {
+            drawable.renderNodeInvalidated = true;
+            drawable.invalidateSelf();
+        }
     }
 
 
@@ -132,7 +144,7 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
                 thickness,
                 boundProps.liquidIntensity,
                 boundProps.liquidIndex,
-                backgroundColor
+                Theme.multAlpha(backgroundColor, app.lumine.ios.IosStyleConfig.glassTint.Int() / 100f)
             );
         }
         source.draw(c, sL, sT, sR, sB);
