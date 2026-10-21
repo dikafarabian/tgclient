@@ -13,14 +13,16 @@ import org.telegram.messenger.R;
 @RequiresApi(api = 33)
 public class LiquidGlassEffect {
 
+    private static String shaderCode;
+
     private final RenderNode node;
     private final RuntimeShader shader;
     private RenderEffect effect;
 
     public LiquidGlassEffect(RenderNode node) {
         this.node = node;
-        final String code = AndroidUtilities.readRes(R.raw.liquid_glass_shader);
-        shader = new RuntimeShader(code);
+        if (shaderCode == null) shaderCode = AndroidUtilities.readRes(R.raw.liquid_glass_shader);
+        shader = new RuntimeShader(shaderCode);
         node.setRenderEffect(effect = RenderEffect.createRuntimeShaderEffect(shader, "img"));
     }
 
@@ -33,6 +35,7 @@ public class LiquidGlassEffect {
     private float radiusLeftBottom;
     private float thickness;
     private float intensity;
+    private float angle;
     private float index;
     private int foregroundColor;
 
@@ -64,6 +67,8 @@ public class LiquidGlassEffect {
             radiusRightBottom = height * (1.0f - a);
         }
 
+        final float configuredIntensity = intensity * app.lumine.ios.IosStyleConfig.glassIntensity.Int() / 75f;
+        final float configuredAngle = (float) Math.toRadians(app.lumine.ios.IosStyleConfig.glassAngle.Int());
         if (
             Math.abs(this.resolutionX - resolutionX) > 0.1f ||
             Math.abs(this.resolutionY - resolutionY) > 0.1f ||
@@ -76,7 +81,8 @@ public class LiquidGlassEffect {
             Math.abs(this.radiusRightBottom - radiusRightBottom) > 0.1f ||
             Math.abs(this.radiusLeftBottom - radiusLeftBottom) > 0.1f ||
             Math.abs(this.thickness - thickness) > 0.1f ||
-            Math.abs(this.intensity - intensity) > 0.1f ||
+            Math.abs(this.intensity - configuredIntensity) > 0.001f ||
+            Math.abs(this.angle - configuredAngle) > 0.001f ||
             Math.abs(this.index - index) > 0.1f ||
             this.foregroundColor != foregroundColor
         ) {
@@ -92,7 +98,8 @@ public class LiquidGlassEffect {
             shader.setFloatUniform("size", this.sizeX = sizeX, this.sizeY = sizeY);
             shader.setFloatUniform("radius", this.radiusRightBottom = radiusRightBottom, this.radiusRightTop = radiusRightTop, this.radiusLeftBottom = radiusLeftBottom, this.radiusLeftTop = radiusLeftTop);
             shader.setFloatUniform("thickness", this.thickness = thickness);
-            shader.setFloatUniform("refract_intensity", this.intensity = intensity);
+            shader.setFloatUniform("refract_intensity", this.intensity = configuredIntensity);
+            shader.setFloatUniform("refract_angle", this.angle = configuredAngle);
             shader.setFloatUniform("refract_index", this.index = index);
             shader.setFloatUniform("foreground_color_premultiplied", r, g, b, a);
             node.setRenderEffect(effect = RenderEffect.createRuntimeShaderEffect(shader, "img"));

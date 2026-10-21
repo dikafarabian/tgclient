@@ -31,9 +31,6 @@ object IosStyleConfig {
     val glassTint = addConfig("LumineIosGlassTint", ConfigItem.configTypeInt, 50)
 
     @JvmField
-    val disableGlassGlare = addConfig("LumineIosDisableGlassGlare", ConfigItem.configTypeBool, false)
-
-    @JvmField
     val inputButtonPlacement = addConfig("LumineIosInputButtonPlacement", ConfigItem.configTypeBool, true)
 
     @JvmField
