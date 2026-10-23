@@ -4908,6 +4908,7 @@ public class ChatActivity extends BaseFragment implements
             context.getResources().getDrawable(R.drawable.mini_attach).mutate()
         );
         otherIcon.setIconTranslate(-dp(6), dp(6.66f));
+        otherIcon.setHideWhen(() -> avatarContainer != null && avatarContainer.isIosMenuSlotAvatar());
 
         if (((chatMode == 0 && (threadMessageId == 0 || isTopic)) || chatMode == MODE_SUGGESTIONS) && !UserObject.isReplyUser(currentUser) && !isReport()) {
             TLRPC.UserFull userFull = null;
@@ -31860,6 +31861,9 @@ public class ChatActivity extends BaseFragment implements
             return;
         }
         final boolean active = avatarContainer.isIosMenuSlotAvatar();
+        if (otherIcon != null) {
+            otherIcon.invalidate();
+        }
         if (!active && !menuSlotAvatarActive) {
             return;
         }

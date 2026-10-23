@@ -11,6 +11,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.telegram.messenger.Utilities;
 import org.telegram.ui.Components.AnimatedFloat;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 
@@ -41,6 +42,12 @@ public class ComposeDrawable extends Drawable {
         this.ty = ty;
     }
 
+    private Utilities.Callback0Return<Boolean> hideWhen;
+
+    public void setHideWhen(Utilities.Callback0Return<Boolean> hideWhen) {
+        this.hideWhen = hideWhen;
+    }
+
     public void setIconVisible(boolean visible) {
         setIconVisible(visible, true);
     }
@@ -56,6 +63,10 @@ public class ComposeDrawable extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
         final float iconVisible = animatedIconVisible.set(this.iconVisible);
+
+        if (hideWhen != null && Boolean.TRUE.equals(hideWhen.run())) {
+            return;
+        }
 
         background.setAlpha(alpha);
         background.setBounds(getBounds());
@@ -104,7 +115,7 @@ public class ComposeDrawable extends Drawable {
         return PixelFormat.TRANSPARENT;
     }
 
-    private void invalidate() {
+    public void invalidate() {
         for (View view : views)
             view.invalidate();
         invalidateSelf();
