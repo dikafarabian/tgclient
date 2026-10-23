@@ -9,4 +9,15 @@
     <string name="LumineChatHeader">Chat header</string>
     <string name="LumineChatTitleMarquee">Text marquee for long titles</string>
     <string name="LumineChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
+    <string name="LumineCenterTitleChats">Center in chats/channels</string>
+    <string name="LumineCenterTitleChatsInfo">Centers the chat title and subtitle; the avatar stays left. Works on its own.</string>
+    <string name="LumineCenterTitleMain">Center screen titles</string>
+    <string name="LumineCenterTitleMainInfo">Centers action bar titles outside chats. Chats have their own toggle.</string>
+    <string name="LumineCompactPill">Compact pill</string>
+    <string name="LumineCompactPillInfo">iOS-style compact chat header pill floating in the middle.</string>
+    <string name="LumineAvatarSlot">Move avatar to the menu button</string>
+    <string name="LumineAvatarSlotInfo">Put the avatar in the menu slot: tap for the profile, long-press for the chat menu.</string>
+    <string name="LumineAvatarStatic">Do not center the avatar</string>
+    <string name="LumineAvatarStaticInfo">Keep the avatar next to the back button; only the title pill is centered.</string>
+    <string name="LumineAvatarRight">Show avatar on the right</string>
 </resources>

@@ -27,10 +27,27 @@ class IosStyleSettingsActivity : UniversalFragment() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter?) {
         val context = context ?: return
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatHeader)))
-        items.add(
-            UItem.asCheck(TOGGLE_CHAT_TITLE_MARQUEE, LocaleController.getString(R.string.LumineChatTitleMarquee))
-                .setChecked(IosStyleConfig.chatTitleMarquee.Bool())
-        )
+        items.add(check(TOGGLE_CENTER_CHATS, R.string.LumineCenterTitleChats, IosStyleConfig.centerTitleChats.Bool()))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineCenterTitleChatsInfo)))
+        if (IosStyleHelper.centerChatTitle()) {
+            items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool()))
+            items.add(UItem.asShadow(LocaleController.getString(R.string.LumineCompactPillInfo)))
+            if (IosStyleHelper.compactChatPill()) {
+                items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool()))
+                items.add(UItem.asShadow(LocaleController.getString(R.string.LumineAvatarSlotInfo)))
+                if (!IosStyleHelper.chatAvatarInMenuSlot()) {
+                    items.add(check(TOGGLE_AVATAR_STATIC, R.string.LumineAvatarStatic, IosStyleConfig.chatHeaderAvatarStatic.Bool()))
+                    items.add(UItem.asShadow(LocaleController.getString(R.string.LumineAvatarStaticInfo)))
+                }
+            }
+            if (!IosStyleHelper.chatAvatarInMenuSlot() && !IosStyleHelper.chatAvatarStatic()) {
+                items.add(check(TOGGLE_AVATAR_RIGHT, R.string.LumineAvatarRight, IosStyleConfig.centerTitleRightAvatar.Bool()))
+                items.add(UItem.asShadow())
+            }
+        }
+        items.add(check(TOGGLE_CENTER_MAIN, R.string.LumineCenterTitleMain, IosStyleConfig.centerTitleMain.Bool()))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineCenterTitleMainInfo)))
+        items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool()))
         items.add(UItem.asShadow(LocaleController.getString(R.string.LumineChatTitleMarqueeInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlass)))
@@ -41,13 +58,22 @@ class IosStyleSettingsActivity : UniversalFragment() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        when (item.id) {
-            TOGGLE_CHAT_TITLE_MARQUEE -> {
-                IosStyleConfig.chatTitleMarquee.setConfigBool(!IosStyleConfig.chatTitleMarquee.Bool())
-                listView.adapter.update(true)
-            }
+        val toggled = when (item.id) {
+            TOGGLE_CENTER_CHATS -> IosStyleConfig.centerTitleChats
+            TOGGLE_COMPACT_PILL -> IosStyleConfig.chatHeader
+            TOGGLE_AVATAR_SLOT -> IosStyleConfig.chatHeaderAvatarSlot
+            TOGGLE_AVATAR_STATIC -> IosStyleConfig.chatHeaderAvatarStatic
+            TOGGLE_AVATAR_RIGHT -> IosStyleConfig.centerTitleRightAvatar
+            TOGGLE_CENTER_MAIN -> IosStyleConfig.centerTitleMain
+            TOGGLE_CHAT_TITLE_MARQUEE -> IosStyleConfig.chatTitleMarquee
+            else -> return
         }
+        toggled.setConfigBool(!toggled.Bool())
+        listView.adapter.update(true)
     }
+
+    private fun check(id: Int, title: Int, checked: Boolean): UItem =
+        UItem.asCheck(id, LocaleController.getString(title)).setChecked(checked)
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean = false
 
@@ -126,5 +152,11 @@ class IosStyleSettingsActivity : UniversalFragment() {
     private companion object {
         const val SLIDER_HEIGHT_DP = 112
         const val TOGGLE_CHAT_TITLE_MARQUEE = 1
+        const val TOGGLE_CENTER_CHATS = 2
+        const val TOGGLE_COMPACT_PILL = 3
+        const val TOGGLE_AVATAR_SLOT = 4
+        const val TOGGLE_AVATAR_STATIC = 5
+        const val TOGGLE_AVATAR_RIGHT = 6
+        const val TOGGLE_CENTER_MAIN = 7
     }
 }
