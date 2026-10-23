@@ -17867,7 +17867,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (topView != null) {
             final float y = getMeasuredHeight() - animatorInputFieldHeight.getFactor();
 
-            topView.setTranslationY(y - topView.getMeasuredHeight() * visibility);
+            topView.setTranslationY(y - (topView.getMeasuredHeight() + getIosTopViewGap()) * visibility);
             topView.setVisibility(visibility > 0 ? VISIBLE : GONE);
         }
 
