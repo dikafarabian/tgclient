@@ -121,7 +121,6 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
     private boolean md3Expanded;
     private int iosGroupRow;
     private int iosNavBarRow;
-    private int iosChatHeaderRow;
     private boolean iosExpanded;
     private int senderMiniAvatarsRow;
     private int titleTextRow;
@@ -228,9 +227,8 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
         iosGroupRow = addRow("iosStyles");
         if (iosExpanded) {
             iosNavBarRow = addRow("iosNavBar");
-            iosChatHeaderRow = addRow("iosChatHeader");
         } else {
-            iosNavBarRow = iosChatHeaderRow = -1;
+            iosNavBarRow = -1;
         }
         gooeyAvatarRow = addRow("gooeyAvatar");
         customThemesRow = addRow("customThemes");
@@ -632,10 +630,6 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
             }
             rebuildAllAndSelf(view, enable);
             return;
-        } else if (position == iosChatHeaderRow) {
-            AppearanceConfig.iosChatHeader.setConfigBool(!AppearanceConfig.iosChatHeader.Bool());
-            rebuildAllAndSelf(view, AppearanceConfig.iosChatHeader.Bool());
-            return;
         } else if (position == dividerStyleRow) {
             showSelector(position, getString(R.string.OEAppearanceDividerStyle), new CharSequence[]{
                     getString(R.string.OEAppearanceDividerHidden),
@@ -988,10 +982,7 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
                                 AppearanceConfig.md3MiniPlayer.Bool(), false, true);
                     } else if (position == iosNavBarRow) {
                         cell.setText(getString(R.string.OEAppearanceIosNavigationBarStyle), "",
-                                AppearanceConfig.iosNavigationBarStyle.Bool(), true, true);
-                    } else if (position == iosChatHeaderRow) {
-                        cell.setText(getString(R.string.OEAppearanceIosChatHeader), "",
-                                AppearanceConfig.iosChatHeader.Bool(), false, true);
+                                AppearanceConfig.iosNavigationBarStyle.Bool(), false, true);
                     }
                     cell.setPad(1);
                     // По умолчанию ячейка этого типа красит текст серым; у exteraGram
@@ -1117,7 +1108,7 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
                     || position == md3SwitchRow || position == md3ChatHeaderRow
                     || position == md3NavBarRow || position == md3ListItemsRow
                     || position == md3PlayerRow || position == md3MiniPlayerRow
-                    || position == iosNavBarRow || position == iosChatHeaderRow) {
+                    || position == iosNavBarRow) {
                 return TYPE_ROUND_CHECK;
             } else if (position == dividerStyleRow || position == glassOutlineRow
                     || position == tabTitleStyleRow
@@ -1181,19 +1172,17 @@ public class OpenExteraAppearanceActivity extends BaseNekoSettingsActivity {
         }
     }
 
-    private static final int IOS_STYLE_COUNT = 2;
+    private static final int IOS_STYLE_COUNT = 1;
 
     private int iosSelectedCount() {
         int n = 0;
         if (AppearanceConfig.iosNavigationBarStyle.Bool()) n++;
-        if (AppearanceConfig.iosChatHeader.Bool()) n++;
         return n;
     }
 
     private void toggleAllIosStyles() {
         boolean enable = iosSelectedCount() == 0;
         AppearanceConfig.iosNavigationBarStyle.setConfigBool(enable);
-        AppearanceConfig.iosChatHeader.setConfigBool(enable);
         if (enable) {
             AppearanceConfig.newNavigationBarStyle.setConfigBool(false);
         }

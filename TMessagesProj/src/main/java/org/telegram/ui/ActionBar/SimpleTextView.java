@@ -94,6 +94,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
     private int offsetX;
     private int offsetY;
     private int textWidth;
+    private float cachedExactTextWidth = -1f;
     private int totalWidth;
     private int textHeight;
     public int rightDrawableX;
@@ -208,6 +209,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
             return;
         }
         textPaint.setTextSize(newSize);
+        cachedExactTextWidth = -1f;
         if (!recreateLayoutMaybe()) {
             invalidate();
         }
@@ -305,6 +307,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
 
     public void setTypeface(Typeface typeface) {
         textPaint.setTypeface(typeface);
+        cachedExactTextWidth = -1f;
     }
 
     public int getSideDrawablesSize() {
@@ -321,6 +324,11 @@ public class SimpleTextView extends View implements Drawable.Callback {
             size += dw + drawablePadding;
         }
         return size;
+    }
+
+    public int getCenteringDrawableBias() {
+        final int left = leftDrawable != null ? leftDrawable.getIntrinsicWidth() + drawablePadding : 0;
+        return Math.max(0, getSideDrawablesSize() - left) / 2;
     }
 
     public TextPaint getPaint() {
@@ -342,7 +350,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
             }
 
             if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
-                offsetX = (width - textWidth) / 2 - (int) layout.getLineLeft(0);
+                int totalContentWidth = textWidth + getSideDrawablesSize();
+                offsetX = Math.max(0, (width - totalContentWidth) / 2) - (int) layout.getLineLeft(0);
             } else if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT) {
                 if (firstLineLayout != null) {
                     offsetX = -(int) firstLineLayout.getLineLeft(0);
@@ -709,6 +718,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
             return false;
         }
         text = value;
+        cachedExactTextWidth = -1f;
         currentScrollDelay = SCROLL_DELAY_MS;
         recreateLayoutMaybe();
         return true;
@@ -1178,6 +1188,18 @@ public class SimpleTextView extends View implements Drawable.Callback {
 
     public int getMaxTextWidth() {
         return getMeasuredWidth() - (rightDrawableOutside && rightDrawable != null ? rightDrawable.getIntrinsicWidth() + drawablePadding : 0) - (rightDrawableOutside && rightDrawable2 != null ? rightDrawable2.getIntrinsicWidth() + drawablePadding : 0);
+    }
+
+    private float getExactTextWidthOnly() {
+        if (cachedExactTextWidth < 0) {
+            final CharSequence t = getText();
+            cachedExactTextWidth = (t != null && t.length() > 0) ? getPaint().measureText(t.toString()) : 0f;
+        }
+        return cachedExactTextWidth;
+    }
+
+    public float getExactContentWidth() {
+        return getExactTextWidthOnly() + getSideDrawablesSize();
     }
 
     public float getExactWidth() {
