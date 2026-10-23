@@ -50,6 +50,12 @@ class IosStyleSettingsActivity : UniversalFragment() {
         items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool()))
         items.add(UItem.asShadow(LocaleController.getString(R.string.LumineChatTitleMarqueeInfo)))
 
+        items.add(check(TOGGLE_UNREAD_BADGE, R.string.LumineUnreadBadge, IosStyleConfig.unreadBadgeOnBackButton.Bool()))
+        if (IosStyleConfig.unreadBadgeOnBackButton.Bool()) {
+            items.add(check(TOGGLE_UNREAD_BADGE_IOS, R.string.LumineUnreadBadgeIos, IosStyleConfig.unreadBadgeOnBackButtonIos.Bool()))
+        }
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineUnreadBadgeInfo)))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlass)))
         items.add(UItem.asCustom(angleSlider(context), SLIDER_HEIGHT_DP))
         items.add(UItem.asCustom(intensitySlider(context), SLIDER_HEIGHT_DP))
@@ -66,6 +72,8 @@ class IosStyleSettingsActivity : UniversalFragment() {
             TOGGLE_AVATAR_RIGHT -> IosStyleConfig.centerTitleRightAvatar
             TOGGLE_CENTER_MAIN -> IosStyleConfig.centerTitleMain
             TOGGLE_CHAT_TITLE_MARQUEE -> IosStyleConfig.chatTitleMarquee
+            TOGGLE_UNREAD_BADGE -> IosStyleConfig.unreadBadgeOnBackButton
+            TOGGLE_UNREAD_BADGE_IOS -> IosStyleConfig.unreadBadgeOnBackButtonIos
             else -> return
         }
         toggled.setConfigBool(!toggled.Bool())
@@ -158,5 +166,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
         const val TOGGLE_AVATAR_STATIC = 5
         const val TOGGLE_AVATAR_RIGHT = 6
         const val TOGGLE_CENTER_MAIN = 7
+        const val TOGGLE_UNREAD_BADGE = 8
+        const val TOGGLE_UNREAD_BADGE_IOS = 9
     }
 }

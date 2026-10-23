@@ -20,4 +20,7 @@
     <string name="LumineAvatarStatic">Do not center the avatar</string>
     <string name="LumineAvatarStaticInfo">Keep the avatar next to the back button; only the title pill is centered.</string>
     <string name="LumineAvatarRight">Show avatar on the right</string>
+    <string name="LumineUnreadBadge">Show unread chats counter</string>
+    <string name="LumineUnreadBadgeInfo">Show the number of unread chats on the back button in a chat.</string>
+    <string name="LumineUnreadBadgeIos">iOS-styled counter</string>
 </resources>
