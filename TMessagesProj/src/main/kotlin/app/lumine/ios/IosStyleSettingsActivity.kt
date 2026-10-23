@@ -26,46 +26,48 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter?) {
         val context = context ?: return
+
+        adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatHeader)))
-        items.add(check(TOGGLE_CENTER_CHATS, R.string.LumineCenterTitleChats, IosStyleConfig.centerTitleChats.Bool()))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineCenterTitleChatsInfo)))
+        items.add(check(TOGGLE_CENTER_CHATS, R.string.LumineCenterTitleChats, IosStyleConfig.centerTitleChats.Bool(), R.string.LumineCenterTitleChatsInfo))
         if (IosStyleHelper.centerChatTitle()) {
-            items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool()))
-            items.add(UItem.asShadow(LocaleController.getString(R.string.LumineCompactPillInfo)))
+            items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
             if (IosStyleHelper.compactChatPill()) {
-                items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool()))
-                items.add(UItem.asShadow(LocaleController.getString(R.string.LumineAvatarSlotInfo)))
+                items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool(), R.string.LumineAvatarSlotInfo))
                 if (!IosStyleHelper.chatAvatarInMenuSlot()) {
-                    items.add(check(TOGGLE_AVATAR_STATIC, R.string.LumineAvatarStatic, IosStyleConfig.chatHeaderAvatarStatic.Bool()))
-                    items.add(UItem.asShadow(LocaleController.getString(R.string.LumineAvatarStaticInfo)))
+                    items.add(check(TOGGLE_AVATAR_STATIC, R.string.LumineAvatarStatic, IosStyleConfig.chatHeaderAvatarStatic.Bool(), R.string.LumineAvatarStaticInfo))
                 }
             }
             if (!IosStyleHelper.chatAvatarInMenuSlot() && !IosStyleHelper.chatAvatarStatic()) {
                 items.add(check(TOGGLE_AVATAR_RIGHT, R.string.LumineAvatarRight, IosStyleConfig.centerTitleRightAvatar.Bool()))
-                items.add(UItem.asShadow())
             }
         }
-        items.add(check(TOGGLE_CENTER_MAIN, R.string.LumineCenterTitleMain, IosStyleConfig.centerTitleMain.Bool()))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineCenterTitleMainInfo)))
-        items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool()))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineChatTitleMarqueeInfo)))
+        adapter?.whiteSectionEnd()
+        items.add(UItem.asShadow())
 
-        items.add(check(TOGGLE_UNREAD_BADGE, R.string.LumineUnreadBadge, IosStyleConfig.unreadBadgeOnBackButton.Bool()))
+        adapter?.whiteSectionStart()
+        items.add(check(TOGGLE_CENTER_MAIN, R.string.LumineCenterTitleMain, IosStyleConfig.centerTitleMain.Bool(), R.string.LumineCenterTitleMainInfo))
+        items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool(), R.string.LumineChatTitleMarqueeInfo))
+        items.add(check(TOGGLE_UNREAD_BADGE, R.string.LumineUnreadBadge, IosStyleConfig.unreadBadgeOnBackButton.Bool(), R.string.LumineUnreadBadgeInfo))
         if (IosStyleConfig.unreadBadgeOnBackButton.Bool()) {
             items.add(check(TOGGLE_UNREAD_BADGE_IOS, R.string.LumineUnreadBadgeIos, IosStyleConfig.unreadBadgeOnBackButtonIos.Bool()))
         }
-        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineUnreadBadgeInfo)))
+        adapter?.whiteSectionEnd()
+        items.add(UItem.asShadow())
 
+        adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatInput)))
-        items.add(check(TOGGLE_INPUT_APPEARANCE, R.string.LumineInputAppearance, IosStyleConfig.inputAppearance.Bool()))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineInputAppearanceInfo)))
-        items.add(check(TOGGLE_INPUT_BUTTON_PLACEMENT, R.string.LumineInputButtonPlacement, IosStyleConfig.inputButtonPlacement.Bool()))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineInputButtonPlacementInfo)))
+        items.add(check(TOGGLE_INPUT_APPEARANCE, R.string.LumineInputAppearance, IosStyleConfig.inputAppearance.Bool(), R.string.LumineInputAppearanceInfo))
+        items.add(check(TOGGLE_INPUT_BUTTON_PLACEMENT, R.string.LumineInputButtonPlacement, IosStyleConfig.inputButtonPlacement.Bool(), R.string.LumineInputButtonPlacementInfo))
+        adapter?.whiteSectionEnd()
+        items.add(UItem.asShadow())
 
+        adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlass)))
         items.add(UItem.asCustom(angleSlider(context), SLIDER_HEIGHT_DP))
         items.add(UItem.asCustom(intensitySlider(context), SLIDER_HEIGHT_DP))
         items.add(UItem.asCustom(tintSlider(context), SLIDER_HEIGHT_DP))
+        adapter?.whiteSectionEnd()
         items.add(UItem.asShadow())
     }
 
@@ -88,8 +90,15 @@ class IosStyleSettingsActivity : UniversalFragment() {
         listView.adapter.update(true)
     }
 
-    private fun check(id: Int, title: Int, checked: Boolean): UItem =
-        UItem.asCheck(id, LocaleController.getString(title)).setChecked(checked)
+    private fun check(id: Int, title: Int, checked: Boolean, info: Int = 0): UItem {
+        val label = LocaleController.getString(title)
+        val item = if (info == 0) {
+            UItem.asCheck(id, label)
+        } else {
+            UItem.asCheck(id, label, LocaleController.getString(info), true)
+        }
+        return item.setChecked(checked)
+    }
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean = false
 
