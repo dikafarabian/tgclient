@@ -1711,12 +1711,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             }
         }
         int trueCenter = (right - left) / 2;
-        int centerX;
+        int titleCenterX;
         if (isRealDialogsMainScreen()) {
             int bandCenter = (textLeft + centerRightBound) / 2;
-            centerX = (bandCenter + trueCenter) / 2;
+            titleCenterX = (bandCenter + trueCenter) / 2;
         } else {
-            centerX = trueCenter;
+            titleCenterX = trueCenter;
         }
 
         for (int i = 0; i < 2; i++) {
@@ -1735,7 +1735,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                     int halfWidth = titleTextView[i].getMeasuredWidth() / 2;
                     int textHalfWidth = clampedTextHalfWidth(titleTextView[i]);
                     int drawableBias = titleTextView[i].getCenteringDrawableBias();
-                    int centerX = Math.max(textLeft + textHalfWidth, Math.min(centerRightBound - textHalfWidth, centerX + drawableBias));
+                    int centerX = Math.max(textLeft + textHalfWidth, Math.min(centerRightBound - textHalfWidth, titleCenterX + drawableBias));
                     titleTextView[i].layout(centerX - halfWidth, additionalTop + textTop - titleTextView[i].getPaddingTop(), centerX + halfWidth, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
                 } else {
                     titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
@@ -1751,7 +1751,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             if (isCenterTitle) {
                 int halfWidth = subtitleTextView.getMeasuredWidth() / 2;
                 int textHalfWidth = clampedTextHalfWidth(subtitleTextView);
-                int centerX = Math.max(textLeft + textHalfWidth, Math.min(centerRightBound - textHalfWidth, centerX));
+                int centerX = Math.max(textLeft + textHalfWidth, Math.min(centerRightBound - textHalfWidth, titleCenterX));
                 subtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + subtitleTextView.getTextHeight());
             } else {
                 subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
@@ -1763,7 +1763,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             if (isCenterTitle) {
                 int halfWidth = additionalSubtitleTextView.getMeasuredWidth() / 2;
                 int textHalfWidth = clampedTextHalfWidth(additionalSubtitleTextView);
-                int centerX = Math.max(textLeft + textHalfWidth, Math.min(centerRightBound - textHalfWidth, centerX));
+                int centerX = Math.max(textLeft + textHalfWidth, Math.min(centerRightBound - textHalfWidth, titleCenterX));
                 additionalSubtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
             } else {
                 additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
