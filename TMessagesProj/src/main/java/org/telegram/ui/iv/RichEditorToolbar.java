@@ -414,6 +414,10 @@ public class RichEditorToolbar extends FrameLayout {
             public boolean isOpen() {
                 return sendLoading || super.isOpen();
             }
+            @Override
+            public boolean shouldDrawInternalCircle() {
+                return !app.lumine.ios.IosInputHelper.isAppearance();
+            }
         };
         sendButton.setBackground(RichEditor.withShadow(Theme.createRoundRectDrawable(dp(22), color(Theme.key_chat_messagePanelSend))));
         ScaleStateListAnimator.apply(sendButton);

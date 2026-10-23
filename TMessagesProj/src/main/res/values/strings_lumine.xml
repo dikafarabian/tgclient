@@ -23,4 +23,9 @@
     <string name="LumineUnreadBadge">Show unread chats counter</string>
     <string name="LumineUnreadBadgeInfo">Show the number of unread chats on the back button in a chat.</string>
     <string name="LumineUnreadBadgeIos">iOS-styled counter</string>
+    <string name="LumineChatInput">Message input</string>
+    <string name="LumineInputAppearance">iOS appearance</string>
+    <string name="LumineInputAppearanceInfo">Glass bubbles around the input field and its buttons. Applies after reopening a chat.</string>
+    <string name="LumineInputButtonPlacement">iOS button placement</string>
+    <string name="LumineInputButtonPlacementInfo">Attachment button on the left, emoji button inside the field on the right. Applies after reopening a chat.</string>
 </resources>

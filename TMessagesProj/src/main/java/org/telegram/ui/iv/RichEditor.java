@@ -997,6 +997,10 @@ public class RichEditor extends BaseFragment implements NotificationCenter.Notif
             public boolean isInScheduleMode() {
                 return RichEditor.this.isInScheduleMode();
             }
+            @Override
+            public boolean shouldDrawInternalCircle() {
+                return !app.lumine.ios.IosInputHelper.isAppearance();
+            }
         };
         sendButton.setBackground(withShadow(Theme.createRoundRectDrawable(dp(22), getThemedColor(Theme.key_chat_messagePanelSend))));
         ScaleStateListAnimator.apply(sendButton);

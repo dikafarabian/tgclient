@@ -546,6 +546,7 @@ public class ChatActivity extends BaseFragment implements
 
     private BlurredBackgroundColorProviderThemed blurredBackgroundColorProvider;
     private BlurredBackgroundColorProviderThemed blurredBackgroundColorProviderWhite;
+    private BlurredBackgroundColorProviderThemed blurredBackgroundColorProviderAccentSend;
 
     private final ReferenceList<View> glassAttachedViews = new ReferenceList<>();
     private final ReferenceList<BlurredBackgroundDrawable> glassAttachedDrawables = new ReferenceList<>();
@@ -4124,6 +4125,7 @@ public class ChatActivity extends BaseFragment implements
                 return super.getBackgroundColor();
             }
         };
+        blurredBackgroundColorProviderAccentSend = new BlurredBackgroundColorProviderThemed(themeDelegate, Theme.key_chat_messagePanelSend);
 
         if (textSelectionHelper == null) {
             Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
@@ -8653,6 +8655,10 @@ public class ChatActivity extends BaseFragment implements
             public void setVisibility(int visibility) {
                 super.setVisibility(visibility);
                 bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
+                if (chatInputViewsContainer != null) {
+                    chatInputViewsContainer.drawInputBackground = !isFeedSearch() && (!isIosInputAppearance() || visibility != View.VISIBLE);
+                    chatInputViewsContainer.invalidate();
+                }
             }
 
             @Override
@@ -8868,6 +8874,8 @@ public class ChatActivity extends BaseFragment implements
         checkSendButtonBlockedByTyping(false);
 
         chatInputBubbleContainer.addView(chatActivityEnterView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 7, 0, 7, 0));
+        chatActivityEnterView.setInputBarGlassFactory(glassBackgroundDrawableFactory, blurredBackgroundColorProvider, blurredBackgroundColorProviderAccentSend);
+        chatInputViewsContainer.drawInputBackground = !isFeedSearch() && (!chatActivityEnterView.isIosInputAppearance() || chatActivityEnterView.getVisibility() != View.VISIBLE);
 
         int chatListIndex = contentView.indexOfChild(chatListView);
         chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
@@ -46057,6 +46065,9 @@ public class ChatActivity extends BaseFragment implements
             }
             if (blurredBackgroundColorProviderWhite != null) {
                 blurredBackgroundColorProviderWhite.updateColors();
+            }
+            if (blurredBackgroundColorProviderAccentSend != null) {
+                blurredBackgroundColorProviderAccentSend.updateColors();
             }
 
             if (chatActivityEnterView != null) {

@@ -56,6 +56,12 @@ class IosStyleSettingsActivity : UniversalFragment() {
         }
         items.add(UItem.asShadow(LocaleController.getString(R.string.LumineUnreadBadgeInfo)))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatInput)))
+        items.add(check(TOGGLE_INPUT_APPEARANCE, R.string.LumineInputAppearance, IosStyleConfig.inputAppearance.Bool()))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineInputAppearanceInfo)))
+        items.add(check(TOGGLE_INPUT_BUTTON_PLACEMENT, R.string.LumineInputButtonPlacement, IosStyleConfig.inputButtonPlacement.Bool()))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineInputButtonPlacementInfo)))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlass)))
         items.add(UItem.asCustom(angleSlider(context), SLIDER_HEIGHT_DP))
         items.add(UItem.asCustom(intensitySlider(context), SLIDER_HEIGHT_DP))
@@ -74,6 +80,8 @@ class IosStyleSettingsActivity : UniversalFragment() {
             TOGGLE_CHAT_TITLE_MARQUEE -> IosStyleConfig.chatTitleMarquee
             TOGGLE_UNREAD_BADGE -> IosStyleConfig.unreadBadgeOnBackButton
             TOGGLE_UNREAD_BADGE_IOS -> IosStyleConfig.unreadBadgeOnBackButtonIos
+            TOGGLE_INPUT_APPEARANCE -> IosStyleConfig.inputAppearance
+            TOGGLE_INPUT_BUTTON_PLACEMENT -> IosStyleConfig.inputButtonPlacement
             else -> return
         }
         toggled.setConfigBool(!toggled.Bool())
@@ -168,5 +176,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
         const val TOGGLE_CENTER_MAIN = 7
         const val TOGGLE_UNREAD_BADGE = 8
         const val TOGGLE_UNREAD_BADGE_IOS = 9
+        const val TOGGLE_INPUT_APPEARANCE = 10
+        const val TOGGLE_INPUT_BUTTON_PLACEMENT = 11
     }
 }

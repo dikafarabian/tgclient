@@ -74,6 +74,7 @@ import org.telegram.ui.Components.ScrimOptions;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.Text;
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
+import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceBitmap;
 import org.telegram.ui.Components.blur3.utils.Blur3Utils;
@@ -148,6 +149,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
 
     private final BlurredBackgroundSourceBitmap iBlur3SourceBitmap;
     private final BlurredBackgroundDrawableViewFactory iBlur3Factory;
+    private BlurredBackgroundDrawable sendButtonGlassDrawable;
 
     public MessageSendPreview(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
@@ -390,10 +392,12 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                         firstOpenFrame2 = false;
                     }
                     canvas.save();
-                    canvas.translate(
-                        AndroidUtilities.lerp(sendButtonInitialPosition[0] - (sendButton.getWidth() - sendButton.width(sendButton.getHeight())) + dp(6), sendButton.getX(), openProgress),
-                        AndroidUtilities.lerp(sendButtonInitialPosition[1], sendButton.getY(), openProgress)
-                    );
+                    float drawnX = AndroidUtilities.lerp(sendButtonInitialPosition[0] - (sendButton.getWidth() - sendButton.width(sendButton.getHeight())) + dp(6), sendButton.getX(), openProgress);
+                    float drawnY = AndroidUtilities.lerp(sendButtonInitialPosition[1], sendButton.getY(), openProgress);
+                    canvas.translate(drawnX, drawnY);
+                    if (sendButtonGlassDrawable != null) {
+                        sendButtonGlassDrawable.setSourceOffset(containerView.getX() + drawnX, containerView.getY() + drawnY);
+                    }
                     if (closing && sent) {
                         canvas.saveLayerAlpha(0, 0, sendButton.getWidth(), sendButton.getHeight(), (int) (0xFF * openProgress), Canvas.ALL_SAVE_FLAG);
                     }
@@ -1243,7 +1247,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
             }
             @Override
             public boolean isOpen() {
-                return (fillWhenClose ? !dismissing : true) || super.isOpen();
+                return app.lumine.ios.IosInputHelper.isAppearance() || (fillWhenClose ? !dismissing : true) || super.isOpen();
             }
             @Override
             public boolean isInactive() {
@@ -1252,6 +1256,14 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
             @Override
             public boolean shouldDrawBackground() {
                 return sendButton.shouldDrawBackground();
+            }
+            @Override
+            public boolean shouldDrawInternalCircle() {
+                return anchorSendButton.shouldDrawInternalCircle() || anchorSendButton.getActionBubbleColorProvider() == null;
+            }
+            @Override
+            public int resolveSendIconColor(int themeColor) {
+                return sendButton.resolveSendIconColor(themeColor);
             }
             @Override
             public int getFillColor() {
@@ -1264,6 +1276,10 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         this.sendButton.open.set(sendButton.open.get(), true);
         this.sendButton.setOnClickListener(onClick);
         containerView.addView(this.sendButton, new ViewGroup.LayoutParams(sendButton.getWidth(), sendButton.getHeight()));
+        if (!anchorSendButton.shouldDrawInternalCircle() && anchorSendButton.getActionBubbleColorProvider() != null) {
+            sendButtonGlassDrawable = iBlur3Factory.create(this.sendButton, anchorSendButton.getActionBubbleColorProvider());
+            this.sendButton.setBlurredBackgroundDrawable(sendButtonGlassDrawable);
+        }
         sendButtonWidth = anchorSendButton.width(sendButton.getHeight());
         sendButtonInitialPosition[0] += anchorSendButton.getWidth() - anchorSendButton.width(sendButton.getHeight()) - dp(6);
         return this.sendButton;
