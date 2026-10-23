@@ -66,6 +66,7 @@ import org.telegram.ui.Adapters.FiltersView;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.ChatAvatarContainer;
+import org.telegram.ui.Components.CounterView;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EllipsizeSpanAnimator;
 import org.telegram.ui.Components.FireworksEffect;
@@ -218,6 +219,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
     public int glassTitleRight;
     public int glassTop;
     public int glassBottom;
+
+    public CounterView countLayout;
+    private boolean countLayoutIsVisible;
+    private boolean isIOSUnreadBadgeAvailable;
+    private AnimatorSet countLayoutAnimator;
+    private final FactorAnimator animatorBackPillWidth = new FactorAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 380);
+    private static final int BACK_COUNTER_LEFT_OFFSET_DP = 30;
+    private static final int BACK_COUNTER_MAX_EXTRA_DP = 35;
 
     public void setGlassOnlyBack() {
         glassOnlyBack = true;
@@ -1004,6 +1013,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         }
         actionModeVisible = true;
         checkMenuItemsWidth();
+        if (iOSUnreadBadgeAvailable()) {
+            updateBackPillWidth(true);
+        }
         if (animated) {
             ArrayList<Animator> animators = new ArrayList<>();
             animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
@@ -1175,6 +1187,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         actionMode.hideAllPopupMenus();
         actionModeVisible = false;
         checkMenuItemsWidth();
+        if (iOSUnreadBadgeAvailable()) {
+            updateBackPillWidth(true);
+        }
         ArrayList<Animator> animators = new ArrayList<>();
         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
         if (actionModeHidingViews != null) {
@@ -1571,6 +1586,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
             backButtonImageView.measure(MeasureSpec.makeMeasureSpec(dp(54), MeasureSpec.EXACTLY), actionBarHeightSpec);
             textLeft = dp(AndroidUtilities.isTablet() ? 80 : 72);
+
+            if (countLayout != null) {
+                countLayout.measure(MeasureSpec.makeMeasureSpec(dp(100), MeasureSpec.EXACTLY), actionBarHeightSpec);
+                updateBackPillWidth(true);
+            }
         } else {
             textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
         }
@@ -1667,7 +1687,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView) {
+            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView || countLayout != null && child == countLayout) {
                 continue;
             }
             measureChildWithMargins(child, widthMeasureSpec, 0, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY), 0);
@@ -1694,6 +1714,18 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
             backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
             textLeft = glassMode ? dp(76) : dp(AndroidUtilities.isTablet() ? 80 : 72);
+
+            if (countLayout != null) {
+                if (iOSUnreadBadgeAvailable()) {
+                    final int counterW = countLayout.getMeasuredWidth();
+                    final int counterH = countLayout.getMeasuredHeight();
+                    final int counterLeft = dp(BACK_COUNTER_LEFT_OFFSET_DP);
+                    final int counterTop = additionalTop + (backButtonImageView.getMeasuredHeight() - counterH) / 2;
+                    countLayout.layout(counterLeft, counterTop, counterLeft + counterW, counterTop + counterH);
+                } else {
+                    countLayout.layout(dp(30), additionalTop - dp(15), countLayout.getMeasuredWidth(), additionalTop + countLayout.getMeasuredHeight());
+                }
+            }
         } else {
             textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
         }
@@ -1782,7 +1814,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView) {
+            if (child.getVisibility() == GONE || child == titleTextView[0] || child == titleTextView[1] || child == additionalSubTitleOverlayContainer || child == subtitleTextView || child == menu || child == backButtonImageView || child == additionalSubtitleTextView || child == avatarSearchImageView || countLayout != null && child == countLayout) {
                 continue;
             }
 
@@ -2509,7 +2541,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                 chatAvatarContainer == null ? 0 : chatAvatarContainer.getMenuSlotAvatarReserve());
 
         final int baseLeft = hasBackButton ? s + p : 0;
-        final int leftLimit = Math.max(baseLeft,
+        final int backPillLeft = hasBackButton ? getBackPillWidth() - p : 0;
+        final int leftLimit = Math.max(Math.max(baseLeft, backPillLeft),
                 chatAvatarContainer == null ? 0 : chatAvatarContainer.getStaticAvatarReserve());
         int leftDefault = leftLimit;
         int rightDefault = width - rightOffset;
@@ -2551,7 +2584,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             rightDefault = leftDefault + drawn;
         } else {
             final int stockRightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
-            final int stockLeft = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+            final int stockLeft = lerp(hasBackButton ? backPillLeft : 0, hasBackButton ? backPillLeft : s + p, chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
             leftDefault = stockLeft;
             rightDefault = width - stockRightOffset;
             if (chatAvatarContainer != null && chatAvatarContainer.getLayoutParams() instanceof MarginLayoutParams) {
@@ -2619,7 +2652,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                 || (animatorMenuItemsWidth != null && animatorMenuItemsWidth.isAnimating())
                 || (animatorHasMenuItems != null && animatorHasMenuItems.isAnimating())
                 || (animatorAvatarContainerWidth != null && animatorAvatarContainerWidth.isAnimating())
-                || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
+                || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating())
+                || (animatorBackPillWidth != null && animatorBackPillWidth.isAnimating());
     }
 
     @Override
@@ -2643,7 +2677,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             glassDrawable.draw(canvas);
         }
         if (glassDrawableBack != null && hasBackButton) {
-            glassDrawableBack.setBounds(0, t, s + p * 2, b);
+            if (iOSUnreadBadgeAvailable() && countLayout != null) {
+                final int counterExtra = getBackPillCounterExtraWidth();
+                final int counterWidth = Math.max(1, getBackPillCounterTargetWidth());
+                countLayout.setAlpha(Math.min(1f, counterExtra / (float) counterWidth));
+            }
+            glassDrawableBack.setBounds(0, t, getBackPillWidth(), b);
             glassDrawableBack.draw(canvas);
         }
         if (glassDrawableMenu != null && menuWidth > 0 && !glassOnlyBack && !doNotDrawGlassMenu) {
@@ -2678,79 +2717,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         this.drawBackButton = b;
         if (backButtonImageView != null) {
             backButtonImageView.invalidate();
-        }
-    }
-
-    // NekoX Changes
-
-    private StaticLayout countLayout;
-
-    public class UnreadImageView extends AppCompatImageView {
-        public UnreadImageView(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void setImageResource(int resId) {
-            if (resId == 0) {
-                setImageDrawable(null);
-                return;
-            }
-            try {
-                setImageDrawable(getContext().getResources().getDrawable(resId, getContext().getTheme()));
-            } catch (Throwable t) {
-                super.setImageResource(resId);
-            }
-        }
-
-        private int unreadCount = 0;
-        private int pluginUnreadBadgeDepth;
-
-        public void beginPluginUnreadBadge() {
-            pluginUnreadBadgeDepth++;
-        }
-
-        public void endPluginUnreadBadge() {
-            pluginUnreadBadgeDepth = Math.max(0, pluginUnreadBadgeDepth - 1);
-        }
-
-        private RectF rect = new RectF();
-
-        @Override
-        public void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            if (countLayout == null || unreadCount == 0 || pluginUnreadBadgeDepth > 0)
-                return;
-
-            Paint paint = Theme.dialogs_countPaint;
-            String unreadCountString = unreadCount > 99 ? "99+" : Integer.toString(unreadCount);
-            int countWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(Theme.dialogs_countTextPaint.measureText(unreadCountString)));
-            int countLeft = getMeasuredWidth() - countWidth - AndroidUtilities.dp(20);
-            int countTop = 0;
-
-            int x = countLeft - AndroidUtilities.dp(5.5f);
-            rect.set(x, countTop, x + countWidth + AndroidUtilities.dp(11), countTop + AndroidUtilities.dp(23));
-            canvas.drawRoundRect(rect, 11.5f * AndroidUtilities.density, 11.5f * AndroidUtilities.density, paint);
-            canvas.save();
-            canvas.translate(countLeft, countTop + AndroidUtilities.dp(4));
-            countLayout.draw(canvas);
-            canvas.restore();
-        }
-
-        public void setUnread(int count) {
-            if (count != unreadCount) {
-                unreadCount = count;
-                String countString = count > 99 ? "99+" : Integer.toString(count);
-                int countWidth = count == 0 ? 0 : Math.max(AndroidUtilities.dp(12), (int) Math.ceil(Theme.dialogs_countTextPaint.measureText(countString)));
-                countLayout = new StaticLayout(countString, Theme.dialogs_countTextPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
-                invalidate();
-            }
-        }
-    }
-
-    public void unreadBadgeSetCount(int count) {
-        if (backButtonImageView != null && NekoConfig.unreadBadgeOnBackButton.Bool()) {
-            backButtonImageView.setUnread(count);
         }
     }
 
@@ -2928,6 +2894,265 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         setShadowAlpha((int) ((1.0f - onTopAnimated) * 0xFF));
         if (blurredBackground) {
             invalidate();
+        }
+    }
+
+    private int getBackPillCounterTargetWidth() {
+        if (countLayout == null) {
+            return 0;
+        }
+        return Math.min(dp(BACK_COUNTER_MAX_EXTRA_DP), Math.max(0, countLayout.getMeasuredWidth()));
+    }
+
+    public void updateBackPillWidth(boolean animated) {
+        boolean show = iOSUnreadBadgeAvailable()
+                && countLayout != null
+                && backButtonImageView != null
+                && backButtonImageView.getUnreadCount() > 0
+                && !isActionModeShowed()
+                && !isSearchFieldVisible;
+
+        int target = show ? getBackPillCounterTargetWidth() : 0;
+
+        if (countLayout != null) {
+            if (countLayoutIsVisible != show) {
+                countLayoutIsVisible = show;
+
+                if (countLayoutAnimator != null) {
+                    countLayoutAnimator.cancel();
+                }
+
+                if (animated) {
+                    countLayoutAnimator = new AnimatorSet();
+                    ArrayList<Animator> animators = new ArrayList<>();
+
+                    ValueAnimator progressAnimator = ValueAnimator.ofFloat(show ? 0.0f : 1.0f, show ? 1.0f : 0.0f);
+
+                    final boolean[] iconTriggered = {false};
+
+                    progressAnimator.addUpdateListener(animation -> {
+                        float progress = (float) animation.getAnimatedValue();
+
+                        countLayout.setScaleX(progress);
+                        countLayout.setScaleY(progress);
+                        countLayout.setAlpha(progress);
+
+                        float fraction = animation.getAnimatedFraction();
+
+                        if (show && fraction >= 0.5f && !iconTriggered[0]) {
+                            iconTriggered[0] = true;
+                            updateMoveBackIconState(true);
+                        }
+                    });
+
+                    animators.add(progressAnimator);
+
+                    countLayoutAnimator.playTogether(animators);
+                    countLayoutAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
+                    countLayoutAnimator.setDuration(380);
+
+                    countLayoutAnimator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            if (!show) {
+                                updateMoveBackIconState(false);
+                            }
+                        }
+                    });
+
+                    countLayoutAnimator.start();
+                } else {
+                    countLayout.setScaleX(show ? 1.0f : 0.0f);
+                    countLayout.setScaleY(show ? 1.0f : 0.0f);
+                    countLayout.setAlpha(show ? 1.0f : 0.0f);
+                    updateMoveBackIconState(show);
+                }
+            }
+        }
+
+        if (animated) {
+            if (animatorBackPillWidth.getToFactor() != target) {
+                animatorBackPillWidth.animateTo(target);
+            }
+        } else {
+            animatorBackPillWidth.forceFactor(target);
+        }
+    }
+
+    private void updateMoveBackIconState(boolean show) {
+        if (backButtonImageView != null) {
+            Drawable drawable = backButtonImageView.getDrawable();
+            if (drawable instanceof BackDrawable) {
+                ((BackDrawable) drawable).setMoveBackIcon(show && !isSearchFieldVisible);
+            }
+        }
+    }
+
+    private int getBackPillCounterExtraWidth() {
+        if (!iOSUnreadBadgeAvailable() || countLayout == null) {
+            return 0;
+        }
+        return Math.max(0, (int) animatorBackPillWidth.getFactor());
+    }
+
+    public int getBackPillWidth() {
+        final int p = dp(6);
+        final int s = dp(46);
+        int width = s + p * 2;
+        int extra = getBackPillCounterExtraWidth();
+        if (extra > 0) {
+            width = Math.max(width, dp(BACK_COUNTER_LEFT_OFFSET_DP) + extra + getBackPillCounterRightPadding());
+        }
+        return width;
+    }
+
+    public int getBackPillCounterRightPadding() {
+        int count = backButtonImageView != null ? backButtonImageView.getUnreadCount() : 0;
+
+        if (count <= 0) {
+            return 0;
+        }
+
+        String countStr = String.valueOf(Math.min(999, count));
+        int length = countStr.length();
+
+        if (length == 1) {
+            return dp(3.5f);
+        } else if (length == 2) {
+            return dp(7.5f);
+        } else {
+            return dp(13.5f);
+        }
+    }
+
+    public int getBackPillGrowth() {
+        return Math.max(0, getBackPillWidth() - (dp(46) + dp(6) * 2));
+    }
+
+    public void setIOSUnreadBadgeAvailable(boolean available) {
+        this.isIOSUnreadBadgeAvailable = available;
+        if (countLayout != null) {
+            countLayout.setIOSUnreadBadgeAvailable(available);
+        }
+    }
+
+    public boolean iOSUnreadBadgeAvailable() {
+        return app.lumine.ios.IosStyleConfig.unreadBadgeOnBackButtonIos.Bool() && isIOSUnreadBadgeAvailable;
+    }
+
+    public class UnreadImageView extends AppCompatImageView {
+        private int unreadCount = -1;
+        private int pluginUnreadBadgeDepth;
+
+        public UnreadImageView(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void setImageResource(int resId) {
+            if (resId == 0) {
+                setImageDrawable(null);
+                return;
+            }
+            try {
+                setImageDrawable(getContext().getResources().getDrawable(resId, getContext().getTheme()));
+            } catch (Throwable t) {
+                super.setImageResource(resId);
+            }
+        }
+
+        public void beginPluginUnreadBadge() {
+            pluginUnreadBadgeDepth++;
+        }
+
+        public void endPluginUnreadBadge() {
+            pluginUnreadBadgeDepth = Math.max(0, pluginUnreadBadgeDepth - 1);
+        }
+
+        public void createUnreadView(int count) {
+            if (countLayout != null) {
+                return;
+            }
+            countLayout = new CounterView(getContext(), resourcesProvider) {
+                @Override
+                public void invalidate() {
+                    super.invalidate();
+                    if (iOSUnreadBadgeAvailable()) {
+                        updateBackPillWidth(true);
+                    }
+                }
+            };
+
+            countLayout.setReverse(!iOSUnreadBadgeAvailable());
+            countLayout.setGravity(Gravity.LEFT);
+
+            if (iOSUnreadBadgeAvailable()) {
+                countLayout.setColors(Theme.key_actionBarActionModeDefault, Theme.key_actionBarActionModeDefaultIcon);
+                countLayout.setTextSize(12f);
+            }
+
+            addView(countLayout, LayoutHelper.createFrame(
+                    iOSUnreadBadgeAvailable() ? LayoutHelper.WRAP_CONTENT : 54,
+                    iOSUnreadBadgeAvailable() ? 24 : 54,
+                    Gravity.LEFT | Gravity.TOP
+            ));
+
+            setUnread(count);
+        }
+
+        public void checkUnreadView(int count) {
+            if (!app.lumine.ios.IosStyleConfig.unreadBadgeOnBackButton.Bool() || (parentFragment != null && parentFragment.isInPreviewMode())) {
+                return;
+            }
+            if (countLayout == null) {
+                createUnreadView(count);
+            } else {
+                setUnread(count);
+            }
+        }
+
+        public int getUnreadCount() {
+            return unreadCount;
+        }
+
+        public void setUnread(int count) {
+            count = Math.max(0, count);
+
+            if (count > 999) {
+                count = 999;
+            }
+
+            if (countLayout == null) {
+                return;
+            }
+
+            if (count != unreadCount) {
+                unreadCount = count;
+                if (iOSUnreadBadgeAvailable()) {
+                    countLayout.setColors(Theme.key_actionBarActionModeDefault, Theme.key_actionBarActionModeDefaultIcon);
+                    countLayout.setTextSize(12f);
+
+                    String countStr = String.valueOf(count);
+
+                    float badgeWidthDp;
+                    if (countStr.length() == 1) {
+                        badgeWidthDp = 18f;
+                    } else if (countStr.length() == 2) {
+                        badgeWidthDp = 24f;
+                    } else {
+                        badgeWidthDp = 30f;
+                    }
+                    countLayout.setBackgroundSize(badgeWidthDp, 16f);
+
+                    countLayout.setCount(count, true);
+                } else {
+                    countLayout.setCount(count, true);
+                }
+            }
+
+            if (iOSUnreadBadgeAvailable()) {
+                updateBackPillWidth(true);
+            }
         }
     }
     // --- Spring Animation ---
