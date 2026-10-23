@@ -300,7 +300,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             app.exteraless.appearance.ChatHeaderUiHelper.getChatAvatarRadius(glassAvatarSizeDp, isForum, false) + glassAvatarGap);
         glassAvatarRadius = glassDrawableLeftRadius;
         glassMenuAppliedOuterRadius = glassMenuAppliedInnerRadius = -1;
-        glassDrawable.setRadius(glassDrawableLeftRadius, dp(23), dp(23), glassDrawableLeftRadius);
+        glassDrawable.setRadius(glassDrawableLeftRadius, dp(23), dp(23), glassDrawableLeftRadius, false);
 
 
         glassDrawableBack = factory.create(this)
@@ -342,7 +342,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         glassDrawableLeftRadius = radius;
         glassAvatarRadius = radius;
         glassMenuAppliedOuterRadius = glassMenuAppliedInnerRadius = -1;
-        glassDrawable.setRadius(glassDrawableLeftRadius, dp(23), dp(23), glassDrawableLeftRadius);
+        glassDrawable.setRadius(glassDrawableLeftRadius, dp(23), dp(23), glassDrawableLeftRadius, false);
         invalidate();
     }
 
@@ -1389,7 +1389,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             if (glassDrawable != null && glassDrawableLeftRadius != dp(23)) {
                 final float r1 = dp(23);
                 final float r2 = lerp(glassDrawableLeftRadius, dp(23), searchFieldVisibleAlpha);
-                glassDrawable.setRadius(r2, r1, r1, r2);
+                glassDrawable.setRadius(r2, r1, r1, r2, false);
                 invalidate();
             }
 
