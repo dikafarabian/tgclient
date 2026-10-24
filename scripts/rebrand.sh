@@ -33,6 +33,7 @@ git ls-files -z | while IFS= read -r -d '' path; do
     s{\@exteraless}{\x01AT\x01}g;
     s{openByUserName\("exteraless"}{\x01USER\x01}g;
     s{exteraless/build\.sh}{\x01BUILD\x01}g;
+    s{exteralesscloudbot}{\x01CLOUD\x01}g;
     s{exteraless}{luminegram}g;
     s{Exteraless}{Luminegram}g;
     s{EXTERALESS}{LUMINEGRAM}g;
@@ -41,5 +42,6 @@ git ls-files -z | while IFS= read -r -d '' path; do
     s{\x01AT\x01}{\@exteraless}g;
     s{\x01USER\x01}{openByUserName("exteraless"}g;
     s{\x01BUILD\x01}{exteraless/build.sh}g;
+    s{\x01CLOUD\x01}{exteralesscloudbot}g;
   ' "$path"
 done
