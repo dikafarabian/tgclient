@@ -1068,6 +1068,7 @@ public class OpenExteraGeneralActivity extends BaseNekoSettingsActivity {
                         .append(config.registeredForPush).append('\n');
             }
         }
+        text.append("register result: ").append(MessagesController.pushRegisterResult == null ? "no attempt in this session" : MessagesController.pushRegisterResult).append('\n');
         text.append("last push: ").append(SharedConfig.pushLastReceivedTime <= 0 ? "never"
                 : LocaleController.formatDateTime(SharedConfig.pushLastReceivedTime / 1000L, true)).append('\n');
         text.append("play services: ")

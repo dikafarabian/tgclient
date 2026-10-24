@@ -16527,6 +16527,8 @@ public class MessagesController extends BaseController implements NotificationCe
         getContactsController().deleteUnknownAppAccounts();
     }
 
+    public static String pushRegisterResult;
+
     public void registerForPush(@PushListenerController.PushType int pushType, String regid) {
         if (TextUtils.isEmpty(regid) || getUserConfig().getClientUserId() == 0) {
             return;
@@ -16573,6 +16575,10 @@ public class MessagesController extends BaseController implements NotificationCe
                     return;
                 }
                 boolean currentToken = pushType == SharedConfig.pushType && regid.equals(SharedConfig.pushString);
+                pushRegisterResult = error != null ? "account " + currentAccount + ": " + error.code + " " + error.text : response instanceof TLRPC.TL_boolTrue ? "ok" : "account " + currentAccount + ": unexpected " + (response == null ? "null" : response.getClass().getSimpleName());
+                if (error != null) {
+                    FileLog.e("registerDevice failed: " + error.code + " " + error.text);
+                }
                 if (response instanceof TLRPC.TL_boolTrue && currentToken) {
                     FileLog.d("account " + currentAccount + " registered for push, push type: " + pushType);
                     getUserConfig().registeredForPush = true;
