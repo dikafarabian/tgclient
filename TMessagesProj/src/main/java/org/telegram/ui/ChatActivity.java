@@ -7202,6 +7202,9 @@ public class ChatActivity extends BaseFragment implements
         chatListView.setTag(1);
         chatListView.setVerticalScrollBarEnabled(!SharedConfig.chatBlurEnabled());
         chatListView.setAdapter(chatAdapter = new ChatActivityAdapter(context));
+        if (stylePreview) {
+            chatListView.setAdapter(new app.lumine.ios.IosPreviewRowsAdapter());
+        }
         chatListView.setClipToPadding(false);
         if (ChatObject.isMonoForum(currentChat) || ChatObject.areTabsEnabled(currentChat)) {
             chatListView.setClipChildren(false);

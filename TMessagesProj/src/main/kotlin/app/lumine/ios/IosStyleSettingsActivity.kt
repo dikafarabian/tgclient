@@ -98,6 +98,8 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     override fun createView(context: Context): View {
         val content = super.createView(context) as FrameLayout
+        listView.setSections()
+        listView.adapter.setApplyBackground(false)
         val preview = IosChatPreview(context, this)
         chatPreview = preview
         val height = AndroidUtilities.dp(PREVIEW_HEIGHT_DP.toFloat())
