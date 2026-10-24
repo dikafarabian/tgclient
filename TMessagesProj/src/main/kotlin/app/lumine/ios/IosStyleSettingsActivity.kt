@@ -6,10 +6,14 @@ package app.lumine.ios
 
 import android.content.Context
 import android.os.Build
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import app.exteraless.appearance.AltSeekbar
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.UniversalFragment
@@ -21,8 +25,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
     private var angleSlider: AltSeekbar? = null
     private var intensitySlider: AltSeekbar? = null
     private var tintSlider: AltSeekbar? = null
-    private var headerPreview: IosChatHeaderPreview? = null
-    private var inputPreview: IosChatInputPreview? = null
+    private var chatPreview: IosChatPreview? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.LumineIosStyle)
 
@@ -31,7 +34,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatHeader)))
-        items.add(UItem.asCustom(headerPreview(context), HEADER_PREVIEW_HEIGHT_DP))
         items.add(check(TOGGLE_CENTER_CHATS, R.string.LumineCenterTitleChats, IosStyleConfig.centerTitleChats.Bool(), R.string.LumineCenterTitleChatsInfo))
         if (IosStyleHelper.centerChatTitle()) {
             items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
@@ -60,7 +62,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatInput)))
-        items.add(UItem.asCustom(inputPreview(context), INPUT_PREVIEW_HEIGHT_DP))
         items.add(check(TOGGLE_INPUT_APPEARANCE, R.string.LumineInputAppearance, IosStyleConfig.inputAppearance.Bool(), R.string.LumineInputAppearanceInfo))
         items.add(check(TOGGLE_INPUT_BUTTON_PLACEMENT, R.string.LumineInputButtonPlacement, IosStyleConfig.inputButtonPlacement.Bool(), R.string.LumineInputButtonPlacementInfo))
         adapter?.whiteSectionEnd()
@@ -91,16 +92,35 @@ class IosStyleSettingsActivity : UniversalFragment() {
             else -> return
         }
         toggled.setConfigBool(!toggled.Bool())
-        headerPreview?.invalidate()
-        inputPreview?.invalidate()
+        chatPreview?.rebuild()
         listView.adapter.update(true)
     }
 
-    private fun headerPreview(context: Context): IosChatHeaderPreview =
-        headerPreview ?: IosChatHeaderPreview(context).also { headerPreview = it }
+    override fun createView(context: Context): View {
+        val content = super.createView(context) as FrameLayout
+        val preview = IosChatPreview(context, this)
+        chatPreview = preview
+        val height = AndroidUtilities.dp(PREVIEW_HEIGHT_DP.toFloat())
+        content.addView(preview, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT.toFloat(), PREVIEW_HEIGHT_DP.toFloat(), Gravity.TOP))
+        (listView.layoutParams as FrameLayout.LayoutParams).topMargin = height
+        return content
+    }
 
-    private fun inputPreview(context: Context): IosChatInputPreview =
-        inputPreview ?: IosChatInputPreview(context).also { inputPreview = it }
+    override fun onResume() {
+        super.onResume()
+        chatPreview?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        chatPreview?.onPause()
+    }
+
+    override fun onFragmentDestroy() {
+        chatPreview?.destroy()
+        chatPreview = null
+        super.onFragmentDestroy()
+    }
 
     private fun check(id: Int, title: Int, checked: Boolean, info: Int = 0): UItem {
         val label = LocaleController.getString(title)
@@ -188,8 +208,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     private companion object {
         const val SLIDER_HEIGHT_DP = 112
-        const val HEADER_PREVIEW_HEIGHT_DP = 172
-        const val INPUT_PREVIEW_HEIGHT_DP = 168
+        const val PREVIEW_HEIGHT_DP = 220
         const val TOGGLE_CHAT_TITLE_MARQUEE = 1
         const val TOGGLE_CENTER_CHATS = 2
         const val TOGGLE_COMPACT_PILL = 3
