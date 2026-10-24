@@ -10,13 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.ui.Components.RecyclerListView
 
 class IosPreviewRowsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = ROW_COUNT
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-        object : RecyclerView.ViewHolder(CheckerRow(parent.context)) {}
+        RecyclerListView.Holder(CheckerRow(parent.context))
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = Unit
 
