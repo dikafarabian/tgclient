@@ -208,7 +208,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     private companion object {
         const val SLIDER_HEIGHT_DP = 112
-        const val PREVIEW_HEIGHT_DP = 220
+        const val PREVIEW_HEIGHT_DP = 280
         const val TOGGLE_CHAT_TITLE_MARQUEE = 1
         const val TOGGLE_CENTER_CHATS = 2
         const val TOGGLE_COMPACT_PILL = 3

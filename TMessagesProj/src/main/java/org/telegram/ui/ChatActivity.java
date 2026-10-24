@@ -3054,6 +3054,7 @@ public class ChatActivity extends BaseFragment implements
     };
 
     public boolean isInsideContainer;
+    public boolean stylePreview;
     public boolean reversed;
     private long wallpaperRandomSeed;
 
@@ -4141,7 +4142,7 @@ public class ChatActivity extends BaseFragment implements
             actionBar.setTitleColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
             actionBar.setSubtitleColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
         }
-        if (isInsideContainer && !isFeedSearch()) {
+        if (isInsideContainer && !stylePreview && !isFeedSearch()) {
             actionBar.setVisibility(View.GONE);
         }
         actionBarBackgroundPaint.setColor(getThemedColor(Theme.key_actionBarDefault));
@@ -8863,7 +8864,7 @@ public class ChatActivity extends BaseFragment implements
             chatActivityEnterView.setFieldText(textToSet);
             textToSet = null;
         }
-        if (inPreviewMode || isInsideContainer || isFeedSearch()) {
+        if (inPreviewMode || (isInsideContainer && !stylePreview) || isFeedSearch()) {
             chatActivityEnterView.setVisibility(View.INVISIBLE);
         }
         if (!ChatObject.isChannel(currentChat) || currentChat.megagroup) {
@@ -19785,7 +19786,7 @@ public class ChatActivity extends BaseFragment implements
             int childCount = getChildCount();
             measureChildWithMargins(chatActivityEnterView, widthMeasureSpec, 0, heightMeasureSpec, 0);
 
-            if (inPreviewMode || isInsideContainer || shouldHideBottomFor3ButtonNav() || shouldHideBottomForGesture()) {
+            if (inPreviewMode || (isInsideContainer && !stylePreview) || shouldHideBottomFor3ButtonNav() || shouldHideBottomForGesture()) {
                 inputFieldHeight = 0;
             } else {
                 inputFieldHeight = chatActivityEnterView.getMeasuredHeight();
@@ -20213,7 +20214,7 @@ public class ChatActivity extends BaseFragment implements
                 hideKeyboard = true;
             } else if (currentEncryptedChat instanceof TLRPC.TL_encryptedChat) {
                 bottomOverlay.setVisibility(View.INVISIBLE);
-                if (!inPreviewMode && !isInsideContainer && chatMode != MODE_SAVED) {
+                if (!inPreviewMode && !(isInsideContainer && !stylePreview) && chatMode != MODE_SAVED) {
                     chatActivityEnterView.setVisibility(View.VISIBLE);
                 }
             }
@@ -23477,7 +23478,7 @@ public class ChatActivity extends BaseFragment implements
                 getMessagesController().sendBotStart(currentUser, botUser);
 
                 bottomChannelButtonsLayout.setVisibility(View.GONE);
-                if (!isInsideContainer) {
+                if (!(isInsideContainer && !stylePreview)) {
                     chatActivityEnterView.setVisibility(View.VISIBLE);
                 }
                 chatActivityEnterView.setBotInfo(botInfo);
@@ -30073,7 +30074,7 @@ public class ChatActivity extends BaseFragment implements
                     muteItemGap.setVisibility(View.VISIBLE);
                 }
             }
-            if (isInsideContainer || forceNoBottom || shouldHideBottomFor3ButtonNav() || shouldHideBottomForGesture()) {
+            if ((isInsideContainer && !stylePreview) || forceNoBottom || shouldHideBottomFor3ButtonNav() || shouldHideBottomForGesture()) {
                 bottomChannelButtonsLayout.setVisibility(View.GONE);
                 chatActivityEnterView.setVisibility(View.GONE);
             } else if (isReport()) {

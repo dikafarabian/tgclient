@@ -53,6 +53,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
             putLong("user_id", UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId())
         }
         val next = ChatActivityContainer(context, host.parentLayout, args)
+        next.chatActivity.stylePreview = true
         container = next
         addView(next, LayoutHelper.createFrameMatchParent())
     }
