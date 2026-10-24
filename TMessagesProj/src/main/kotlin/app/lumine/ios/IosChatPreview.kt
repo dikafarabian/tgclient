@@ -17,6 +17,7 @@ import org.telegram.ui.Components.LayoutHelper
 class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLayout(context) {
 
     private var container: ChatActivityContainer? = null
+    private var touchBlocked = false
     private val rebuildRunnable = Runnable { rebuildNow() }
 
     init {
@@ -67,9 +68,19 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
         old.chatActivity.onFragmentDestroy()
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean = true
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
+            val inChrome = ev.y < AndroidUtilities.dp(HEADER_ZONE_DP.toFloat()) ||
+                ev.y > height - AndroidUtilities.dp(INPUT_ZONE_DP.toFloat())
+            touchBlocked = inChrome
+        }
+        if (touchBlocked) return true
+        return super.dispatchTouchEvent(ev)
+    }
 
     private companion object {
         const val REBUILD_DELAY_MS = 150L
+        const val HEADER_ZONE_DP = 64
+        const val INPUT_ZONE_DP = 72
     }
 }
