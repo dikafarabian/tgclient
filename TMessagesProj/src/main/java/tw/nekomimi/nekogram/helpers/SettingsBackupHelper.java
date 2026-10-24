@@ -134,9 +134,9 @@ public final class SettingsBackupHelper {
             spToJSON("aiConfig", configJson, key -> !"history".equals(key));
         }
         if (!isCloud) {
-            JSONObject faveStickers = app.exteraless.utils.FaveStickersBackup.export();
+            JSONObject faveStickers = app.luminegram.utils.FaveStickersBackup.export();
             if (faveStickers != null) {
-                configJson.put(app.exteraless.utils.FaveStickersBackup.KEY, faveStickers);
+                configJson.put(app.luminegram.utils.FaveStickersBackup.KEY, faveStickers);
             }
         }
 
@@ -204,14 +204,14 @@ public final class SettingsBackupHelper {
         } catch (Throwable ignore) {
         }
         try {
-            configTypes.putAll(app.exteraless.OpenExteraConfig.getConfigTypes());
-            configTypes.putAll(app.exteraless.chats.ChatsConfig.getConfigTypes());
-            configTypes.putAll(app.exteraless.icons.IconPacksConfig.getConfigTypes());
-            configTypes.putAll(app.exteraless.glyph.GlyphConfig.getConfigTypes());
-            configTypes.putAll(app.exteraless.pillstack.PillStackConfig.getConfigTypes());
-            configTypes.putAll(app.exteraless.utils.UtilsConfig.getConfigTypes());
-            configTypes.putAll(app.exteraless.appearance.AppearanceConfig.getConfigTypes());
-            configTypes.putAll(app.exteraless.general.GeneralConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.OpenExteraConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.chats.ChatsConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.icons.IconPacksConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.glyph.GlyphConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.pillstack.PillStackConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.utils.UtilsConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.appearance.AppearanceConfig.getConfigTypes());
+            configTypes.putAll(app.luminegram.general.GeneralConfig.getConfigTypes());
         } catch (Throwable ignore) {
         }
         String[] preservePrefixes = {
@@ -228,7 +228,7 @@ public final class SettingsBackupHelper {
 
         for (Map.Entry<String, JsonElement> element : configJson.entrySet()) {
             String spName = element.getKey();
-            if (app.exteraless.utils.FaveStickersBackup.KEY.equals(spName) || !element.getValue().isJsonObject()) {
+            if (app.luminegram.utils.FaveStickersBackup.KEY.equals(spName) || !element.getValue().isJsonObject()) {
                 continue;
             }
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(spName, Activity.MODE_PRIVATE);
@@ -289,7 +289,7 @@ public final class SettingsBackupHelper {
             }
             editor.commit();
         }
-        app.exteraless.utils.FaveStickersBackup.restore(configJson.get(app.exteraless.utils.FaveStickersBackup.KEY));
+        app.luminegram.utils.FaveStickersBackup.restore(configJson.get(app.luminegram.utils.FaveStickersBackup.KEY));
         PushListenerController.reconcilePushRegistration();
     }
 

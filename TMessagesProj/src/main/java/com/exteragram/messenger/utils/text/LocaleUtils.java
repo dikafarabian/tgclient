@@ -198,7 +198,7 @@ public abstract class LocaleUtils {
         try {
             return ApplicationLoader.applicationContext.getString(R.string.OpenExtera);
         } catch (Exception e) {
-            return "exteraless";
+            return "luminegram";
         }
     }
 
@@ -271,7 +271,7 @@ public abstract class LocaleUtils {
     }
 
     public static boolean canUseLocalPremiumEmojis(int account) {
-        return app.exteraless.chats.LinkedCustomEmoji.canSend(account);
+        return app.luminegram.chats.LinkedCustomEmoji.canSend(account);
     }
 
     public static String normalizeResourceLanguage(String language) {

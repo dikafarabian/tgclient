@@ -11,7 +11,7 @@ import java.util.Collections;
  * плагина их не передают, поэтому здесь пустые списки — фильтрация в этом
  * случае и не нужна, хук зовётся всегда.
  */
-public class PyMethodHook extends app.exteraless.plugins.xposed.PyMethodHook {
+public class PyMethodHook extends app.luminegram.plugins.xposed.PyMethodHook {
 
     public PyMethodHook(String pluginId, PyObject handler, int priority) {
         super(pluginId, handler, priority, Collections.emptyList(), Collections.emptyList());

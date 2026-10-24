@@ -15,7 +15,7 @@ public class LauncherIconController {
             }
         }
 
-        setIcon(LauncherIcon.EXTERALESS);
+        setIcon(LauncherIcon.LUMINEGRAM);
     }
 
     public static boolean isEnabled(LauncherIcon icon) {
@@ -25,7 +25,7 @@ public class LauncherIconController {
         // именно она стоит у <application> в манифесте, и переключатель должен
         // показывать выбранным то, что человек видит на рабочем столе.
         return i == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                || i == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT && icon == LauncherIcon.EXTERALESS;
+                || i == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT && icon == LauncherIcon.LUMINEGRAM;
     }
 
     public static void setIcon(LauncherIcon icon) {
@@ -38,8 +38,8 @@ public class LauncherIconController {
     }
 
     public enum LauncherIcon {
-        EXTERALESS("ExteralessIcon", R.drawable.exteraless_icon_background,
-                R.drawable.exteraless_icon_foreground, R.string.AppIconExteraless),
+        LUMINEGRAM("LuminegramIcon", R.drawable.luminegram_icon_background,
+                R.drawable.luminegram_icon_foreground, R.string.AppIconLuminegram),
         BLUEPRINT("BlueprintIcon", R.drawable.blueprint_icon_background,
                 R.drawable.blueprint_icon_foreground, R.string.AppIconBlueprint),
         RED("RedIcon", R.drawable.red_icon_background,

@@ -85,7 +85,7 @@ import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
 import me.vkryl.android.animator.ReplaceAnimator;
 
-import app.exteraless.appearance.AppearanceConfig;
+import app.luminegram.appearance.AppearanceConfig;
 import tw.nekomimi.nekogram.NekoConfig;
 import xyz.nextalone.nagram.NaConfig;
 
@@ -292,12 +292,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         glassDrawable = factory.create(this)
             .setColorProvider(colorProvider)
             .setPadding(dp(6));
-        final int glassAvatarSizeDp = app.exteraless.appearance.ChatHeaderUiHelper.getChatAvatarSizeDp();
-        glassAvatarGap = app.exteraless.appearance.ChatHeaderUiHelper.isMaterial3ChatHeaderStyle()
+        final int glassAvatarSizeDp = app.luminegram.appearance.ChatHeaderUiHelper.getChatAvatarSizeDp();
+        glassAvatarGap = app.luminegram.appearance.ChatHeaderUiHelper.isMaterial3ChatHeaderStyle()
             ? dp(3.33f)
-            : (dp(46) - app.exteraless.appearance.ChatHeaderUiHelper.getAvatarSizePx(glassAvatarSizeDp)) / 2f;
+            : (dp(46) - app.luminegram.appearance.ChatHeaderUiHelper.getAvatarSizePx(glassAvatarSizeDp)) / 2f;
         glassDrawableLeftRadius = Math.min(dp(23),
-            app.exteraless.appearance.ChatHeaderUiHelper.getChatAvatarRadius(glassAvatarSizeDp, isForum, false) + glassAvatarGap);
+            app.luminegram.appearance.ChatHeaderUiHelper.getChatAvatarRadius(glassAvatarSizeDp, isForum, false) + glassAvatarGap);
         glassAvatarRadius = glassDrawableLeftRadius;
         glassMenuAppliedOuterRadius = glassMenuAppliedInnerRadius = -1;
         glassDrawable.setRadius(glassDrawableLeftRadius, dp(23), dp(23), glassDrawableLeftRadius, false);
@@ -331,11 +331,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             return;
         }
         glassModeIsForum = isForum;
-        glassAvatarGap = app.exteraless.appearance.ChatHeaderUiHelper.isMaterial3ChatHeaderStyle()
+        glassAvatarGap = app.luminegram.appearance.ChatHeaderUiHelper.isMaterial3ChatHeaderStyle()
             ? dp(3.33f)
-            : (dp(46) - app.exteraless.appearance.ChatHeaderUiHelper.getAvatarSizePx(avatarSizeDp)) / 2f;
+            : (dp(46) - app.luminegram.appearance.ChatHeaderUiHelper.getAvatarSizePx(avatarSizeDp)) / 2f;
         final float radius = Math.min(dp(23),
-            app.exteraless.appearance.ChatHeaderUiHelper.getChatAvatarRadius(avatarSizeDp, isForum, hasStories) + glassAvatarGap);
+            app.luminegram.appearance.ChatHeaderUiHelper.getChatAvatarRadius(avatarSizeDp, isForum, hasStories) + glassAvatarGap);
         if (radius == glassDrawableLeftRadius) {
             return;
         }

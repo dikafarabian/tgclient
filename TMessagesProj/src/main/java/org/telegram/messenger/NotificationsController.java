@@ -8,7 +8,7 @@
 
 package org.telegram.messenger;
 
-import app.exteraless.notifications.NotificationsHelper;
+import app.luminegram.notifications.NotificationsHelper;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -1200,7 +1200,7 @@ public class NotificationsController extends BaseController implements Notificat
         }
 
         if (isLast) {
-            app.exteraless.glyph.GlyphController.getInstance().onNewMessages(messageObjects, currentAccount);
+            app.luminegram.glyph.GlyphController.getInstance().onNewMessages(messageObjects, currentAccount);
         }
 
         ArrayList<MessageObject> popupArrayAdd = new ArrayList<>(0);
@@ -6620,10 +6620,10 @@ public class NotificationsController extends BaseController implements Notificat
             case 0:
                 return R.drawable.notification;
             case 1:
-                return R.drawable.exteraless_notification;
+                return R.drawable.luminegram_notification;
         }
 
-        return R.drawable.exteraless_notification;
+        return R.drawable.luminegram_notification;
     }
 
     public void loadTopicsNotificationsExceptions(long dialogId, Consumer<HashSet<Integer>> consumer) {

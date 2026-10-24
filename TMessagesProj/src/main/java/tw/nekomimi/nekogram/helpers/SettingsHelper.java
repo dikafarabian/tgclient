@@ -21,20 +21,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import app.exteraless.ai.ui.AiSettingsActivity;
-import app.exteraless.icons.IconPacksActivity;
-import app.exteraless.pillstack.pills.weather.WeatherSettingsActivity;
-import app.exteraless.settings.OpenExteraCloudActivity;
-import app.exteraless.settings.OpenExteraGlyphActivity;
-import app.exteraless.pillstack.PillStackSettingsActivity;
-import app.exteraless.plugins.ui.PluginsActivity;
-import app.exteraless.settings.OpenExteraAppNavigationActivity;
-import app.exteraless.settings.OpenExteraAppearanceActivity;
-import app.exteraless.settings.OpenExteraAyuMomentsActivity;
-import app.exteraless.settings.OpenExteraChatsActivity;
-import app.exteraless.settings.OpenExteraGeneralActivity;
-import app.exteraless.settings.OpenExteraOtherActivity;
-import app.exteraless.settings.OpenExteraSettingsActivity;
+import app.luminegram.ai.ui.AiSettingsActivity;
+import app.luminegram.icons.IconPacksActivity;
+import app.luminegram.pillstack.pills.weather.WeatherSettingsActivity;
+import app.luminegram.settings.OpenExteraCloudActivity;
+import app.luminegram.settings.OpenExteraGlyphActivity;
+import app.luminegram.pillstack.PillStackSettingsActivity;
+import app.luminegram.plugins.ui.PluginsActivity;
+import app.luminegram.settings.OpenExteraAppNavigationActivity;
+import app.luminegram.settings.OpenExteraAppearanceActivity;
+import app.luminegram.settings.OpenExteraAyuMomentsActivity;
+import app.luminegram.settings.OpenExteraChatsActivity;
+import app.luminegram.settings.OpenExteraGeneralActivity;
+import app.luminegram.settings.OpenExteraOtherActivity;
+import app.luminegram.settings.OpenExteraSettingsActivity;
 import tw.nekomimi.nekogram.settings.BaseNekoSettingsActivity;
 import tw.nekomimi.nekogram.settings.BaseNekoXSettingsActivity;
 import tw.nekomimi.nekogram.settings.NekoAboutActivity;
@@ -45,7 +45,7 @@ import tw.nekomimi.nekogram.settings.NekoTranslatorSettingsActivity;
 public class SettingsHelper {
 
     private static final String HOST_NAGRAM = "nasettings";
-    private static final String HOST_EXTERALESS = "exteraless";
+    private static final String HOST_LUMINEGRAM = "luminegram";
 
     private static final Map<String, String> SEARCH_TITLE_ALIASES = new HashMap<>();
     private static final Map<String, String> TRANSLATOR_ROWS = new HashMap<>();
@@ -141,7 +141,7 @@ public class SettingsHelper {
         }
     }
 
-    private static final Set<String> EXTERALESS_SCREENS = new HashSet<>(Arrays.asList(
+    private static final Set<String> LUMINEGRAM_SCREENS = new HashSet<>(Arrays.asList(
             "settings", "general", "appearance", "chats", "plugins", "pillstack", "other",
             "ayumoments", "navigation", "menus", "media", "hiding"));
 
@@ -152,10 +152,10 @@ public class SettingsHelper {
         if (path.startsWith(HOST_NAGRAM + "/")) {
             return true;
         }
-        if (!path.startsWith(HOST_EXTERALESS + "/")) {
+        if (!path.startsWith(HOST_LUMINEGRAM + "/")) {
             return false;
         }
-        return EXTERALESS_SCREENS.contains(path.substring(HOST_EXTERALESS.length() + 1));
+        return LUMINEGRAM_SCREENS.contains(path.substring(HOST_LUMINEGRAM.length() + 1));
     }
 
     public static String linkPathFor(String key) {
@@ -163,28 +163,28 @@ public class SettingsHelper {
             return null;
         }
         switch (key) {
-            case "exteraless":
-                return HOST_EXTERALESS + "/settings";
-            case "exteraless_general":
-                return HOST_EXTERALESS + "/general";
-            case "exteraless_appearance":
-                return HOST_EXTERALESS + "/appearance";
-            case "exteraless_chats":
-                return HOST_EXTERALESS + "/chats";
-            case "exteraless_menus":
-                return HOST_EXTERALESS + "/menus";
-            case "exteraless_media":
-                return HOST_EXTERALESS + "/media";
-            case "exteraless_hiding":
-                return HOST_EXTERALESS + "/hiding";
-            case "exteraless_other":
-                return HOST_EXTERALESS + "/other";
-            case "exteraless_ayumoments":
-                return HOST_EXTERALESS + "/ayumoments";
+            case "luminegram":
+                return HOST_LUMINEGRAM + "/settings";
+            case "luminegram_general":
+                return HOST_LUMINEGRAM + "/general";
+            case "luminegram_appearance":
+                return HOST_LUMINEGRAM + "/appearance";
+            case "luminegram_chats":
+                return HOST_LUMINEGRAM + "/chats";
+            case "luminegram_menus":
+                return HOST_LUMINEGRAM + "/menus";
+            case "luminegram_media":
+                return HOST_LUMINEGRAM + "/media";
+            case "luminegram_hiding":
+                return HOST_LUMINEGRAM + "/hiding";
+            case "luminegram_other":
+                return HOST_LUMINEGRAM + "/other";
+            case "luminegram_ayumoments":
+                return HOST_LUMINEGRAM + "/ayumoments";
             case "pillstack":
-                return HOST_EXTERALESS + "/pillstack";
-            case "exteraless_navigation":
-                return HOST_EXTERALESS + "/navigation";
+                return HOST_LUMINEGRAM + "/pillstack";
+            case "luminegram_navigation":
+                return HOST_LUMINEGRAM + "/navigation";
             default:
                 return HOST_NAGRAM + "/" + key;
         }
@@ -200,12 +200,12 @@ public class SettingsHelper {
             unknown.run();
             return;
         }
-        final boolean exteraless = HOST_EXTERALESS.equals(segments.get(0));
-        if (!exteraless && !HOST_NAGRAM.equals(segments.get(0))) {
+        final boolean luminegram = HOST_LUMINEGRAM.equals(segments.get(0));
+        if (!luminegram && !HOST_NAGRAM.equals(segments.get(0))) {
             unknown.run();
             return;
         }
-        if (exteraless && segments.size() < 2) {
+        if (luminegram && segments.size() < 2) {
             unknown.run();
             return;
         }
@@ -217,9 +217,9 @@ public class SettingsHelper {
         BaseNekoSettingsActivity neko_fragment = null;
         BaseNekoXSettingsActivity nekox_fragment = null;
         OpenExteraAppNavigationActivity navigation_fragment = null;
-        String screen = exteraless ? segments.get(1) : nagramScreen(segments.size() == 1 ? null : segments.get(1), row);
-        if (screen == null && segments.size() == 2 && segments.get(1).startsWith("exteraless_")) {
-            String base = segments.get(1).substring("exteraless_".length());
+        String screen = luminegram ? segments.get(1) : nagramScreen(segments.size() == 1 ? null : segments.get(1), row);
+        if (screen == null && segments.size() == 2 && segments.get(1).startsWith("luminegram_")) {
+            String base = segments.get(1).substring("luminegram_".length());
             if (row != null && MOVED_ROWS.containsKey(base + ":" + row)) {
                 screen = base;
             }
@@ -299,10 +299,10 @@ public class SettingsHelper {
                 case "t":
                     fragment = nekox_fragment = new NekoTranslatorSettingsActivity();
                     break;
-                case "exteraless":
+                case "luminegram":
                     fragment = neko_fragment = new OpenExteraSettingsActivity();
                     break;
-                case "exteraless_general":
+                case "luminegram_general":
                     if (TRANSLATOR_ROWS.containsKey(row)) {
                         fragment = nekox_fragment = new NekoTranslatorSettingsActivity();
                         row = TRANSLATOR_ROWS.get(row);
@@ -310,17 +310,17 @@ public class SettingsHelper {
                         fragment = neko_fragment = new OpenExteraGeneralActivity();
                     }
                     break;
-                case "exteraless_appearance":
+                case "luminegram_appearance":
                     fragment = neko_fragment = "useSystemEmoji".equals(row)
                             ? new NekoEmojiSettingsActivity() : new OpenExteraAppearanceActivity();
                     break;
-                case "exteraless_chats":
+                case "luminegram_chats":
                     fragment = neko_fragment = new OpenExteraChatsActivity();
                     break;
-                case "exteraless_other":
+                case "luminegram_other":
                     fragment = neko_fragment = new OpenExteraOtherActivity();
                     break;
-                case "exteraless_ayumoments":
+                case "luminegram_ayumoments":
                     fragment = neko_fragment = new OpenExteraAyuMomentsActivity();
                     break;
                 case "pillstack":
@@ -332,13 +332,13 @@ public class SettingsHelper {
                 case "iconpacks":
                     fragment = neko_fragment = new IconPacksActivity();
                     break;
-                case "exteraless_ai":
+                case "luminegram_ai":
                     fragment = neko_fragment = new AiSettingsActivity();
                     break;
-                case "exteraless_cloud":
+                case "luminegram_cloud":
                     fragment = neko_fragment = new OpenExteraCloudActivity();
                     break;
-                case "exteraless_glyph":
+                case "luminegram_glyph":
                     fragment = neko_fragment = new OpenExteraGlyphActivity();
                     break;
                 case "send_logs":
@@ -443,21 +443,21 @@ public class SettingsHelper {
         ArrayList<BaseNekoXSettingsActivity> fragments = new ArrayList<>();
         fragments.add(new NekoTranslatorSettingsActivity());
 
-        ArrayList<BaseNekoSettingsActivity> exteralessFragments = new ArrayList<>();
-        exteralessFragments.add(new OpenExteraSettingsActivity());
-        exteralessFragments.add(new OpenExteraGeneralActivity());
-        exteralessFragments.add(new OpenExteraAppearanceActivity());
-        exteralessFragments.add(new OpenExteraChatsActivity());
-        exteralessFragments.add(new OpenExteraChatsActivity(OpenExteraChatsActivity.SCREEN_MENUS));
-        exteralessFragments.add(new OpenExteraChatsActivity(OpenExteraChatsActivity.SCREEN_MEDIA));
-        exteralessFragments.add(new OpenExteraChatsActivity(OpenExteraChatsActivity.SCREEN_HIDING));
-        exteralessFragments.add(new OpenExteraOtherActivity());
-        exteralessFragments.add(new OpenExteraAyuMomentsActivity());
-        exteralessFragments.add(new PillStackSettingsActivity());
-        exteralessFragments.add(new AiSettingsActivity());
+        ArrayList<BaseNekoSettingsActivity> luminegramFragments = new ArrayList<>();
+        luminegramFragments.add(new OpenExteraSettingsActivity());
+        luminegramFragments.add(new OpenExteraGeneralActivity());
+        luminegramFragments.add(new OpenExteraAppearanceActivity());
+        luminegramFragments.add(new OpenExteraChatsActivity());
+        luminegramFragments.add(new OpenExteraChatsActivity(OpenExteraChatsActivity.SCREEN_MENUS));
+        luminegramFragments.add(new OpenExteraChatsActivity(OpenExteraChatsActivity.SCREEN_MEDIA));
+        luminegramFragments.add(new OpenExteraChatsActivity(OpenExteraChatsActivity.SCREEN_HIDING));
+        luminegramFragments.add(new OpenExteraOtherActivity());
+        luminegramFragments.add(new OpenExteraAyuMomentsActivity());
+        luminegramFragments.add(new PillStackSettingsActivity());
+        luminegramFragments.add(new AiSettingsActivity());
 
         String e_title = getString(R.string.OpenExtera);
-        for (BaseNekoSettingsActivity fragment : exteralessFragments) {
+        for (BaseNekoSettingsActivity fragment : luminegramFragments) {
             try {
                 fragment.buildRowsForSearch();
             } catch (Exception e) {

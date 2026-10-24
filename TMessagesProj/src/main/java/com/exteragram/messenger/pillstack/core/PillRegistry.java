@@ -9,7 +9,7 @@ public final class PillRegistry {
     }
 
     public static PillInfo getPillInfo(int id) {
-        return app.exteraless.pillstack.PillRegistry.isRegistered(id) ? new PillInfo(id) : null;
+        return app.luminegram.pillstack.PillRegistry.isRegistered(id) ? new PillInfo(id) : null;
     }
 
     public static final class PillInfo {
@@ -32,16 +32,16 @@ public final class PillRegistry {
         }
 
         public BasePill create(Context context, Theme.ResourcesProvider resourcesProvider) {
-            app.exteraless.pillstack.pills.BasePill pill =
-                    app.exteraless.pillstack.PillRegistry.createPill(id, context, resourcesProvider);
+            app.luminegram.pillstack.pills.BasePill pill =
+                    app.luminegram.pillstack.PillRegistry.createPill(id, context, resourcesProvider);
             return pill == null ? null : new WrappedPill(pill, resourcesProvider);
         }
     }
 
     private static final class WrappedPill extends BasePill {
-        private final app.exteraless.pillstack.pills.BasePill delegate;
+        private final app.luminegram.pillstack.pills.BasePill delegate;
 
-        private WrappedPill(app.exteraless.pillstack.pills.BasePill delegate,
+        private WrappedPill(app.luminegram.pillstack.pills.BasePill delegate,
                             Theme.ResourcesProvider resourcesProvider) {
             super(delegate.getContext(), resourcesProvider);
             this.delegate = delegate;

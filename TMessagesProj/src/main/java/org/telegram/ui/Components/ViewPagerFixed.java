@@ -1,6 +1,6 @@
 package org.telegram.ui.Components;
 
-import app.exteraless.utils.AppUtils;
+import app.luminegram.utils.AppUtils;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.Utilities.swapItems;

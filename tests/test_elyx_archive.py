@@ -10,7 +10,7 @@ import pytest
 import corpus
 
 ARCHIVE_DIR = os.environ.get(
-    "EXTERALESS_PLUGIN_ARCHIVES", "/home/coral/openExtera/plugin-corpus/archives")
+    "LUMINEGRAM_PLUGIN_ARCHIVES", "/home/coral/openExtera/plugin-corpus/archives")
 
 
 @pytest.fixture(scope="module")

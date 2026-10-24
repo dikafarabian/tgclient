@@ -32,9 +32,9 @@ Java-сторону. ``Class.forName("java.lang.Runtime")`` + ``getMethod`` +
 ``invoke`` отработал в том же тесте и породил ровно ноль событий сверх
 импорта ``java.lang``: Chaquopy отдаёт живые Java-объекты, а дальше всё
 происходит в JVM, где Python-аудита нет. Это чинится только на Java-стороне
-(``app.exteraless.plugins.PluginRuntime`` + хуки на стоках) и всё равно не
+(``app.luminegram.plugins.PluginRuntime`` + хуки на стоках) и всё равно не
 держит плагин с разрешением ``hooks`` — он снимает наши хуки. См.
-см. уровни доступа в app.exteraless.plugins.PluginPermissions.
+см. уровни доступа в app.luminegram.plugins.PluginPermissions.
 """
 
 import os
@@ -420,7 +420,7 @@ def _hook(event, args, _watched=None, _loader_ref=None):
 
 
 #: Метка «это наш отказ, его нельзя глотать».
-_DENIAL_MARK = "_exteraless_denial"
+_DENIAL_MARK = "_luminegram_denial"
 
 
 def _denial(error):
@@ -738,6 +738,6 @@ def install(loader_module) -> bool:
             and bound_hook(event, args, bound_watched, bound_loader))
         _installed = True
     except Exception as e:  # интерпретатор без PEP 578 — работаем на врапперах
-        print(f"[exteraless:audit_gate] install failed: {e}", file=sys.stderr)
+        print(f"[luminegram:audit_gate] install failed: {e}", file=sys.stderr)
         return False
     return True

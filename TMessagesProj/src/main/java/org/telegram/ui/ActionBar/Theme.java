@@ -5731,7 +5731,7 @@ public class Theme {
     }
 
     private static String monetAssetName(String base) {
-        return base + app.exteraless.appearance.AppearanceConfig.monetAssetSuffix() + ".attheme";
+        return base + app.luminegram.appearance.AppearanceConfig.monetAssetSuffix() + ".attheme";
     }
 
     public static void reloadMonetThemes() {
@@ -9146,8 +9146,8 @@ public class Theme {
      * разделитель под ActionBar.
      */
     public static int getDividerColor(ResourcesProvider provider) {
-        if (app.exteraless.appearance.AppearanceConfig.dividerStyle()
-                == app.exteraless.appearance.AppearanceConfig.DIVIDER_HIDDEN) {
+        if (app.luminegram.appearance.AppearanceConfig.dividerStyle()
+                == app.luminegram.appearance.AppearanceConfig.DIVIDER_HIDDEN) {
             return 0x00ffffff;
         }
         resolvingDividerColor = true;
@@ -9155,8 +9155,8 @@ public class Theme {
             if (provider != null) {
                 return provider.getColor(key_divider);
             }
-            final boolean ignoreAnimation = app.exteraless.appearance.AppearanceConfig.dividerStyle()
-                    != app.exteraless.appearance.AppearanceConfig.DIVIDER_LINE;
+            final boolean ignoreAnimation = app.luminegram.appearance.AppearanceConfig.dividerStyle()
+                    != app.luminegram.appearance.AppearanceConfig.DIVIDER_LINE;
             return getColor(key_divider, null, ignoreAnimation);
         } finally {
             resolvingDividerColor = false;
@@ -9170,7 +9170,7 @@ public class Theme {
     public static int getColor(int key, ResourcesProvider provider) {
         // Скрытие разделителей должно работать и при непустом ResourcesProvider
         // (чат-темы, боттом-шиты, профиль): иначе линии остаются там, где цвет берёт провайдер.
-        if (key_divider == key && !resolvingDividerColor && app.exteraless.appearance.AppearanceConfig.dividerHidden()) {
+        if (key_divider == key && !resolvingDividerColor && app.luminegram.appearance.AppearanceConfig.dividerHidden()) {
             return 0x00ffffff;
         }
         if (provider != null) {
@@ -9198,7 +9198,7 @@ public class Theme {
                 return animatingColors.valueAt(index);
             }
         }
-        if (key_divider == key && !resolvingDividerColor && app.exteraless.appearance.AppearanceConfig.dividerHidden()) {
+        if (key_divider == key && !resolvingDividerColor && app.luminegram.appearance.AppearanceConfig.dividerHidden()) {
             return 0x00ffffff;
         }
         if (serviceBitmapShader != null && (key_chat_serviceText == key || key_chat_serviceLink == key || key_chat_serviceIcon == key

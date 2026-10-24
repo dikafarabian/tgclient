@@ -60,7 +60,7 @@ def check(gate, event, *args):
 
 def test_files_permission_does_not_open_settings_for_writing(gate):
     gate.granted.add("files")
-    target = str(gate.root / "shared_prefs" / "exteraless_plugin_grants.xml")
+    target = str(gate.root / "shared_prefs" / "luminegram_plugin_grants.xml")
     with pytest.raises(PermissionError):
         check(gate, "open", target, "w", os.O_WRONLY | os.O_CREAT)
     check(gate, "open", target, "r", os.O_RDONLY)

@@ -21,7 +21,7 @@ PARITY_BASELINE = "reference_parity.json"
 MISSING_BASELINE = "reference_missing_classes.json"
 
 REFERENCE_ROOT = javaapi.REFERENCE_ROOT
-OUR_JAVA_ROOT = os.environ.get("EXTERALESS_JAVA_ROOT", corpus.JAVA_ROOT)
+OUR_JAVA_ROOT = os.environ.get("LUMINEGRAM_JAVA_ROOT", corpus.JAVA_ROOT)
 OUR_KOTLIN_ROOT = javaapi.KOTLIN_ROOT
 ALIASES_PATH = os.path.join(corpus.PYTHON_ROOT, "extera_utils", "class_aliases.py")
 
@@ -54,7 +54,7 @@ _SYNTHETIC_PARAM = ("DefaultConstructorMarker", "$i$f$")
 
 _WHITESPACE_RUN = re.compile(r"[ \t]{2,}")
 
-_TMPDIR = tempfile.TemporaryDirectory(prefix="exteraless-parity-")
+_TMPDIR = tempfile.TemporaryDirectory(prefix="luminegram-parity-")
 _NORMALISED = {}
 _INDEX_CACHE = {}
 NORMALISE_ERRORS = []
@@ -176,7 +176,7 @@ def kotlin_file_exists(fqcn):
 @functools.lru_cache(maxsize=1)
 def aliases():
     spec = importlib.util.spec_from_file_location(
-        "exteraless_aliases_for_parity", ALIASES_PATH)
+        "luminegram_aliases_for_parity", ALIASES_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -431,7 +431,7 @@ def test_classes_the_catalogue_uses_exist_on_our_side():
 
 
 DEX_SHIM = "com.exteragram.messenger.plugins.PluginsController"
-DEX_IMPL = "app.exteraless.plugins.PluginsController"
+DEX_IMPL = "app.luminegram.plugins.PluginsController"
 NOT_DEX_SURFACE = frozenset((
     "executePreRequestHook", "executePostRequestHook", "getWatchdog"))
 

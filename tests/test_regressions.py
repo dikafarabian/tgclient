@@ -10,8 +10,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import corpus
 import javaapi
 
-REPO = os.environ.get("EXTERALESS_REPO", corpus.REPO)
-PYTHON_ROOT = os.environ.get("EXTERALESS_PYTHON_ROOT", corpus.PYTHON_ROOT)
+REPO = os.environ.get("LUMINEGRAM_REPO", corpus.REPO)
+PYTHON_ROOT = os.environ.get("LUMINEGRAM_PYTHON_ROOT", corpus.PYTHON_ROOT)
 CLASS_ALIASES = os.path.join(PYTHON_ROOT, "extera_utils", "class_aliases.py")
 PROGUARD_RULES = os.path.join(REPO, "TMessagesProj", "proguard-rules.pro")
 USAGE = os.path.join(REPO, "TMessagesProj", "build", "outputs", "mapping", "release", "usage.txt")
@@ -37,7 +37,7 @@ def _load(path, name):
 
 @pytest.fixture(scope="module")
 def aliases():
-    return _load(CLASS_ALIASES, "exteraless_class_aliases")
+    return _load(CLASS_ALIASES, "luminegram_class_aliases")
 
 
 class FakeExteraConfig:
@@ -173,16 +173,16 @@ def test_resolve_maps_every_prefix(aliases):
 def test_resolve_keeps_the_nested_class_suffix(aliases):
     assert aliases.resolve(
         "com.exteragram.messenger.pillstack.core.PillRegistry$PillInfo") == \
-        "app.exteraless.pillstack.PillRegistry$PillInfo"
+        "app.luminegram.pillstack.PillRegistry$PillInfo"
     assert aliases.resolve(
         "com.exteragram.messenger.pillstack.ui.PillStackLayout$Slot") == \
-        "app.exteraless.pillstack.PillStackView$Slot"
+        "app.luminegram.pillstack.PillStackView$Slot"
 
 
 def test_resolve_leaves_foreign_names_untouched(aliases):
     for name in (
         "org.telegram.messenger.ApplicationLoader",
-        "app.exteraless.plugins.PluginsController",
+        "app.luminegram.plugins.PluginsController",
         "com.exteragram.messenger.SomethingWeDoNotShip",
         "java.lang.String",
     ):

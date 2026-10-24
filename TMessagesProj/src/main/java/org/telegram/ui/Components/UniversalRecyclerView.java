@@ -453,10 +453,10 @@ public class UniversalRecyclerView extends RecyclerListView {
     }
 
     public void setSections() {
-        setSections(dp(12), dp(app.exteraless.appearance.AppearanceConfig.sectionRadius()), false);
+        setSections(dp(12), dp(app.luminegram.appearance.AppearanceConfig.sectionRadius()), false);
     }
     public void setSections(boolean topPadding) {
-        setSections(dp(12), dp(app.exteraless.appearance.AppearanceConfig.sectionRadius()), topPadding);
+        setSections(dp(12), dp(app.luminegram.appearance.AppearanceConfig.sectionRadius()), topPadding);
     }
     public void setSections(int padding, float roundRadius, boolean topPadding) {
         super.setSections(
@@ -466,7 +466,7 @@ public class UniversalRecyclerView extends RecyclerListView {
                 final int viewType = viewHolder.getItemViewType();
                 if (UniversalAdapter.isShadow(viewType)) return false;
                 if (UniversalAdapter.isHeader(viewType)
-                        && app.exteraless.appearance.AppearanceConfig.sectionsSeparatedHeaders()) {
+                        && app.luminegram.appearance.AppearanceConfig.sectionsSeparatedHeaders()) {
                     return false;
                 }
                 // Элемент, помеченный transparent, не должен получать карточку секции:
@@ -481,7 +481,7 @@ public class UniversalRecyclerView extends RecyclerListView {
             },
             viewType -> !UniversalAdapter.isShadow(viewType)
                     && !(UniversalAdapter.isHeader(viewType)
-                        && app.exteraless.appearance.AppearanceConfig.sectionsSeparatedHeaders()),
+                        && app.luminegram.appearance.AppearanceConfig.sectionsSeparatedHeaders()),
             padding, roundRadius,
             super::drawBackgroundRect,
             topPadding

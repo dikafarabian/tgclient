@@ -16,7 +16,7 @@ MAGIC_BY_VERSION = {
 }
 
 ARCHIVE_DIR = os.environ.get(
-    "EXTERALESS_PLUGIN_ARCHIVES", "/home/coral/openExtera/plugin-corpus/archives")
+    "LUMINEGRAM_PLUGIN_ARCHIVES", "/home/coral/openExtera/plugin-corpus/archives")
 
 BUILD_GRADLE = os.path.join(corpus.REPO, "TMessagesProj", "build.gradle")
 

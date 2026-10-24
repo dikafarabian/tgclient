@@ -121,7 +121,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
     private BaseFragment fragment;
     private Utilities.CallbackReturn<URLSpan, Boolean> onLinkPress;
     private boolean firstTranslation = true;
-    private final boolean nekoProviders = app.exteraless.chats.ChatsConfig.translateInSheet.Bool();
+    private final boolean nekoProviders = app.luminegram.chats.ChatsConfig.translateInSheet.Bool();
     private int sheetProvider = tw.nekomimi.nekogram.NekoConfig.translationProvider.Int();
 
     public TranslateAlert2(
@@ -408,8 +408,8 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
                     adapter.updateMainView(textViewContainer);
                 }
             };
-            if (app.exteraless.ai.TelegramAiReplacement.replacesSummaries(currentAccount)) {
-                aiReplacementCancel = app.exteraless.ai.TelegramAiReplacement.translate(textWithEntities.text, lang, res -> {
+            if (app.luminegram.ai.TelegramAiReplacement.replacesSummaries(currentAccount)) {
+                aiReplacementCancel = app.luminegram.ai.TelegramAiReplacement.translate(textWithEntities.text, lang, res -> {
                     aiReplacementCancel = null;
                     onResult.run(res, null);
                 }, (code, message) -> {
@@ -485,7 +485,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
 
     private void translateWithProvider() {
         final int request = ++providerRequest;
-        app.exteraless.utils.text.TranslatorUtils.translate(reqText == null ? "" : reqText, toLanguage, providerEntities, new app.exteraless.utils.text.TranslatorUtils.TranslateCallback() {
+        app.luminegram.utils.text.TranslatorUtils.translate(reqText == null ? "" : reqText, toLanguage, providerEntities, new app.luminegram.utils.text.TranslatorUtils.TranslateCallback() {
             @Override
             public void onSuccess(TLRPC.TL_textWithEntities result) {
                 if (request != providerRequest || isDismissed() || result == null) {

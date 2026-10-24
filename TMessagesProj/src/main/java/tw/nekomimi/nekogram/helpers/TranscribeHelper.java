@@ -50,7 +50,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import app.exteraless.speech.VoskTranscriber;
+import app.luminegram.speech.VoskTranscriber;
 import tw.nekomimi.nekogram.utils.HttpClient;
 import xyz.nextalone.nagram.NaConfig;
 
@@ -96,8 +96,8 @@ public class TranscribeHelper {
         if (fragment == null) {
             return;
         }
-        final app.exteraless.settings.OpenExteraChatsActivity activity =
-                new app.exteraless.settings.OpenExteraChatsActivity(app.exteraless.settings.OpenExteraChatsActivity.SCREEN_MEDIA);
+        final app.luminegram.settings.OpenExteraChatsActivity activity =
+                new app.luminegram.settings.OpenExteraChatsActivity(app.luminegram.settings.OpenExteraChatsActivity.SCREEN_MEDIA);
         fragment.presentFragment(activity);
         AndroidUtilities.runOnUIThread(() -> activity.scrollToRow("transcribeProvider", () -> {}));
     }

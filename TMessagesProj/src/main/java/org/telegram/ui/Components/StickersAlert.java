@@ -114,7 +114,7 @@ import tw.nekomimi.nekogram.NekoConfig;
 import xyz.nextalone.nagram.NaConfig;
 import xyz.nextalone.nagram.helper.StickerSetHelper;
 
-import app.exteraless.chats.UserLookup;
+import app.luminegram.chats.UserLookup;
 
 public class StickersAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 

@@ -38,11 +38,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.math.MathUtils;
 import androidx.core.view.WindowInsetsCompat;
 
-import app.exteraless.appearance.AppearanceConfig;
-import app.exteraless.appearance.MainTabsUiHelper;
-import app.exteraless.feed.FeedController;
-import app.exteraless.feed.ui.FeedActivity;
-import app.exteraless.feed.ui.FeedChannelsActivity;
+import app.luminegram.appearance.AppearanceConfig;
+import app.luminegram.appearance.MainTabsUiHelper;
+import app.luminegram.feed.FeedController;
+import app.luminegram.feed.ui.FeedActivity;
+import app.luminegram.feed.ui.FeedChannelsActivity;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -175,7 +175,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     private boolean dropCallsFragmentAfterPageScroll;
 
     private UpdateLayoutWrapper updateLayoutWrapper;
-    private app.exteraless.player.PlayerMiniView miniPlayer;
+    private app.luminegram.player.PlayerMiniView miniPlayer;
     private FrameLayout tabsViewWrapper;
     private MainTabsLayout tabsView;
     private BlurredBackgroundDrawable tabsViewBackground;
@@ -466,9 +466,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
         contentView.addView(fadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM));
 
-        miniPlayer = new app.exteraless.player.PlayerMiniView(context, this, resourceProvider);
+        miniPlayer = new app.luminegram.player.PlayerMiniView(context, this, resourceProvider);
         miniPlayer.setOffsetListener(this::onMiniPlayerOffsetChanged);
-        contentView.addView(miniPlayer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, app.exteraless.player.PlayerMiniView.HEIGHT_DP + 16, Gravity.BOTTOM));
+        contentView.addView(miniPlayer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, app.luminegram.player.PlayerMiniView.HEIGHT_DP + 16, Gravity.BOTTOM));
         contentView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(@NonNull View v) {

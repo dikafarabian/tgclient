@@ -779,8 +779,8 @@ public class AvatarDrawable extends Drawable {
     private void drawBackgroundShape(Canvas canvas, int size, float scale, Paint paint) {
         final float half = size / 2.0f;
         int radius = roundRadius;
-        if (radius <= 0 && !app.exteraless.appearance.AppearanceConfig.avatarCornersDefault()) {
-            radius = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(size);
+        if (radius <= 0 && !app.luminegram.appearance.AppearanceConfig.avatarCornersDefault()) {
+            radius = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(size);
         }
         if (radius <= 0) {
             canvas.drawCircle(half, half, half * scale, paint);

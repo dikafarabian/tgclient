@@ -1,7 +1,7 @@
 package org.telegram.ui.Components;
 
-import app.exteraless.chats.LinkedCustomEmoji;
-import app.exteraless.utils.AppUtils;
+import app.luminegram.chats.LinkedCustomEmoji;
+import app.luminegram.utils.AppUtils;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.dpf2;
@@ -7907,8 +7907,8 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                             }
                             return;
                         }
-                        // exteraless plugins: установить плагин, а не открывать его в просмотрщике.
-                        if (app.exteraless.plugins.PluginInstallHelper.handleMessageTap(profileActivity.getParentActivity(), message)) {
+                        // luminegram plugins: установить плагин, а не открывать его в просмотрщике.
+                        if (app.luminegram.plugins.PluginInstallHelper.handleMessageTap(profileActivity.getParentActivity(), message)) {
                             return;
                         }
                         AndroidUtilities.openDocument(message, profileActivity.getParentActivity(), profileActivity);

@@ -41,7 +41,7 @@ import androidx.core.content.ContextCompat;
 
 import com.radolyn.ayugram.utils.LastSeenHelper;
 
-import app.exteraless.appearance.ChatHeaderUiHelper;
+import app.luminegram.appearance.ChatHeaderUiHelper;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;

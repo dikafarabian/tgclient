@@ -335,12 +335,12 @@ public class PhotoAttachPhotoCell extends FrameLayout {
                     videoPlayImageView.setVisibility(VISIBLE);
                     ((LayoutParams) videoTextView.getLayoutParams()).leftMargin = dp(13);
                     videoTextView.setText(AndroidUtilities.formatShortDuration(photoEntry.duration));
-                } else if (photoEntry.isHighQuality() && !app.exteraless.chats.ChatsConfig.alwaysSendInHD.Bool()) {
+                } else if (photoEntry.isHighQuality() && !app.luminegram.chats.ChatsConfig.alwaysSendInHD.Bool()) {
                     videoInfoContainer.setVisibility(VISIBLE);
                     videoPlayImageView.setVisibility(GONE);
                     ((LayoutParams) videoTextView.getLayoutParams()).leftMargin = dp(0);
                     videoTextView.setText(getString(R.string.ShortHighQuality));
-                } else if (photoEntry.isHighQuality() || !app.exteraless.chats.ChatsConfig.alwaysSendInHD.Bool()) {
+                } else if (photoEntry.isHighQuality() || !app.luminegram.chats.ChatsConfig.alwaysSendInHD.Bool()) {
                     videoPlayImageView.setVisibility(GONE);
                     videoInfoContainer.setVisibility(INVISIBLE);
                 } else {
@@ -534,12 +534,12 @@ public class PhotoAttachPhotoCell extends FrameLayout {
             videoPlayImageView.setVisibility(VISIBLE);
             ((LayoutParams) videoTextView.getLayoutParams()).leftMargin = dp(13);
             videoTextView.setText(AndroidUtilities.formatShortDuration(photoEntry.duration));
-        } else if (photoEntry.isHighQuality() && isChecked() && !app.exteraless.chats.ChatsConfig.alwaysSendInHD.Bool()) {
+        } else if (photoEntry.isHighQuality() && isChecked() && !app.luminegram.chats.ChatsConfig.alwaysSendInHD.Bool()) {
             videoInfoContainer.setVisibility(VISIBLE);
             videoPlayImageView.setVisibility(GONE);
             ((LayoutParams) videoTextView.getLayoutParams()).leftMargin = dp(0);
             videoTextView.setText(getString(R.string.ShortHighQuality));
-        } else if (photoEntry.isHighQuality() || !isChecked() || !app.exteraless.chats.ChatsConfig.alwaysSendInHD.Bool()) {
+        } else if (photoEntry.isHighQuality() || !isChecked() || !app.luminegram.chats.ChatsConfig.alwaysSendInHD.Bool()) {
             videoPlayImageView.setVisibility(GONE);
             videoInfoContainer.setVisibility(INVISIBLE);
         } else {

@@ -13,7 +13,7 @@ POSITIONAL_BASELINE = "sdk_signature_positional.json"
 REQUIRED_BASELINE = "sdk_signature_required.json"
 
 ARCHIVE_DIR = os.environ.get(
-    "EXTERALESS_PLUGIN_ARCHIVES", "/home/coral/openExtera/plugin-corpus/archives")
+    "LUMINEGRAM_PLUGIN_ARCHIVES", "/home/coral/openExtera/plugin-corpus/archives")
 
 WIDGET_MODULE = "ui.settings"
 WIDGET_MIN_PLUGINS = 3

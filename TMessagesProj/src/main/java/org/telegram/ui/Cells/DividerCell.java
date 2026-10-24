@@ -16,7 +16,7 @@ import android.view.View;
 
 import androidx.core.graphics.ColorUtils;
 
-import app.exteraless.appearance.AppearanceConfig;
+import app.luminegram.appearance.AppearanceConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;

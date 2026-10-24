@@ -8,7 +8,7 @@
 
 package org.telegram.messenger;
 
-import app.exteraless.OpenExteraConfig;
+import app.luminegram.OpenExteraConfig;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -287,15 +287,15 @@ public class ApplicationLoader extends Application implements CameraXConfig.Prov
         NekoConfig.init();
         NaConfig.init();
         OpenExteraConfig.init();
-        app.exteraless.icons.IconPacksConfig.init();
-        app.exteraless.pillstack.PillStackConfig.init();
+        app.luminegram.icons.IconPacksConfig.init();
+        app.luminegram.pillstack.PillStackConfig.init();
         app.lumine.ios.IosStyleConfig.init();
-        app.exteraless.appearance.AppearanceConfig.init();
-        app.exteraless.chats.ChatsConfig.init();
-        app.exteraless.general.GeneralConfig.init();
-        app.exteraless.utils.UtilsConfig.init();
-        app.exteraless.glyph.GlyphConfig.init();
-        app.exteraless.glyph.GlyphController.getInstance().init();
+        app.luminegram.appearance.AppearanceConfig.init();
+        app.luminegram.chats.ChatsConfig.init();
+        app.luminegram.general.GeneralConfig.init();
+        app.luminegram.utils.UtilsConfig.init();
+        app.luminegram.glyph.GlyphConfig.init();
+        app.luminegram.glyph.GlyphController.getInstance().init();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // Суффикс набора Monet запекается в ThemeInfo.assetName при первой загрузке
             // класса Theme. Если она случилась до загрузки конфигов (процесс поднялся
@@ -303,9 +303,9 @@ public class ApplicationLoader extends Application implements CameraXConfig.Prov
             // умолчанию — патчим assetName после инициализации конфигов.
             org.telegram.ui.ActionBar.Theme.reloadMonetThemes();
         }
-        app.exteraless.plugins.PluginsController.getInstance().init(applicationContext);
+        app.luminegram.plugins.PluginsController.getInstance().init(applicationContext);
         if (BuildConfig.DEBUG_TOOLS) {
-            app.exteraless.debug.EnergyProfiler.resumeIfEnabled(applicationContext);
+            app.luminegram.debug.EnergyProfiler.resumeIfEnabled(applicationContext);
         }
         SharedPrefsHelper.init(applicationContext);
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(AndroidUtil.shouldEnableCrashlytics());
@@ -419,16 +419,16 @@ public class ApplicationLoader extends Application implements CameraXConfig.Prov
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
 
-        org.osmdroid.config.Configuration.getInstance().setUserAgentValue("exteraless/" + BuildConfig.VERSION_NAME + " (+https://github.com/exteraless/exteraless)");
+        org.osmdroid.config.Configuration.getInstance().setUserAgentValue("luminegram/" + BuildConfig.VERSION_NAME + " (+https://github.com/exteraless/exteraless)");
         final File osmdroidBasePath = new File(ApplicationLoader.applicationContext.getCacheDir(), "osmdroid");
         org.osmdroid.config.Configuration.getInstance().setOsmdroidBasePath(osmdroidBasePath);
         org.osmdroid.config.Configuration.getInstance().setOsmdroidTileCache(new File(osmdroidBasePath, "tiles"));
 
         LauncherIconController.tryFixLauncherIconIfNeeded();
         ProxyRotationController.init();
-        app.exteraless.proxy.ProxyPingController.init();
-        app.exteraless.links.LinkCleaner.preloadIfEnabled();
-        app.exteraless.appearance.M3CircularProgress.prewarm();
+        app.luminegram.proxy.ProxyPingController.init();
+        app.luminegram.links.LinkCleaner.preloadIfEnabled();
+        app.luminegram.appearance.M3CircularProgress.prewarm();
 
         //if (BuildConfig.DEBUG_PRIVATE_VERSION) {
         //    Choreographer60FpsContent.getInstance().addFrameCallback(debugEverySecondChecks, 1);
@@ -902,8 +902,8 @@ public class ApplicationLoader extends Application implements CameraXConfig.Prov
     private void installCrashReportFilter() {
         Thread.UncaughtExceptionHandler crashlyticsHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
-            app.exteraless.plugins.PluginsWatchdog.onUncaughtException(error);
-            app.exteraless.crash.CrashLog.record(thread, error);
+            app.luminegram.plugins.PluginsWatchdog.onUncaughtException(error);
+            app.luminegram.crash.CrashLog.record(thread, error);
             if (AndroidUtil.shouldReportCrashToCrashlytics(error)) {
                 if (crashlyticsHandler != null) {
                     crashlyticsHandler.uncaughtException(thread, error);

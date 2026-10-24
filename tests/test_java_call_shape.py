@@ -16,7 +16,7 @@ import javaapi
 MEMBER_BASELINE = "java_call_members.json"
 ARITY_BASELINE = "java_call_arity.json"
 
-OWNED_PREFIXES = ("app.exteraless.", "com.exteragram.", "org.telegram.")
+OWNED_PREFIXES = ("app.luminegram.", "com.exteragram.", "org.telegram.")
 FACTORY_CALLS = ("find_class", "jclass", "autoclass", "load_class", "get_class")
 INIT = "<init>"
 GENERATED = ("R", "BuildConfig")
@@ -26,12 +26,12 @@ OBJECT_MEMBERS = frozenset((
 
 ALIASES_PATH = os.path.join(corpus.PYTHON_ROOT, "extera_utils", "class_aliases.py")
 
-PLUGIN_FQCN = "app.exteraless.plugins.Plugin"
+PLUGIN_FQCN = "app.luminegram.plugins.Plugin"
 PLUGIN_METHODS = ("setEngine", "setIcon", "setVersion",
                   "getId", "getDisplayName", "getSubtitle")
-CELL_FQCN = "app.exteraless.plugins.ui.components.PluginCell"
+CELL_FQCN = "app.luminegram.plugins.ui.components.PluginCell"
 FACTORY_FQCN = CELL_FQCN + "$Factory"
-DELEGATE_FQCN = "app.exteraless.plugins.ui.components.PluginCellDelegate"
+DELEGATE_FQCN = "app.luminegram.plugins.ui.components.PluginCellDelegate"
 DELEGATE_METHODS = frozenset((
     "sharePlugin", "openInExternalApp", "deletePlugin", "togglePlugin",
     "openPluginSettings", "pinPlugin", "canOpenInExternalApp"))
@@ -46,7 +46,7 @@ pytestmark = pytest.mark.skipif(
 @functools.lru_cache(maxsize=1)
 def aliases():
     spec = importlib.util.spec_from_file_location(
-        "exteraless_class_aliases_call_shape", ALIASES_PATH)
+        "luminegram_class_aliases_call_shape", ALIASES_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

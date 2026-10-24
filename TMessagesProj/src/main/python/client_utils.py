@@ -1,4 +1,4 @@
-"""Telegram client helpers: queues, requests, controllers, sending — exteraless plugin SDK.
+"""Telegram client helpers: queues, requests, controllers, sending — luminegram plugin SDK.
 
 All Java interop is lazy; importing this module on a host interpreter is
 safe, calling into it requires the Android runtime.
@@ -59,7 +59,7 @@ def _log(message):
         from android_utils import log
         log(message)
     except Exception:
-        print(f"[exteraless:client_utils] {message}", file=sys.stderr)
+        print(f"[luminegram:client_utils] {message}", file=sys.stderr)
 
 
 def _require(perm: str, what: str, detail=None):
@@ -246,8 +246,8 @@ def _request_delegate_type():
     class _RequestDelegate(dynamic_proxy(RequestDelegate)):
         def run(self, response, error):
             # Колбэк уходит в Java: ошибка плагина не должна ронять приложение.
-            with hook_scope(self._exteraless_account):
-                safe_call(self._exteraless_fn, response, error)
+            with hook_scope(self._luminegram_account):
+                safe_call(self._luminegram_fn, response, error)
 
     _request_delegate_class = _RequestDelegate
     return _RequestDelegate
@@ -269,11 +269,11 @@ def RequestCallback(fn, account=None):
     """
     resolved = _resolve_account(account, "RequestCallback")
     proxy = _request_delegate_type()()
-    proxy._exteraless_fn = fn
-    proxy._exteraless_account = resolved
+    proxy._luminegram_fn = fn
+    proxy._luminegram_account = resolved
     # Marks an already-wrapped callback so send_request does not double-wrap.
     try:
-        proxy.__dict__["_exteraless_request_delegate"] = True
+        proxy.__dict__["_luminegram_request_delegate"] = True
     except Exception:
         pass
     return proxy
@@ -281,7 +281,7 @@ def RequestCallback(fn, account=None):
 
 def _is_request_delegate(fn) -> bool:
     """True when *fn* is already a Java RequestDelegate rather than a callable."""
-    if getattr(fn, "_exteraless_request_delegate", False):
+    if getattr(fn, "_luminegram_request_delegate", False):
         return True
     # A dynamic_proxy instance exposes run() but is not callable itself;
     # every plain Python callback is callable. That is the discriminator.
@@ -320,7 +320,7 @@ def send_request(request, fn, account=None) -> int:
 
 def _plugin_services():
     try:
-        from app.exteraless.plugins import PluginServices
+        from app.luminegram.plugins import PluginServices
         return PluginServices
     except Exception:
         return None
@@ -675,7 +675,7 @@ def send_audio(peer_id, path, caption=None, parse_mode=None,
 
 
 def _media_services():
-    from app.exteraless.plugins import PluginMediaServices
+    from app.luminegram.plugins import PluginMediaServices
     return PluginMediaServices
 
 

@@ -510,7 +510,7 @@ public class Camera2Session {
                 captureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON);
                 recordingFrameRate = 30;
                 Range<Integer> extendedFps;
-                if (app.exteraless.chats.ChatsConfig.extendedFramesPerSecond.Bool()
+                if (app.luminegram.chats.ChatsConfig.extendedFramesPerSecond.Bool()
                         && (extendedFps = selectExtendedFpsRange()) != null) {
                     captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, extendedFps);
                     captureRequestBuilder.set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_VIDEO_RECORD);
@@ -519,7 +519,7 @@ public class Camera2Session {
                     captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<Integer>(30, 30));
                     captureRequestBuilder.set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_VIDEO_RECORD);
                 }
-                if (app.exteraless.chats.ChatsConfig.cameraStabilization.Bool()) {
+                if (app.luminegram.chats.ChatsConfig.cameraStabilization.Bool()) {
                     chooseStabilizationMode(captureRequestBuilder);
                 }
                 chooseFocusMode(captureRequestBuilder);   // без настройки, как в exteraGram

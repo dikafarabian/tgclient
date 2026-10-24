@@ -8,7 +8,7 @@
 
 package org.telegram.messenger;
 
-import app.exteraless.OpenExteraConfig;
+import app.luminegram.OpenExteraConfig;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.formatWholeNumber;
@@ -1473,7 +1473,7 @@ public class LocaleController {
         try {
             return ApplicationLoader.applicationContext.getString(R.string.OpenExtera);
         } catch (Exception ignore) {
-            return "exteraless";
+            return "luminegram";
         }
     }
 

@@ -118,7 +118,7 @@ import tw.nekomimi.nekogram.helpers.EntitiesHelper;
 import tw.nekomimi.nekogram.helpers.MessageHelper;
 import xyz.nextalone.nagram.NaConfig;
 
-import app.exteraless.chats.LinkedCustomEmoji;
+import app.luminegram.chats.LinkedCustomEmoji;
 
 @SuppressWarnings("unchecked")
 public class MediaDataController extends BaseController {

@@ -761,7 +761,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
      * Перенесено из exteraGram 12.9.0 (DialogCell.addSenderAvatar).
      */
     private CharSequence addSenderAvatar(CharSequence name, MessageObject messageObject) {
-        if (!app.exteraless.appearance.AppearanceConfig.senderMiniAvatars() || messageObject == null || TextUtils.isEmpty(name)) {
+        if (!app.luminegram.appearance.AppearanceConfig.senderMiniAvatars() || messageObject == null || TextUtils.isEmpty(name)) {
             return name;
         }
         long fromId = messageObject.getFromChatId();
@@ -1713,7 +1713,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                         if (draftMessage != null) {
                             MediaDataController.addTextStyleRuns(draftMessage, messSpan, TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_STRIKE);
                             if (draftMessage != null && draftMessage.entities != null) {
-                                app.exteraless.chats.LinkedCustomEmoji.parse(draftMessage.message, draftMessage.entities);
+                                app.luminegram.chats.LinkedCustomEmoji.parse(draftMessage.message, draftMessage.entities);
                                 MediaDataController.addAnimatedEmojiSpans(draftMessage.entities, messSpan, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
                             }
                         } else if (draftVoice) {
@@ -3878,12 +3878,12 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             if (drawMonoforumAvatar) {
                 avatarRadius = 1;
             } else if (drawCommunityAvatar) {
-                avatarRadius = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.exteraless.appearance.AppearanceConfig.CORNER_TYPE_COMMUNITY);
+                avatarRadius = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.luminegram.appearance.AppearanceConfig.CORNER_TYPE_COMMUNITY);
             } else if ((chat != null && chat.forum && currentDialogFolderId == 0 && !useFromUserAsAvatar)
                     || !isSavedDialog && user != null && user.self && MessagesController.getInstance(currentAccount).savedViewAsChats) {
-                avatarRadius = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.exteraless.appearance.AppearanceConfig.CORNER_TYPE_FORUM);
+                avatarRadius = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.luminegram.appearance.AppearanceConfig.CORNER_TYPE_FORUM);
             } else {
-                avatarRadius = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(avatarSize);
+                avatarRadius = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(avatarSize);
             }
 
             avatarImage.setAvatarCornersApplied(!drawMonoforumAvatar);

@@ -63,7 +63,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import app.exteraless.appearance.AppearanceConfig;
+import app.luminegram.appearance.AppearanceConfig;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 

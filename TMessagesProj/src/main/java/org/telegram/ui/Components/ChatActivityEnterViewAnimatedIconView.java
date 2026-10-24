@@ -54,7 +54,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
      */
     private boolean useStaticIcons() {
         try {
-            return app.exteraless.icons.IconPackManager.getInstance().hasReplacements();
+            return app.luminegram.icons.IconPackManager.getInstance().hasReplacements();
         } catch (Throwable ignored) {
             return false;
         }

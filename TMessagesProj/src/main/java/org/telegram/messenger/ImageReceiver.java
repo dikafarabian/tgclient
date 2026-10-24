@@ -2602,7 +2602,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
      */
     public void setRoundRadiusForAvatar(float sizePx) {
         oeAvatarCornersApplied = true;
-        setRoundRadius(app.exteraless.appearance.AppearanceConfig.getAvatarCorners(sizePx));
+        setRoundRadius(app.luminegram.appearance.AppearanceConfig.getAvatarCorners(sizePx));
     }
 
     private void updateAvatarRadiusWidth() {
@@ -2615,8 +2615,8 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
 
     private void applyRoundRadiusInternal() {
         int[] value = oeRequestedRoundRadius;
-        if (oeIsAvatar && !oeAvatarCornersApplied && !app.exteraless.appearance.AppearanceConfig.avatarCornersDefault()) {
-            if (app.exteraless.appearance.AppearanceConfig.singleCornerRadius()) {
+        if (oeIsAvatar && !oeAvatarCornersApplied && !app.luminegram.appearance.AppearanceConfig.avatarCornersDefault()) {
+            if (app.luminegram.appearance.AppearanceConfig.singleCornerRadius()) {
                 // When "singleCornerRadius" is ON, all avatars must get the same corners
                 // regardless of what radius the stock code requested (circle vs squircle).
                 // Infer the avatar diameter from the max requested radius (= half-side for circles)
@@ -2629,15 +2629,15 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                     }
                     if (r > maxR) maxR = r;
                 }
-                int uniformCorner = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(maxR * 2f);
+                int uniformCorner = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(maxR * 2f);
                 int[] scaled = new int[4];
                 for (int a = 0; a < 4; a++) {
                     scaled[a] = uniformCorner;
                 }
                 value = scaled;
             } else {
-                int corners = app.exteraless.appearance.AppearanceConfig.avatarCorners();
-                int max = app.exteraless.appearance.AppearanceConfig.AVATAR_CORNERS_MAX;
+                int corners = app.luminegram.appearance.AppearanceConfig.avatarCorners();
+                int max = app.luminegram.appearance.AppearanceConfig.AVATAR_CORNERS_MAX;
                 int[] scaled = new int[4];
                 for (int a = 0; a < 4; a++) {
                     int r = value[a];

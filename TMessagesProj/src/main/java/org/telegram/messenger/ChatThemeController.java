@@ -10,7 +10,7 @@ import android.util.SparseArray;
 
 import androidx.annotation.Nullable;
 
-import app.exteraless.appearance.AppearanceConfig;
+import app.luminegram.appearance.AppearanceConfig;
 
 import org.telegram.messenger.wallpaper.WallpaperBitmapHolder;
 import org.telegram.messenger.wallpaper.WallpaperGiftPatternPosition;

@@ -1024,9 +1024,9 @@ public class TranslateController extends BaseController {
 
         loadingSummarizations.add(id);
 
-        if (app.exteraless.ai.TelegramAiReplacement.replacesSummaries(currentAccount)) {
+        if (app.luminegram.ai.TelegramAiReplacement.replacesSummaries(currentAccount)) {
             final String targetLanguage = language != null ? language : message.messageOwner.summary_from_language;
-            app.exteraless.ai.TelegramAiReplacement.summarize(message.messageOwner.message, targetLanguage, text -> {
+            app.luminegram.ai.TelegramAiReplacement.summarize(message.messageOwner.message, targetLanguage, text -> {
                 loadingSummarizations.remove(id);
                 callback.run(text);
             }, (code, error) -> {

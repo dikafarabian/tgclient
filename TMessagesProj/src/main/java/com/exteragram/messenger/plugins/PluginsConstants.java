@@ -7,138 +7,138 @@ package com.exteragram.messenger.plugins;
  */
 public final class PluginsConstants {
 
-    public static final String PYTHON = app.exteraless.plugins.PluginsConstants.PYTHON;
-    public static final String SEND_MESSAGE_HOOK = app.exteraless.plugins.PluginsConstants.SEND_MESSAGE_HOOK;
-    public static final String STRATEGY = app.exteraless.plugins.PluginsConstants.STRATEGY;
-    public static final String PARAMS = app.exteraless.plugins.PluginsConstants.PARAMS;
-    public static final String UPDATE = app.exteraless.plugins.PluginsConstants.UPDATE;
-    public static final String UPDATES = app.exteraless.plugins.PluginsConstants.UPDATES;
-    public static final String REQUEST = app.exteraless.plugins.PluginsConstants.REQUEST;
-    public static final String RESPONSE = app.exteraless.plugins.PluginsConstants.RESPONSE;
-    public static final String ERROR = app.exteraless.plugins.PluginsConstants.ERROR;
-    public static final String PLUGINS = app.exteraless.plugins.PluginsConstants.PLUGINS;
-    public static final String PLUGINS_EXT = app.exteraless.plugins.PluginsConstants.PLUGINS_EXT;
-    public static final String PLUGINS_SDK = app.exteraless.plugins.PluginsConstants.PLUGINS_SDK;
-    public static final String CREATE_SETTINGS = app.exteraless.plugins.PluginsConstants.CREATE_SETTINGS;
-    public static final String APP_START = app.exteraless.plugins.PluginsConstants.APP_START;
-    public static final String APP_STOP = app.exteraless.plugins.PluginsConstants.APP_STOP;
-    public static final String APP_PAUSE = app.exteraless.plugins.PluginsConstants.APP_PAUSE;
-    public static final String APP_RESUME = app.exteraless.plugins.PluginsConstants.APP_RESUME;
-    public static final String ON_APP_EVENT = app.exteraless.plugins.PluginsConstants.ON_APP_EVENT;
-    public static final String ON_PLUGIN_LOAD = app.exteraless.plugins.PluginsConstants.ON_PLUGIN_LOAD;
-    public static final String ON_PLUGIN_UNLOAD = app.exteraless.plugins.PluginsConstants.ON_PLUGIN_UNLOAD;
+    public static final String PYTHON = app.luminegram.plugins.PluginsConstants.PYTHON;
+    public static final String SEND_MESSAGE_HOOK = app.luminegram.plugins.PluginsConstants.SEND_MESSAGE_HOOK;
+    public static final String STRATEGY = app.luminegram.plugins.PluginsConstants.STRATEGY;
+    public static final String PARAMS = app.luminegram.plugins.PluginsConstants.PARAMS;
+    public static final String UPDATE = app.luminegram.plugins.PluginsConstants.UPDATE;
+    public static final String UPDATES = app.luminegram.plugins.PluginsConstants.UPDATES;
+    public static final String REQUEST = app.luminegram.plugins.PluginsConstants.REQUEST;
+    public static final String RESPONSE = app.luminegram.plugins.PluginsConstants.RESPONSE;
+    public static final String ERROR = app.luminegram.plugins.PluginsConstants.ERROR;
+    public static final String PLUGINS = app.luminegram.plugins.PluginsConstants.PLUGINS;
+    public static final String PLUGINS_EXT = app.luminegram.plugins.PluginsConstants.PLUGINS_EXT;
+    public static final String PLUGINS_SDK = app.luminegram.plugins.PluginsConstants.PLUGINS_SDK;
+    public static final String CREATE_SETTINGS = app.luminegram.plugins.PluginsConstants.CREATE_SETTINGS;
+    public static final String APP_START = app.luminegram.plugins.PluginsConstants.APP_START;
+    public static final String APP_STOP = app.luminegram.plugins.PluginsConstants.APP_STOP;
+    public static final String APP_PAUSE = app.luminegram.plugins.PluginsConstants.APP_PAUSE;
+    public static final String APP_RESUME = app.luminegram.plugins.PluginsConstants.APP_RESUME;
+    public static final String ON_APP_EVENT = app.luminegram.plugins.PluginsConstants.ON_APP_EVENT;
+    public static final String ON_PLUGIN_LOAD = app.luminegram.plugins.PluginsConstants.ON_PLUGIN_LOAD;
+    public static final String ON_PLUGIN_UNLOAD = app.luminegram.plugins.PluginsConstants.ON_PLUGIN_UNLOAD;
 
     private PluginsConstants() {
     }
 
     public static final class Settings {
-        public static final String TYPE = app.exteraless.plugins.PluginsConstants.Settings.TYPE;
-        public static final String KEY = app.exteraless.plugins.PluginsConstants.Settings.KEY;
-        public static final String TEXT = app.exteraless.plugins.PluginsConstants.Settings.TEXT;
-        public static final String SUBTEXT = app.exteraless.plugins.PluginsConstants.Settings.SUBTEXT;
-        public static final String ICON = app.exteraless.plugins.PluginsConstants.Settings.ICON;
-        public static final String ACCENT = app.exteraless.plugins.PluginsConstants.Settings.ACCENT;
-        public static final String RED = app.exteraless.plugins.PluginsConstants.Settings.RED;
-        public static final String ON_CLICK = app.exteraless.plugins.PluginsConstants.Settings.ON_CLICK;
-        public static final String DEFAULT = app.exteraless.plugins.PluginsConstants.Settings.DEFAULT;
-        public static final String ITEMS = app.exteraless.plugins.PluginsConstants.Settings.ITEMS;
-        public static final String HINT = app.exteraless.plugins.PluginsConstants.Settings.HINT;
-        public static final String MULTILINE = app.exteraless.plugins.PluginsConstants.Settings.MULTILINE;
-        public static final String MAX_LENGTH = app.exteraless.plugins.PluginsConstants.Settings.MAX_LENGTH;
-        public static final String MASK = app.exteraless.plugins.PluginsConstants.Settings.MASK;
-        public static final String ON_CHANGE = app.exteraless.plugins.PluginsConstants.Settings.ON_CHANGE;
-        public static final String TYPE_SWITCH = app.exteraless.plugins.PluginsConstants.Settings.TYPE_SWITCH;
-        public static final String TYPE_INPUT = app.exteraless.plugins.PluginsConstants.Settings.TYPE_INPUT;
-        public static final String TYPE_SELECTOR = app.exteraless.plugins.PluginsConstants.Settings.TYPE_SELECTOR;
-        public static final String TYPE_HEADER = app.exteraless.plugins.PluginsConstants.Settings.TYPE_HEADER;
-        public static final String TYPE_DIVIDER = app.exteraless.plugins.PluginsConstants.Settings.TYPE_DIVIDER;
-        public static final String TYPE_TEXT = app.exteraless.plugins.PluginsConstants.Settings.TYPE_TEXT;
-        public static final String TYPE_EDIT_TEXT = app.exteraless.plugins.PluginsConstants.Settings.TYPE_EDIT_TEXT;
-        public static final String TYPE_CUSTOM = app.exteraless.plugins.PluginsConstants.Settings.TYPE_CUSTOM;
-        public static final String VIEW = app.exteraless.plugins.PluginsConstants.Settings.VIEW;
-        public static final String ITEM = app.exteraless.plugins.PluginsConstants.Settings.ITEM;
-        public static final String FACTORY = app.exteraless.plugins.PluginsConstants.Settings.FACTORY;
-        public static final String FACTORY_ARGS = app.exteraless.plugins.PluginsConstants.Settings.FACTORY_ARGS;
-        public static final String CREATE_SUB_FRAGMENT = app.exteraless.plugins.PluginsConstants.Settings.CREATE_SUB_FRAGMENT;
-        public static final String ON_LONG_CLICK = app.exteraless.plugins.PluginsConstants.Settings.ON_LONG_CLICK;
-        public static final String LINK_ALIAS = app.exteraless.plugins.PluginsConstants.Settings.LINK_ALIAS;
+        public static final String TYPE = app.luminegram.plugins.PluginsConstants.Settings.TYPE;
+        public static final String KEY = app.luminegram.plugins.PluginsConstants.Settings.KEY;
+        public static final String TEXT = app.luminegram.plugins.PluginsConstants.Settings.TEXT;
+        public static final String SUBTEXT = app.luminegram.plugins.PluginsConstants.Settings.SUBTEXT;
+        public static final String ICON = app.luminegram.plugins.PluginsConstants.Settings.ICON;
+        public static final String ACCENT = app.luminegram.plugins.PluginsConstants.Settings.ACCENT;
+        public static final String RED = app.luminegram.plugins.PluginsConstants.Settings.RED;
+        public static final String ON_CLICK = app.luminegram.plugins.PluginsConstants.Settings.ON_CLICK;
+        public static final String DEFAULT = app.luminegram.plugins.PluginsConstants.Settings.DEFAULT;
+        public static final String ITEMS = app.luminegram.plugins.PluginsConstants.Settings.ITEMS;
+        public static final String HINT = app.luminegram.plugins.PluginsConstants.Settings.HINT;
+        public static final String MULTILINE = app.luminegram.plugins.PluginsConstants.Settings.MULTILINE;
+        public static final String MAX_LENGTH = app.luminegram.plugins.PluginsConstants.Settings.MAX_LENGTH;
+        public static final String MASK = app.luminegram.plugins.PluginsConstants.Settings.MASK;
+        public static final String ON_CHANGE = app.luminegram.plugins.PluginsConstants.Settings.ON_CHANGE;
+        public static final String TYPE_SWITCH = app.luminegram.plugins.PluginsConstants.Settings.TYPE_SWITCH;
+        public static final String TYPE_INPUT = app.luminegram.plugins.PluginsConstants.Settings.TYPE_INPUT;
+        public static final String TYPE_SELECTOR = app.luminegram.plugins.PluginsConstants.Settings.TYPE_SELECTOR;
+        public static final String TYPE_HEADER = app.luminegram.plugins.PluginsConstants.Settings.TYPE_HEADER;
+        public static final String TYPE_DIVIDER = app.luminegram.plugins.PluginsConstants.Settings.TYPE_DIVIDER;
+        public static final String TYPE_TEXT = app.luminegram.plugins.PluginsConstants.Settings.TYPE_TEXT;
+        public static final String TYPE_EDIT_TEXT = app.luminegram.plugins.PluginsConstants.Settings.TYPE_EDIT_TEXT;
+        public static final String TYPE_CUSTOM = app.luminegram.plugins.PluginsConstants.Settings.TYPE_CUSTOM;
+        public static final String VIEW = app.luminegram.plugins.PluginsConstants.Settings.VIEW;
+        public static final String ITEM = app.luminegram.plugins.PluginsConstants.Settings.ITEM;
+        public static final String FACTORY = app.luminegram.plugins.PluginsConstants.Settings.FACTORY;
+        public static final String FACTORY_ARGS = app.luminegram.plugins.PluginsConstants.Settings.FACTORY_ARGS;
+        public static final String CREATE_SUB_FRAGMENT = app.luminegram.plugins.PluginsConstants.Settings.CREATE_SUB_FRAGMENT;
+        public static final String ON_LONG_CLICK = app.luminegram.plugins.PluginsConstants.Settings.ON_LONG_CLICK;
+        public static final String LINK_ALIAS = app.luminegram.plugins.PluginsConstants.Settings.LINK_ALIAS;
 
         private Settings() {
         }
     }
 
     public static final class Strategy {
-        public static final String MODIFY = app.exteraless.plugins.PluginsConstants.Strategy.MODIFY;
-        public static final String CANCEL = app.exteraless.plugins.PluginsConstants.Strategy.CANCEL;
-        public static final String DEFAULT = app.exteraless.plugins.PluginsConstants.Strategy.DEFAULT;
-        public static final String MODIFY_FINAL = app.exteraless.plugins.PluginsConstants.Strategy.MODIFY_FINAL;
+        public static final String MODIFY = app.luminegram.plugins.PluginsConstants.Strategy.MODIFY;
+        public static final String CANCEL = app.luminegram.plugins.PluginsConstants.Strategy.CANCEL;
+        public static final String DEFAULT = app.luminegram.plugins.PluginsConstants.Strategy.DEFAULT;
+        public static final String MODIFY_FINAL = app.luminegram.plugins.PluginsConstants.Strategy.MODIFY_FINAL;
 
         private Strategy() {
         }
     }
 
     public static final class Xposed {
-        public static final String REPLACE_HOOKED_METHOD = app.exteraless.plugins.PluginsConstants.Xposed.REPLACE_HOOKED_METHOD;
-        public static final String BEFORE_HOOKED_METHOD = app.exteraless.plugins.PluginsConstants.Xposed.BEFORE_HOOKED_METHOD;
-        public static final String AFTER_HOOKED_METHOD = app.exteraless.plugins.PluginsConstants.Xposed.AFTER_HOOKED_METHOD;
-        public static final String HOOK_FILTERS = app.exteraless.plugins.PluginsConstants.Xposed.HOOK_FILTERS;
+        public static final String REPLACE_HOOKED_METHOD = app.luminegram.plugins.PluginsConstants.Xposed.REPLACE_HOOKED_METHOD;
+        public static final String BEFORE_HOOKED_METHOD = app.luminegram.plugins.PluginsConstants.Xposed.BEFORE_HOOKED_METHOD;
+        public static final String AFTER_HOOKED_METHOD = app.luminegram.plugins.PluginsConstants.Xposed.AFTER_HOOKED_METHOD;
+        public static final String HOOK_FILTERS = app.luminegram.plugins.PluginsConstants.Xposed.HOOK_FILTERS;
 
         private Xposed() {
         }
     }
 
     public static final class DevServer {
-        public static final String MODULE = app.exteraless.plugins.PluginsConstants.DevServer.MODULE;
-        public static final String CLASS = app.exteraless.plugins.PluginsConstants.DevServer.CLASS;
-        public static final String START_SERVER = app.exteraless.plugins.PluginsConstants.DevServer.START_SERVER;
-        public static final String STOP_SERVER = app.exteraless.plugins.PluginsConstants.DevServer.STOP_SERVER;
+        public static final String MODULE = app.luminegram.plugins.PluginsConstants.DevServer.MODULE;
+        public static final String CLASS = app.luminegram.plugins.PluginsConstants.DevServer.CLASS;
+        public static final String START_SERVER = app.luminegram.plugins.PluginsConstants.DevServer.START_SERVER;
+        public static final String STOP_SERVER = app.luminegram.plugins.PluginsConstants.DevServer.STOP_SERVER;
 
         private DevServer() {
         }
     }
 
     public static final class MenuItemTypes {
-        public static final String MESSAGE_CONTEXT_MENU = app.exteraless.plugins.PluginsConstants.MenuItemTypes.MESSAGE_CONTEXT_MENU;
-        public static final String DRAWER_MENU = app.exteraless.plugins.PluginsConstants.MenuItemTypes.DRAWER_MENU;
-        public static final String MAIN_MENU = app.exteraless.plugins.PluginsConstants.MenuItemTypes.MAIN_MENU;
-        public static final String CHAT_ACTION_MENU = app.exteraless.plugins.PluginsConstants.MenuItemTypes.CHAT_ACTION_MENU;
-        public static final String PROFILE_ACTION_MENU = app.exteraless.plugins.PluginsConstants.MenuItemTypes.PROFILE_ACTION_MENU;
+        public static final String MESSAGE_CONTEXT_MENU = app.luminegram.plugins.PluginsConstants.MenuItemTypes.MESSAGE_CONTEXT_MENU;
+        public static final String DRAWER_MENU = app.luminegram.plugins.PluginsConstants.MenuItemTypes.DRAWER_MENU;
+        public static final String MAIN_MENU = app.luminegram.plugins.PluginsConstants.MenuItemTypes.MAIN_MENU;
+        public static final String CHAT_ACTION_MENU = app.luminegram.plugins.PluginsConstants.MenuItemTypes.CHAT_ACTION_MENU;
+        public static final String PROFILE_ACTION_MENU = app.luminegram.plugins.PluginsConstants.MenuItemTypes.PROFILE_ACTION_MENU;
 
         private MenuItemTypes() {
         }
     }
 
     public static final class MenuItemProperties {
-        public static final String MENU_TYPE = app.exteraless.plugins.PluginsConstants.MenuItemProperties.MENU_TYPE;
-        public static final String ITEM_ID = app.exteraless.plugins.PluginsConstants.MenuItemProperties.ITEM_ID;
-        public static final String TEXT = app.exteraless.plugins.PluginsConstants.MenuItemProperties.TEXT;
-        public static final String SUBTEXT = app.exteraless.plugins.PluginsConstants.MenuItemProperties.SUBTEXT;
-        public static final String ICON = app.exteraless.plugins.PluginsConstants.MenuItemProperties.ICON;
-        public static final String ON_CLICK = app.exteraless.plugins.PluginsConstants.MenuItemProperties.ON_CLICK;
-        public static final String CONDITION = app.exteraless.plugins.PluginsConstants.MenuItemProperties.CONDITION;
-        public static final String PRIORITY = app.exteraless.plugins.PluginsConstants.MenuItemProperties.PRIORITY;
+        public static final String MENU_TYPE = app.luminegram.plugins.PluginsConstants.MenuItemProperties.MENU_TYPE;
+        public static final String ITEM_ID = app.luminegram.plugins.PluginsConstants.MenuItemProperties.ITEM_ID;
+        public static final String TEXT = app.luminegram.plugins.PluginsConstants.MenuItemProperties.TEXT;
+        public static final String SUBTEXT = app.luminegram.plugins.PluginsConstants.MenuItemProperties.SUBTEXT;
+        public static final String ICON = app.luminegram.plugins.PluginsConstants.MenuItemProperties.ICON;
+        public static final String ON_CLICK = app.luminegram.plugins.PluginsConstants.MenuItemProperties.ON_CLICK;
+        public static final String CONDITION = app.luminegram.plugins.PluginsConstants.MenuItemProperties.CONDITION;
+        public static final String PRIORITY = app.luminegram.plugins.PluginsConstants.MenuItemProperties.PRIORITY;
 
         private MenuItemProperties() {
         }
     }
 
     public static final class HookFilterTypes {
-        public static final String RESULT_IS_NULL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_NULL;
-        public static final String RESULT_IS_TRUE = app.exteraless.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_TRUE;
-        public static final String RESULT_IS_FALSE = app.exteraless.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_FALSE;
-        public static final String RESULT_NOT_NULL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.RESULT_NOT_NULL;
-        public static final String RESULT_IS_INSTANCE_OF = app.exteraless.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_INSTANCE_OF;
-        public static final String RESULT_EQUAL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.RESULT_EQUAL;
-        public static final String RESULT_NOT_EQUAL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.RESULT_NOT_EQUAL;
-        public static final String ARGUMENT_IS_NULL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_NULL;
-        public static final String ARGUMENT_IS_TRUE = app.exteraless.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_TRUE;
-        public static final String ARGUMENT_IS_FALSE = app.exteraless.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_FALSE;
-        public static final String ARGUMENT_NOT_NULL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_NOT_NULL;
-        public static final String ARGUMENT_IS_INSTANCE_OF = app.exteraless.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_INSTANCE_OF;
-        public static final String ARGUMENT_EQUAL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_EQUAL;
-        public static final String ARGUMENT_NOT_EQUAL = app.exteraless.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_NOT_EQUAL;
-        public static final String CONDITION = app.exteraless.plugins.PluginsConstants.HookFilterTypes.CONDITION;
-        public static final String OR = app.exteraless.plugins.PluginsConstants.HookFilterTypes.OR;
+        public static final String RESULT_IS_NULL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_NULL;
+        public static final String RESULT_IS_TRUE = app.luminegram.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_TRUE;
+        public static final String RESULT_IS_FALSE = app.luminegram.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_FALSE;
+        public static final String RESULT_NOT_NULL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.RESULT_NOT_NULL;
+        public static final String RESULT_IS_INSTANCE_OF = app.luminegram.plugins.PluginsConstants.HookFilterTypes.RESULT_IS_INSTANCE_OF;
+        public static final String RESULT_EQUAL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.RESULT_EQUAL;
+        public static final String RESULT_NOT_EQUAL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.RESULT_NOT_EQUAL;
+        public static final String ARGUMENT_IS_NULL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_NULL;
+        public static final String ARGUMENT_IS_TRUE = app.luminegram.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_TRUE;
+        public static final String ARGUMENT_IS_FALSE = app.luminegram.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_FALSE;
+        public static final String ARGUMENT_NOT_NULL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_NOT_NULL;
+        public static final String ARGUMENT_IS_INSTANCE_OF = app.luminegram.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_IS_INSTANCE_OF;
+        public static final String ARGUMENT_EQUAL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_EQUAL;
+        public static final String ARGUMENT_NOT_EQUAL = app.luminegram.plugins.PluginsConstants.HookFilterTypes.ARGUMENT_NOT_EQUAL;
+        public static final String CONDITION = app.luminegram.plugins.PluginsConstants.HookFilterTypes.CONDITION;
+        public static final String OR = app.luminegram.plugins.PluginsConstants.HookFilterTypes.OR;
 
         private HookFilterTypes() {
         }

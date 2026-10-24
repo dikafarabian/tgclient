@@ -7,17 +7,17 @@ public final class PillStackConfig {
     }
 
     public static ArrayList<Integer> getActivePills() {
-        app.exteraless.pillstack.PillStackConfig.loadConfig(false);
-        return app.exteraless.pillstack.PillStackConfig.getActivePills();
+        app.luminegram.pillstack.PillStackConfig.loadConfig(false);
+        return app.luminegram.pillstack.PillStackConfig.getActivePills();
     }
 
     public static ArrayList<Integer> getHiddenPills() {
-        app.exteraless.pillstack.PillStackConfig.loadConfig(false);
-        return app.exteraless.pillstack.PillStackConfig.getHiddenPills();
+        app.luminegram.pillstack.PillStackConfig.loadConfig(false);
+        return app.luminegram.pillstack.PillStackConfig.getHiddenPills();
     }
 
     public static int getLastActivePillId() {
-        app.exteraless.pillstack.PillStackConfig.loadConfig(false);
-        return app.exteraless.pillstack.PillStackConfig.lastActivePillId.Int();
+        app.luminegram.pillstack.PillStackConfig.loadConfig(false);
+        return app.luminegram.pillstack.PillStackConfig.lastActivePillId.Int();
     }
 }

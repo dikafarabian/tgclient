@@ -873,13 +873,13 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
         final int avatarSize = dp(rectangularAvatar ? 42 : 46);
         final int radius;
         if (ChatObject.isCommunity(chat)) {
-            radius = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.exteraless.appearance.AppearanceConfig.CORNER_TYPE_COMMUNITY);
+            radius = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.luminegram.appearance.AppearanceConfig.CORNER_TYPE_COMMUNITY);
         } else if (chat != null && chat.monoforum) {
             radius = 0;
         } else if (chat != null && chat.forum) {
-            radius = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.exteraless.appearance.AppearanceConfig.CORNER_TYPE_FORUM);
+            radius = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(avatarSize, app.luminegram.appearance.AppearanceConfig.CORNER_TYPE_FORUM);
         } else {
-            radius = app.exteraless.appearance.AppearanceConfig.getAvatarCorners(avatarSize);
+            radius = app.luminegram.appearance.AppearanceConfig.getAvatarCorners(avatarSize);
         }
         avatarImage.setAvatarCornersApplied(chat == null || !chat.monoforum);
         avatarImage.setRoundRadius(radius);

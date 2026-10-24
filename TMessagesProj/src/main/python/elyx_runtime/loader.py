@@ -70,7 +70,7 @@ def plugins_dir_for(path: str) -> str:
     """The host plugins dir: authoritative via PythonBridge, else the
     directory containing the plugin file (mirrors how Java passes paths)."""
     try:
-        from app.exteraless.plugins import PythonBridge
+        from app.luminegram.plugins import PythonBridge
 
         plugins_dir = PythonBridge.getPluginsDir()
         if plugins_dir:
@@ -102,7 +102,7 @@ def _record_set(record, name: str, value: Any) -> None:
 def _plugin_id_of(record) -> Optional[str]:
     instance = _record_get(record, "instance")
     if instance is not None:
-        plugin_id = getattr(instance, "_exteraless_plugin_id", None) \
+        plugin_id = getattr(instance, "_luminegram_plugin_id", None) \
             or getattr(instance, "plugin_id", None)
         if plugin_id:
             return str(plugin_id)
@@ -332,8 +332,8 @@ def load_plugin_record(record, path: str) -> None:
         # 7. Instantiate and bind the plugin class.
         plugin_class = _find_plugin_class(module)
         instance = plugin_class()
-        if hasattr(instance, "_exteraless_attach"):
-            instance._exteraless_attach(plugin_id)
+        if hasattr(instance, "_luminegram_attach"):
+            instance._luminegram_attach(plugin_id)
     except Exception:
         _teardown(plugin_id)
         raise

@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import app.exteraless.OpenExteraConfig;
-import app.exteraless.appearance.AppearanceConfig;
-import app.exteraless.chats.ChatsConfig;
-import app.exteraless.drawer.MainMenuItem;
-import app.exteraless.drawer.MainMenuLayout;
-import app.exteraless.general.GeneralConfig;
-import app.exteraless.icons.BaseIconPacks;
-import app.exteraless.icons.IconPacksConfig;
-import app.exteraless.plugins.Plugin;
-import app.exteraless.utils.UtilsConfig;
+import app.luminegram.OpenExteraConfig;
+import app.luminegram.appearance.AppearanceConfig;
+import app.luminegram.chats.ChatsConfig;
+import app.luminegram.drawer.MainMenuItem;
+import app.luminegram.drawer.MainMenuLayout;
+import app.luminegram.general.GeneralConfig;
+import app.luminegram.icons.BaseIconPacks;
+import app.luminegram.icons.IconPacksConfig;
+import app.luminegram.plugins.Plugin;
+import app.luminegram.utils.UtilsConfig;
 
 import tw.nekomimi.nekogram.NekoConfig;
 import xyz.nextalone.nagram.NaConfig;
@@ -100,8 +100,8 @@ public final class ExteraConfig {
         return GSON;
     }
 
-    private static app.exteraless.plugins.PluginsController plugins() {
-        return app.exteraless.plugins.PluginsController.getInstance();
+    private static app.luminegram.plugins.PluginsController plugins() {
+        return app.luminegram.plugins.PluginsController.getInstance();
     }
 
     private static void ensureLoaded() {

@@ -1,7 +1,7 @@
 package tw.nekomimi.nekogram.helpers;
 
-import app.exteraless.appearance.AppearanceConfig;
-import app.exteraless.appearance.MainTabsUiHelper;
+import app.luminegram.appearance.AppearanceConfig;
+import app.luminegram.appearance.MainTabsUiHelper;
 
 import org.telegram.messenger.UserConfig;
 import org.telegram.ui.MainTabsActivity;

@@ -1,4 +1,4 @@
-"""Android runtime helpers (UI thread, listener proxies, clipboard, log) — exteraless plugin SDK.
+"""Android runtime helpers (UI thread, listener proxies, clipboard, log) — luminegram plugin SDK.
 
 All Java interop is resolved lazily so importing this module on a host
 interpreter is safe; calling the helpers without a JVM raises the underlying
@@ -34,14 +34,14 @@ def _engine_class(name):
 
 
 def _bridge():
-    """Resolve app.exteraless.plugins.PythonBridge once, tolerating its absence."""
+    """Resolve app.luminegram.plugins.PythonBridge once, tolerating its absence."""
     global _bridge_cache
     if _bridge_cache is _BRIDGE_UNSET:
         try:
-            from app.exteraless.plugins import PythonBridge
+            from app.luminegram.plugins import PythonBridge
             _bridge_cache = PythonBridge
         except Exception:
-            _bridge_cache = _engine_class("app.exteraless.plugins.PythonBridge")
+            _bridge_cache = _engine_class("app.luminegram.plugins.PythonBridge")
     return _bridge_cache
 
 
@@ -52,10 +52,10 @@ def _services():
     global _services_cache
     if _services_cache is _BRIDGE_UNSET:
         try:
-            from app.exteraless.plugins import PluginServices
+            from app.luminegram.plugins import PluginServices
             _services_cache = PluginServices
         except Exception:
-            _services_cache = _engine_class("app.exteraless.plugins.PluginServices")
+            _services_cache = _engine_class("app.luminegram.plugins.PluginServices")
     return _services_cache
 
 
@@ -78,7 +78,7 @@ def log(data):
             return
         except Exception:
             pass
-    print(f"[exteraless:sdk] {message}", file=sys.stderr)
+    print(f"[luminegram:sdk] {message}", file=sys.stderr)
 
 
 @contextlib.contextmanager
@@ -158,10 +158,10 @@ def _listener_class(interface, method, result=None):
 
     if result is bool:
         def forward(self, *args):
-            return bool(safe_call(self._exteraless_fn, *args))
+            return bool(safe_call(self._luminegram_fn, *args))
     else:
         def forward(self, *args):
-            safe_call(self._exteraless_fn, *args)
+            safe_call(self._luminegram_fn, *args)
 
     forward.__name__ = method
     cls = type("_" + method + "Proxy", (dynamic_proxy(jclass(interface)),), {method: forward})
@@ -171,7 +171,7 @@ def _listener_class(interface, method, result=None):
 
 def _listener(interface, method, fn, result=None):
     proxy = _listener_class(interface, method, result)()
-    proxy._exteraless_fn = fn
+    proxy._luminegram_fn = fn
     return proxy
 
 
@@ -193,7 +193,7 @@ def run_on_ui_thread(func, delay=0):
         return
     services = _services()
     if services is None:
-        raise ImportError("app.exteraless.plugins.PluginServices is unavailable")
+        raise ImportError("app.luminegram.plugins.PluginServices is unavailable")
     services.runOnUiThread(lambda: safe_call(func), int(delay or 0))
 
 
@@ -234,19 +234,19 @@ def OnSeekBarChangeListener(on_progress_changed, on_start=None, on_stop=None):
         class _Listener(dynamic_proxy(
                 jclass("android.widget.SeekBar$OnSeekBarChangeListener"))):
             def onProgressChanged(self, seek_bar, progress, from_user):
-                safe_call(self._exteraless_progress, seek_bar, progress, from_user)
+                safe_call(self._luminegram_progress, seek_bar, progress, from_user)
 
             def onStartTrackingTouch(self, seek_bar):
-                safe_call(self._exteraless_start, seek_bar)
+                safe_call(self._luminegram_start, seek_bar)
 
             def onStopTrackingTouch(self, seek_bar):
-                safe_call(self._exteraless_stop, seek_bar)
+                safe_call(self._luminegram_stop, seek_bar)
 
         cls = _seek_bar_listener_class = _Listener
     listener = cls()
-    listener._exteraless_progress = on_progress_changed
-    listener._exteraless_start = on_start
-    listener._exteraless_stop = on_stop
+    listener._luminegram_progress = on_progress_changed
+    listener._luminegram_start = on_start
+    listener._luminegram_stop = on_stop
     return listener
 
 
@@ -287,7 +287,7 @@ def copy_to_clipboard(text):
     context = jclass("org.telegram.messenger.ApplicationLoader").applicationContext
     ClipData = jclass("android.content.ClipData")
     clipboard = context.getSystemService("clipboard")
-    clipboard.setPrimaryClip(ClipData.newPlainText("exteraless", str(text)))
+    clipboard.setPrimaryClip(ClipData.newPlainText("luminegram", str(text)))
     try:
         from ui.bulletin import BulletinHelper
         BulletinHelper.show_copied_to_clipboard()

@@ -156,7 +156,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      * внутри плитки, сама плитка остаётся в сетке.
      */
     private boolean showCameraTile() {
-        return !app.exteraless.chats.ChatsConfig.hideCameraTile.Bool() || noCameraPermissions;
+        return !app.luminegram.chats.ChatsConfig.hideCameraTile.Bool() || noCameraPermissions;
     }
 
     private RecyclerListView cameraPhotoRecyclerView;

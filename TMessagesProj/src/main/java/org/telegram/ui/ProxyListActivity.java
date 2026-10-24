@@ -180,7 +180,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
         }
 
         public void setProxy(SharedConfig.ProxyInfo proxyInfo) {
-            textView.setText(app.exteraless.proxy.ProxyController.getInstance().getDisplayName(proxyInfo));
+            textView.setText(app.luminegram.proxy.ProxyController.getInstance().getDisplayName(proxyInfo));
             currentInfo = proxyInfo;
         }
 
@@ -411,7 +411,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                                 continue;
                             }
                             if (!info.available) {
-                                app.exteraless.proxy.ProxyController.getInstance().deleteProxy(info);
+                                app.luminegram.proxy.ProxyController.getInstance().deleteProxy(info);
                             }
                         }
                         if (SharedConfig.currentProxy == null) {
@@ -528,7 +528,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                 builder.setTitle(getString(R.string.DeleteProxyTitle));
                 builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
                     for (SharedConfig.ProxyInfo info : proxyList) {
-                        app.exteraless.proxy.ProxyController.getInstance().deleteProxy(info);
+                        app.luminegram.proxy.ProxyController.getInstance().deleteProxy(info);
                     }
                     useProxySettings = false;
                     NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
@@ -587,7 +587,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                         builder.setTitle(getString(R.string.DeleteProxyTitle));
                         builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
                             for (SharedConfig.ProxyInfo info : selectedItems) {
-                                app.exteraless.proxy.ProxyController.getInstance().deleteProxy(info);
+                                app.luminegram.proxy.ProxyController.getInstance().deleteProxy(info);
                             }
                             if (SharedConfig.currentProxy == null) {
                                 useProxySettings = false;
@@ -1076,12 +1076,12 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case VIEW_TYPE_DISABLE_CONDITIONS: {
-                    app.exteraless.proxy.ProxyDisableChipsView chips =
-                            new app.exteraless.proxy.ProxyDisableChipsView(mContext, getResourceProvider());
+                    app.luminegram.proxy.ProxyDisableChipsView chips =
+                            new app.luminegram.proxy.ProxyDisableChipsView(mContext, getResourceProvider());
                     // Колбэк сети поднимает LaunchActivity по hasProxyDisableConditions(),
                     // поэтому первое включённое здесь условие надо зарегистрировать самим.
                     chips.setOnChanged(() -> {
-                        if (app.exteraless.OpenExteraConfig.hasProxyDisableConditions()) {
+                        if (app.luminegram.OpenExteraConfig.hasProxyDisableConditions()) {
                             tw.nekomimi.nekogram.utils.ProxyUtil.registerNetworkCallback();
                         }
                     });

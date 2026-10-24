@@ -18249,11 +18249,11 @@ public class MessagesController extends BaseController implements NotificationCe
 
     // must be run from Utilities.stageQueue
     public void processUpdates(final TLRPC.Updates originalUpdates, boolean fromQueue) {
-        // exteraless plugins: on_updates_hook (CANCEL = контейнер не обрабатывается)
-        app.exteraless.plugins.HookResult hookResult = app.exteraless.plugins.PluginsController.getInstance().hasAnyUpdatesContainerHooks()
-                ? app.exteraless.plugins.PluginsController.getInstance()
-                        .executeOnUpdatesHook(currentAccount, app.exteraless.plugins.PluginsController.hookName(originalUpdates), originalUpdates)
-                : app.exteraless.plugins.HookResult.DEFAULT;
+        // luminegram plugins: on_updates_hook (CANCEL = контейнер не обрабатывается)
+        app.luminegram.plugins.HookResult hookResult = app.luminegram.plugins.PluginsController.getInstance().hasAnyUpdatesContainerHooks()
+                ? app.luminegram.plugins.PluginsController.getInstance()
+                        .executeOnUpdatesHook(currentAccount, app.luminegram.plugins.PluginsController.hookName(originalUpdates), originalUpdates)
+                : app.luminegram.plugins.HookResult.DEFAULT;
         if (hookResult.isCancel()) {
             return;
         }
@@ -18830,16 +18830,16 @@ public class MessagesController extends BaseController implements NotificationCe
             }
             return true;
         }
-        // exteraless plugins: on_update_hook (CANCEL = апдейт выкидывается из обработки).
+        // luminegram plugins: on_update_hook (CANCEL = апдейт выкидывается из обработки).
         // Список принадлежит вызывающему (res.other_updates, updates.updates) и в
         // некоторых ветках обрабатывается повторно, поэтому фильтруем в копию,
         // а не мутируем чужое.
-        if (app.exteraless.plugins.PluginsController.getInstance().hasAnyUpdateHooks()) {
+        if (app.luminegram.plugins.PluginsController.getInstance().hasAnyUpdateHooks()) {
             ArrayList<TLRPC.Update> allowed = null;
             int updateIndex = 0;
             for (TLRPC.Update u : updates) {
-                app.exteraless.plugins.HookResult updateResult = app.exteraless.plugins.PluginsController.getInstance()
-                        .executeOnUpdateHook(currentAccount, app.exteraless.plugins.PluginsController.hookName(u), u);
+                app.luminegram.plugins.HookResult updateResult = app.luminegram.plugins.PluginsController.getInstance()
+                        .executeOnUpdateHook(currentAccount, app.luminegram.plugins.PluginsController.hookName(u), u);
                 TLRPC.Update replacement = updateResult.replacement(TLRPC.Update.class);
                 if (allowed == null && (updateResult.isCancel() || (replacement != null && replacement != u))) {
                     allowed = new ArrayList<>(updates.size());

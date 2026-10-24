@@ -49,7 +49,7 @@ public class NotificationsService extends Service {
                 .setShowWhen(false)
                 .setOngoing(true)
                 .setPriority(visible ? NotificationCompat.PRIORITY_DEFAULT : NotificationCompat.PRIORITY_MIN)
-                .setSmallIcon(R.drawable.exteraless_notification)
+                .setSmallIcon(R.drawable.luminegram_notification)
                 .setContentText(LocaleController.getString(R.string.NagramXPushService))
                 .build();
         try {

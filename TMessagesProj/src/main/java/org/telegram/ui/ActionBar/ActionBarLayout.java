@@ -8,7 +8,7 @@
 
 package org.telegram.ui.ActionBar;
 
-import app.exteraless.utils.AppUtils;
+import app.luminegram.utils.AppUtils;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.dpf2;
@@ -1094,10 +1094,10 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
             canvas.clipPath(clipPath);
         }
         if (m3BackTransition() && predictiveBackBackgroundDrawable != null) {
-            app.exteraless.utils.PredictiveBackAnimationHelper.drawTransitionBackground(
+            app.luminegram.utils.PredictiveBackAnimationHelper.drawTransitionBackground(
                     canvas, predictiveBackBackgroundDrawable, getWidth(), getHeight(), predictiveBackTmpRect);
         } else if (springRouteBackgroundDrawable != null) {
-            app.exteraless.utils.PredictiveBackAnimationHelper.drawTransitionBackground(
+            app.luminegram.utils.PredictiveBackAnimationHelper.drawTransitionBackground(
                     canvas, springRouteBackgroundDrawable, getWidth(), getHeight(), predictiveBackTmpRect);
         }
         super.dispatchDraw(canvas);
@@ -1650,7 +1650,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     private boolean predictiveBackLeft;
 
     // ---- Material 3 predictive back (порт exteraGram) ----
-    private final app.exteraless.utils.PredictiveBackAnimationHelper predictiveBackAnimation = new app.exteraless.utils.PredictiveBackAnimationHelper();
+    private final app.luminegram.utils.PredictiveBackAnimationHelper predictiveBackAnimation = new app.luminegram.utils.PredictiveBackAnimationHelper();
     private final RectF predictiveBackRect = new RectF();
     private final Rect predictiveBackTmpRect = new Rect();
     private Drawable predictiveBackBackgroundDrawable;
@@ -1826,7 +1826,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         }
         prepareForMoving();
         if (m3PredictiveBack) {
-            predictiveBackBackgroundDrawable = app.exteraless.utils.PredictiveBackAnimationHelper
+            predictiveBackBackgroundDrawable = app.luminegram.utils.PredictiveBackAnimationHelper
                     .getTransitionBackground(fragmentsStack, getLastFragment());
         }
         if (parentActivity != null && parentActivity.getCurrentFocus() != null) {
@@ -1844,7 +1844,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         if (!predictiveInput) return;
         // Чувствительность применяется только к живому жесту; докат и откат зовут
         // applyPredictiveBackProgress напрямую, иначе множитель наложился бы дважды
-        t = app.exteraless.utils.UtilsConfig.adjustPredictiveBackProgress(t);
+        t = app.luminegram.utils.UtilsConfig.adjustPredictiveBackProgress(t);
         if (NaConfig.INSTANCE.getBackAnimationStyle().Int() == BACK_ANIMATION_SLIDE) {
             final float dx = dp(180) * CubicBezierInterpolator.StandardDecelerate.getInterpolation(t);
             predictiveBackHasProgress = t > 0;
@@ -2203,7 +2203,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                 // не зияла щель в цвет окна (exteraGram: springRouteBackgroundDrawable)
                 springRouteYRatio = 0f;
                 springRouteBackgroundDrawable =
-                        app.exteraless.utils.PredictiveBackAnimationHelper.getTransitionBackground(
+                        app.luminegram.utils.PredictiveBackAnimationHelper.getTransitionBackground(
                                 fragmentsStack, getLastFragment());
             }
             FloatValueHolder valueHolder = new FloatValueHolder(0);

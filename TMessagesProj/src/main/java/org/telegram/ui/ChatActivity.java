@@ -8,18 +8,18 @@
 
 package org.telegram.ui;
 
-import app.exteraless.chats.DeletedReplyQuote;
-import app.exteraless.chats.LinkedCustomEmoji;
-import app.exteraless.OpenExteraConfig;
-import app.exteraless.feed.FeedChannelAvatarMenu;
-import app.exteraless.feed.FeedChatIntegration;
-import app.exteraless.feed.FeedController;
-import app.exteraless.feed.FeedMessageUtils;
-import app.exteraless.appearance.AppearanceConfig;
-import app.exteraless.chats.ChatsConfig;
-import app.exteraless.components.ActionRow;
-import app.exteraless.components.MessageDetailsPopupWrapper;
-import app.exteraless.appearance.GlassMenuHelper;
+import app.luminegram.chats.DeletedReplyQuote;
+import app.luminegram.chats.LinkedCustomEmoji;
+import app.luminegram.OpenExteraConfig;
+import app.luminegram.feed.FeedChannelAvatarMenu;
+import app.luminegram.feed.FeedChatIntegration;
+import app.luminegram.feed.FeedController;
+import app.luminegram.feed.FeedMessageUtils;
+import app.luminegram.appearance.AppearanceConfig;
+import app.luminegram.chats.ChatsConfig;
+import app.luminegram.components.ActionRow;
+import app.luminegram.components.MessageDetailsPopupWrapper;
+import app.luminegram.appearance.GlassMenuHelper;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.lerp;
@@ -646,8 +646,8 @@ public class ChatActivity extends BaseFragment implements
     private ActionBarMenuItem.Item feeItemGap;
     private ActionBarMenuItem.Item feeItemText;
     private ChatNotificationsPopupWrapper chatNotificationsPopupWrapper;
-    // exteraless plugins: подменю CHAT_ACTION_MENU в меню «⋮».
-    private app.exteraless.plugins.menus.MenuInjector.SwipeBackMenu pluginsMenu;
+    // luminegram plugins: подменю CHAT_ACTION_MENU в меню «⋮».
+    private app.luminegram.plugins.menus.MenuInjector.SwipeBackMenu pluginsMenu;
     // private ChatActivitySideControlsButtonsLayout topButtonsLayout;
     private ChatActivitySideControlsButtonsLayout sideControlsButtonsLayout;
     private boolean pagedownButtonShowedByScroll;
@@ -1601,11 +1601,11 @@ public class ChatActivity extends BaseFragment implements
         return isTopic || chatMode == MODE_SAVED || chatMode == MODE_QUICK_REPLIES || chatMode == MODE_SUGGESTIONS ? threadMessageId : 0L;
     }
 
-    private app.exteraless.ai.network.Client aiClient;
+    private app.luminegram.ai.network.Client aiClient;
 
-    public app.exteraless.ai.network.Client getClient() {
+    public app.luminegram.ai.network.Client getClient() {
         if (aiClient == null) {
-            aiClient = new app.exteraless.ai.network.Client.Builder().build();
+            aiClient = new app.luminegram.ai.network.Client.Builder().build();
         }
         return aiClient;
     }
@@ -3324,7 +3324,7 @@ public class ChatActivity extends BaseFragment implements
         // na: unread count
         getNotificationCenter().addObserver(this, NotificationCenter.dialogsUnreadCounterChanged);
 
-        // exteraless plugins: реестр пунктов меняется, когда плагин включают/выключают.
+        // luminegram plugins: реестр пунктов меняется, когда плагин включают/выключают.
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.pluginMenuItemsUpdated);
 
         if (chatMode != MODE_SCHEDULED) {
@@ -3814,7 +3814,7 @@ public class ChatActivity extends BaseFragment implements
 
     @Override
     public void onFragmentDestroy() {
-        app.exteraless.plugins.menus.MenuInjector.releaseMessageMenu(this);
+        app.luminegram.plugins.menus.MenuInjector.releaseMessageMenu(this);
         super.onFragmentDestroy();
         if (commentsMessagesObserver != null) {
             getNotificationCenter().removeObserver(commentsMessagesObserver, NotificationCenter.messagesDidLoad);
@@ -4777,7 +4777,7 @@ public class ChatActivity extends BaseFragment implements
                 return true;
             }
         };
-        app.exteraless.appearance.ChatHeaderUiHelper.setupGlassAvatarContainer(avatarContainer);
+        app.luminegram.appearance.ChatHeaderUiHelper.setupGlassAvatarContainer(avatarContainer);
         avatarContainer.allowShorterStatus = true;
         avatarContainer.premiumIconHiddable = true;
         avatarContainer.allowDrawStories = dialog_id < 0 && !isTopic;
@@ -5290,7 +5290,7 @@ public class ChatActivity extends BaseFragment implements
             headerItem.lazilyAddSubItem(888, R.drawable.menu_download_round, "Dump Canvas");
         }
 
-        // exteraless plugins: подменю CHAT_ACTION_MENU в конце меню «⋮».
+        // luminegram plugins: подменю CHAT_ACTION_MENU в конце меню «⋮».
         // Место общее для всех веток выше — headerItem здесь уже собран целиком.
         if (headerItem != null) {
             java.util.Map<String, Object> pluginMenuContext = new java.util.HashMap<>();
@@ -5309,9 +5309,9 @@ public class ChatActivity extends BaseFragment implements
             if (currentEncryptedChat != null) {
                 pluginMenuContext.put("encryptedChat", currentEncryptedChat);
             }
-            pluginsMenu = app.exteraless.plugins.menus.MenuInjector.attachSwipeBackMenu(
+            pluginsMenu = app.luminegram.plugins.menus.MenuInjector.attachSwipeBackMenu(
                     headerItem,
-                    app.exteraless.plugins.MenuItemRecord.MenuType.CHAT_ACTION_MENU,
+                    app.luminegram.plugins.MenuItemRecord.MenuType.CHAT_ACTION_MENU,
                     pluginMenuContext, themeDelegate, pluginsMenu);
         }
 
@@ -5348,7 +5348,7 @@ public class ChatActivity extends BaseFragment implements
             glassBackgroundDrawableFactory,
             BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
             ChatObject.isForum(currentChat));
-        app.exteraless.appearance.ChatHeaderUiHelper.applyChatHeaderGlassStyle(actionBar);
+        app.luminegram.appearance.ChatHeaderUiHelper.applyChatHeaderGlassStyle(actionBar);
         actionBar.setChatAvatarContainer(avatarContainer);
         avatarContainer.setActionBar(actionBar);
         if (chatMode == MODE_WELCOME_MESSAGES) {
@@ -9989,7 +9989,7 @@ public class ChatActivity extends BaseFragment implements
         if (cell == null || cell.timeLayout == null || cell.getMessageObject() == null ||
                 cell.getMessageObject().messageOwner == null ||
                 (chatMode != MODE_DEFAULT && chatMode != MODE_PINNED && chatMode != MODE_SAVED) ||
-                app.exteraless.chats.StickerTime.isHidden(cell.getMessageObject())
+                app.luminegram.chats.StickerTime.isHidden(cell.getMessageObject())
         ) {
             return;
         }
@@ -13318,7 +13318,7 @@ public class ChatActivity extends BaseFragment implements
         }
 
         if (topPanelLayout != null) {
-            topPanelLayout.setTranslationY(app.exteraless.appearance.ChatHeaderUiHelper.getTopPanelTranslationY(ty, getTopicTabsSideSize(TopicsTabsView.Position.TOP), getHashtagTabsShownT()));
+            topPanelLayout.setTranslationY(app.luminegram.appearance.ChatHeaderUiHelper.getTopPanelTranslationY(ty, getTopicTabsSideSize(TopicsTabsView.Position.TOP), getHashtagTabsShownT()));
         }
     }
 
@@ -22091,7 +22091,7 @@ public class ChatActivity extends BaseFragment implements
     @Override
     public void didReceivedNotification(int id, int account, final Object... args) {
         if (id == NotificationCenter.pluginMenuItemsUpdated) {
-            // exteraless plugins: пересобрать подменю CHAT_ACTION_MENU.
+            // luminegram plugins: пересобрать подменю CHAT_ACTION_MENU.
             if (pluginsMenu != null) {
                 pluginsMenu.refresh();
             }
@@ -35632,12 +35632,12 @@ public class ChatActivity extends BaseFragment implements
         if (selectedObject == null || getParentActivity() == null) {
             return;
         }
-        // exteraless plugins: id пунктов плагинов живут в своём диапазоне (MenuInjector).
+        // luminegram plugins: id пунктов плагинов живут в своём диапазоне (MenuInjector).
         if (option == oebtn_ask_ai) {
             MessageObject target = selectedObject;
             String content = getMessageContent(target);
             if (!TextUtils.isEmpty(content)) {
-                app.exteraless.ai.ui.AiResponseSheet.show(getParentActivity(), themeDelegate,
+                app.luminegram.ai.ui.AiResponseSheet.show(getParentActivity(), themeDelegate,
                         content, true, text -> {
                             if (chatActivityEnterView != null) {
                                 chatActivityEnterView.setFieldText(text);
@@ -35647,7 +35647,7 @@ public class ChatActivity extends BaseFragment implements
             closeMenu();
             return;
         }
-        if (app.exteraless.plugins.menus.MenuInjector.handleMessageMenuOption(option)) {
+        if (app.luminegram.plugins.menus.MenuInjector.handleMessageMenuOption(option)) {
             return;
         }
         boolean preserveDim = false;
@@ -36004,9 +36004,9 @@ public class ChatActivity extends BaseFragment implements
                     } else if (locFile.getName().toLowerCase().endsWith(".nekox-settings.json") || fileName.endsWith(".nekox-settings.json")) {
                         File finalLocFile = locFile;
                         SettingsBackupHelper.importSettings(getParentActivity(), finalLocFile);
-                    } else if (locFile.getName().toLowerCase().endsWith(app.exteraless.backup.EtgBackup.EXTENSION)
-                            || fileName.endsWith(app.exteraless.backup.EtgBackup.EXTENSION)) {
-                        app.exteraless.backup.EtgBackupUi.confirmImport(this, locFile);
+                    } else if (locFile.getName().toLowerCase().endsWith(app.luminegram.backup.EtgBackup.EXTENSION)
+                            || fileName.endsWith(app.luminegram.backup.EtgBackup.EXTENSION)) {
+                        app.luminegram.backup.EtgBackupUi.confirmImport(this, locFile);
                     } else if (getMessageType(selectedObject) == MESSAGE_TYPE_FONT) {
                         AlertDialog progressDialog = new AlertDialog(getParentActivity(), 3);
                         File finalLocFile = locFile;
@@ -38068,14 +38068,14 @@ public class ChatActivity extends BaseFragment implements
      * Перенесено из exteraGram 12.9.0, ChatActivity.disabledReactions().
      */
     public boolean disabledReactions() {
-        app.exteraless.chats.ChatsConfig.ensureLoaded();
-        if (app.exteraless.chats.ChatsConfig.hideReactionsInChannels.Bool() && isChannel()) {
+        app.luminegram.chats.ChatsConfig.ensureLoaded();
+        if (app.luminegram.chats.ChatsConfig.hideReactionsInChannels.Bool() && isChannel()) {
             return true;
         }
-        if (app.exteraless.chats.ChatsConfig.hideReactionsInGroups.Bool() && !isChannel() && currentChat != null) {
+        if (app.luminegram.chats.ChatsConfig.hideReactionsInGroups.Bool() && !isChannel() && currentChat != null) {
             return true;
         }
-        return app.exteraless.chats.ChatsConfig.hideReactionsInPrivate.Bool() && currentUser != null;
+        return app.luminegram.chats.ChatsConfig.hideReactionsInPrivate.Bool() && currentUser != null;
     }
 
     public boolean canScheduleMessage() {
@@ -39949,7 +39949,7 @@ public class ChatActivity extends BaseFragment implements
                     cell.resetPressedLink(-1);
                 }
                 if (!messageObject.isVoice()) {
-                    showDialog(app.exteraless.player.Md3Player.create(getContext(), themeDelegate));
+                    showDialog(app.luminegram.player.Md3Player.create(getContext(), themeDelegate));
                 }
             } else if (str.startsWith("tonaddress:")) {
                 didPressTonAddress(cell, url, str.substring(11));
@@ -44791,10 +44791,10 @@ public class ChatActivity extends BaseFragment implements
                         }
                     };
 
-                    // exteraless plugins: файл плагина ставится, а не открывается
+                    // luminegram plugins: файл плагина ставится, а не открывается
                     // в подсветке кода (.plugin зарегистрирован как Python
                     // в MarkdownUtils). Проверка идёт до просмотрщиков, как у exteraGram.
-                    if (app.exteraless.plugins.PluginInstallHelper.handleMessageTap(getParentActivity(), message)) {
+                    if (app.luminegram.plugins.PluginInstallHelper.handleMessageTap(getParentActivity(), message)) {
                         return;
                     }
                     boolean handled = false;
@@ -45127,11 +45127,11 @@ public class ChatActivity extends BaseFragment implements
                             getString(R.string.ImportAyuDBAlert),
                             R.drawable.msg_photo_settings_solar, getString(R.string.Import), true,
                             () -> AyuData.importAyuDatabase(ChatActivity.this, finalLocFile));
-                } else if (app.exteraless.backup.AyuDatabaseImport.isAyuGramExport(message.getDocumentName())) {
-                    app.exteraless.backup.AyuDatabaseImport.confirm(ChatActivity.this, locFile);
-                } else if (app.exteraless.icons.IconPackManager.isIconPack(message)) {
+                } else if (app.luminegram.backup.AyuDatabaseImport.isAyuGramExport(message.getDocumentName())) {
+                    app.luminegram.backup.AyuDatabaseImport.confirm(ChatActivity.this, locFile);
+                } else if (app.luminegram.icons.IconPackManager.isIconPack(message)) {
                     // openExtera: иконпак, присланный файлом в чат
-                    app.exteraless.icons.IconPackManager.getInstance()
+                    app.luminegram.icons.IconPackManager.getInstance()
                             .handleIconPack(ChatActivity.this, locFile);
                 } else if (message.getDocumentName().toLowerCase().endsWith("attheme")) {
                     Theme.ThemeInfo themeInfo = Theme.applyThemeFile(locFile, message.getDocumentName(), null, true);
@@ -45151,13 +45151,13 @@ public class ChatActivity extends BaseFragment implements
                 } else if (message.getDocumentName().toLowerCase().endsWith(".nekox-settings.json")) {
                     File finalLocFile = locFile;
                     SettingsBackupHelper.importSettings(getParentActivity(), finalLocFile);
-                } else if (message.getDocumentName().toLowerCase().endsWith(app.exteraless.backup.EtgBackup.EXTENSION)) {
-                    app.exteraless.backup.EtgBackupUi.confirmImport(ChatActivity.this, locFile);
+                } else if (message.getDocumentName().toLowerCase().endsWith(app.luminegram.backup.EtgBackup.EXTENSION)) {
+                    app.luminegram.backup.EtgBackupUi.confirmImport(ChatActivity.this, locFile);
                 } else {
-                    // exteraless plugins: файл плагина ставится, а не открывается
+                    // luminegram plugins: файл плагина ставится, а не открывается
                     // в подсветке кода (.plugin зарегистрирован как Python
                     // в MarkdownUtils). Проверка идёт до просмотрщиков, как у exteraGram.
-                    if (app.exteraless.plugins.PluginInstallHelper.handleMessageTap(getParentActivity(), message)) {
+                    if (app.luminegram.plugins.PluginInstallHelper.handleMessageTap(getParentActivity(), message)) {
                         return;
                     }
                     boolean handled = false;
@@ -48007,8 +48007,8 @@ public class ChatActivity extends BaseFragment implements
         if (actionBar == null) {
             return !Theme.isCurrentThemeDark();
         }
-        if (app.exteraless.appearance.ChatHeaderUiHelper.isMaterial3ChatHeaderStyle()) {
-            return app.exteraless.appearance.ChatHeaderUiHelper.isLightChatStatusBar(actionBar, getThemedColor(Theme.key_windowBackgroundGray));
+        if (app.luminegram.appearance.ChatHeaderUiHelper.isMaterial3ChatHeaderStyle()) {
+            return app.luminegram.appearance.ChatHeaderUiHelper.isLightChatStatusBar(actionBar, getThemedColor(Theme.key_windowBackgroundGray));
         }
         return !shouldHaveLightStatusBarIcons;
     }
@@ -51129,14 +51129,14 @@ public class ChatActivity extends BaseFragment implements
             icons.add(R.drawable.msg_info);
         }
 
-        if (app.exteraless.ai.AiController.canUseAI()
+        if (app.luminegram.ai.AiController.canUseAI()
                 && !TextUtils.isEmpty(getMessageContent(message))) {
             items.add(LocaleController.getString(R.string.OEAiAsk));
             options.add(oebtn_ask_ai);
             icons.add(R.drawable.msg_discussion);
         }
-        // exteraless plugins: пункты плагинов в конце контекстного меню сообщения.
-        app.exteraless.plugins.menus.MenuInjector.fillMessageMenu(this, message, currentChat, currentUser, currentEncryptedChat, dialog_id, currentAccount, icons, items, options);
+        // luminegram plugins: пункты плагинов в конце контекстного меню сообщения.
+        app.luminegram.plugins.menus.MenuInjector.fillMessageMenu(this, message, currentChat, currentUser, currentEncryptedChat, dialog_id, currentAccount, icons, items, options);
         if (isFeedSearch()) {
             FeedMessageUtils.filterAllowedOptions(items, options, icons);
         }
@@ -51181,7 +51181,7 @@ public class ChatActivity extends BaseFragment implements
             return false;
         }
         final boolean noforwards = isPeerNoForwards() || message.messageOwner.noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
-        final String toLang = app.exteraless.utils.text.TranslatorUtils.getResolvedTargetLanguageCode();
+        final String toLang = app.luminegram.utils.text.TranslatorUtils.getResolvedTargetLanguageCode();
         final String fromLang = message.messageOwner.originalLanguage;
         final Utilities.CallbackReturn<URLSpan, Boolean> onLinkPress = link -> {
             didPressMessageUrl(link, false, message, null);
@@ -51391,8 +51391,8 @@ public class ChatActivity extends BaseFragment implements
         }
         fadeHeight += dp(36 + 7) * getHashtagTabsShownT();
 
-        app.exteraless.appearance.ChatHeaderUiHelper.setupChatTopFade(chatActivityFadeView, actionBar,
-            getThemedColor(app.exteraless.appearance.ChatHeaderUiHelper.getChatFadeColorKey()), (int) fadeHeight);
+        app.luminegram.appearance.ChatHeaderUiHelper.setupChatTopFade(chatActivityFadeView, actionBar,
+            getThemedColor(app.luminegram.appearance.ChatHeaderUiHelper.getChatFadeColorKey()), (int) fadeHeight);
     }
 
     private void checkUi_messagesSearchListPadding() {
@@ -51424,7 +51424,7 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private float finalTopPanelHeight(float height) {
-        return app.exteraless.appearance.ChatHeaderUiHelper.getFinalTopPanelHeight(height,
+        return app.luminegram.appearance.ChatHeaderUiHelper.getFinalTopPanelHeight(height,
                 parentChatActivity != null ? parentChatActivity.topPanelLayout : topPanelLayout);
     }
 

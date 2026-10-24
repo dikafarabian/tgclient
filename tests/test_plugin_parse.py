@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import baseline
 import corpus
 
-PYTHON_ROOT = os.environ.get("EXTERALESS_PYTHON_ROOT", corpus.PYTHON_ROOT)
+PYTHON_ROOT = os.environ.get("LUMINEGRAM_PYTHON_ROOT", corpus.PYTHON_ROOT)
 METADATA_PARSER = os.path.join(PYTHON_ROOT, "extera_utils", "metadata_parser.py")
 
 SYNTAX_BASELINE = "plugin_parse_syntax.json"
@@ -65,7 +65,7 @@ def _load_module(path, name):
 def metadata_parser():
     if not os.path.isfile(METADATA_PARSER):
         pytest.skip(f"no metadata parser at {METADATA_PARSER}")
-    return _load_module(METADATA_PARSER, "exteraless_metadata_parser")
+    return _load_module(METADATA_PARSER, "luminegram_metadata_parser")
 
 
 @pytest.fixture(scope="session")

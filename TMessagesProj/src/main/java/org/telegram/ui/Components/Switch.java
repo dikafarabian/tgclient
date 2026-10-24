@@ -268,7 +268,7 @@ public class Switch extends View {
             rippleDrawable.setCallback(this);
         }
         if (Build.VERSION.SDK_INT >= 23) {
-            rippleDrawable.setRadius(isMaterial3SwitchStyle() ? app.exteraless.appearance.Material3SwitchHelper.stateLayerRadius() : AndroidUtilities.dp(18));
+            rippleDrawable.setRadius(isMaterial3SwitchStyle() ? app.luminegram.appearance.Material3SwitchHelper.stateLayerRadius() : AndroidUtilities.dp(18));
         }
         if (isChecked && colorSet != 2 || !isChecked && colorSet != 1) {
             int color = Theme.getColor(isChecked ? Theme.key_switchTrackBlueSelectorChecked : Theme.key_switchTrackBlueSelector, resourcesProvider);
@@ -958,7 +958,7 @@ public class Switch extends View {
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
         final int pad = getOverlayPadding();
-        final int stateLayer = app.exteraless.appearance.Material3SwitchHelper.stateLayerRadius();
+        final int stateLayer = app.luminegram.appearance.Material3SwitchHelper.stateLayerRadius();
         final int alphaSave = overrideAlpha < 1f
                 ? canvas.saveLayerAlpha(-stateLayer, -stateLayer, width + stateLayer, height + stateLayer, (int) (255 * Utilities.clamp01(overrideAlpha)))
                 : -1;
@@ -966,12 +966,12 @@ public class Switch extends View {
             outlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             outlinePaint.setStyle(Paint.Style.STROKE);
         }
-        final float cx = app.exteraless.appearance.Material3SwitchHelper.thumbCenterX(width, progress);
+        final float cx = app.luminegram.appearance.Material3SwitchHelper.thumbCenterX(width, progress);
         final float cy = height / 2f;
-        final int trackOff = processColor(app.exteraless.appearance.Material3SwitchHelper.unselectedTrackColor(trackColorKey, resourcesProvider));
+        final int trackOff = processColor(app.luminegram.appearance.Material3SwitchHelper.unselectedTrackColor(trackColorKey, resourcesProvider));
         final int trackOn = processColor(Theme.getColor(trackCheckedColorKey, resourcesProvider));
-        final int thumbOff = processColor(app.exteraless.appearance.Material3SwitchHelper.unselectedThumbColor(trackColorKey, resourcesProvider));
-        final int thumbOn = processColor(app.exteraless.appearance.Material3SwitchHelper.selectedThumbColor(thumbCheckedColorKey, resourcesProvider));
+        final int thumbOff = processColor(app.luminegram.appearance.Material3SwitchHelper.unselectedThumbColor(trackColorKey, resourcesProvider));
+        final int thumbOn = processColor(app.luminegram.appearance.Material3SwitchHelper.selectedThumbColor(thumbCheckedColorKey, resourcesProvider));
 
         for (int a = 0; a < 2; a++) {
             if (a == 1 && overrideColorProgress == 0) {
@@ -992,13 +992,13 @@ public class Switch extends View {
             final int trackColor = lerpColor(trackOff, trackOn, colorProgress);
             paint.setColor(trackColor);
             paint2.setColor(trackColor);
-            app.exteraless.appearance.Material3SwitchHelper.setTrackBounds(rectF, width, height);
+            app.luminegram.appearance.Material3SwitchHelper.setTrackBounds(rectF, width, height);
             rectF.offset(offset, offset);
             final float trackRadius = rectF.height() / 2f;
             target.drawRoundRect(rectF, trackRadius, trackRadius, paint);
             final float outlineAlpha = 1f - colorProgress;
             if (outlineAlpha > 0f) {
-                final float stroke = app.exteraless.appearance.Material3SwitchHelper.trackOutlineWidth();
+                final float stroke = app.luminegram.appearance.Material3SwitchHelper.trackOutlineWidth();
                 outlinePaint.setColor(Theme.multAlpha(thumbOff, outlineAlpha));
                 outlinePaint.setStrokeWidth(stroke);
                 rectF.inset(stroke / 2f, stroke / 2f);
@@ -1029,7 +1029,7 @@ public class Switch extends View {
             final float iconFactor = drawIconType == 1 || drawIconType == 2 || iconAnimator != null
                     ? 1f
                     : (iconDrawable != null ? animatorIconVisibility.getFloatValue() : 0f);
-            app.exteraless.appearance.Material3SwitchHelper.setThumbBounds(rectF, cx + offset, cy + offset, progress, isChecked, iconFactor, animatorPressed.getFloatValue());
+            app.luminegram.appearance.Material3SwitchHelper.setThumbBounds(rectF, cx + offset, cy + offset, progress, isChecked, iconFactor, animatorPressed.getFloatValue());
             final float thumbRadius = rectF.height() / 2f;
             target.drawRoundRect(rectF, thumbRadius, thumbRadius, paint);
             if (a == 0) {
@@ -1038,7 +1038,7 @@ public class Switch extends View {
                     if (visibility > 0f) {
                         final int iconWidth = iconDrawable.getIntrinsicWidth();
                         final int iconHeight = iconDrawable.getIntrinsicHeight();
-                        final float scale = visibility * app.exteraless.appearance.Material3SwitchHelper.thumbIconScale(iconWidth, iconHeight);
+                        final float scale = visibility * app.luminegram.appearance.Material3SwitchHelper.thumbIconScale(iconWidth, iconHeight);
                         canvas.save();
                         canvas.translate(cx - iconWidth / 2f, cy - iconHeight / 2f);
                         canvas.scale(scale, scale, iconWidth / 2f, iconHeight / 2f);
@@ -1047,16 +1047,16 @@ public class Switch extends View {
                         canvas.restore();
                     }
                 } else if (drawIconType == 1) {
-                    paint2.setStrokeWidth(app.exteraless.appearance.Material3SwitchHelper.iconStrokeWidth());
-                    app.exteraless.appearance.Material3SwitchHelper.setCheckIconLines(iconLines, cx, cy, progress);
+                    paint2.setStrokeWidth(app.luminegram.appearance.Material3SwitchHelper.iconStrokeWidth());
+                    app.luminegram.appearance.Material3SwitchHelper.setCheckIconLines(iconLines, cx, cy, progress);
                     target.drawLines(iconLines, paint2);
                 } else if (drawIconType == 2 || iconAnimator != null) {
                     paint2.setAlpha((int) (255 * (1f - iconProgress)));
-                    paint2.setStrokeWidth(app.exteraless.appearance.Material3SwitchHelper.iconStrokeWidth());
-                    target.drawLine(cx, cy, cx, cy - app.exteraless.appearance.Material3SwitchHelper.clockHandLength(true), paint2);
+                    paint2.setStrokeWidth(app.luminegram.appearance.Material3SwitchHelper.iconStrokeWidth());
+                    target.drawLine(cx, cy, cx, cy - app.luminegram.appearance.Material3SwitchHelper.clockHandLength(true), paint2);
                     target.save();
                     target.rotate(-90f * iconProgress, cx, cy);
-                    target.drawLine(cx, cy, cx + app.exteraless.appearance.Material3SwitchHelper.clockHandLength(false), cy, paint2);
+                    target.drawLine(cx, cy, cx + app.luminegram.appearance.Material3SwitchHelper.clockHandLength(false), cy, paint2);
                     target.restore();
                 }
             }

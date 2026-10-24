@@ -63,7 +63,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.view.WindowInsetsCompat;
 
-import app.exteraless.components.ActionRow;
+import app.luminegram.components.ActionRow;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.AnimationNotificationsLocker;
@@ -1351,7 +1351,7 @@ public class ActionBarMenuItem extends FrameLayout {
      * (там ключ один — ExteraConfig.getCenterTitle()).
      */
     private static boolean isCenterTitleEnabled() {
-        return app.exteraless.appearance.AppearanceConfig.centerTitle()
+        return app.luminegram.appearance.AppearanceConfig.centerTitle()
                 || xyz.nextalone.nagram.NaConfig.INSTANCE.getCenterActionBarTitle().Bool();
     }
 

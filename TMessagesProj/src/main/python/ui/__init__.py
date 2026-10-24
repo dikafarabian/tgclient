@@ -1,1 +1,1 @@
-"""exteraless plugin SDK: settings UI declarations package."""
+"""luminegram plugin SDK: settings UI declarations package."""

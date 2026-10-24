@@ -31,7 +31,7 @@ public abstract class PythonPluginsEngine {
         }
         final android.app.Activity target = activity;
         org.telegram.messenger.AndroidUtilities.runOnUIThread(() ->
-                app.exteraless.plugins.PluginInstallHelper.confirmAndInstall(target, params));
+                app.luminegram.plugins.PluginInstallHelper.confirmAndInstall(target, params));
     }
 
     public void loadPlugin(String pluginId, String filePath) {
@@ -46,7 +46,7 @@ public abstract class PythonPluginsEngine {
         if (android.text.TextUtils.isEmpty(pluginId)) {
             return;
         }
-        app.exteraless.plugins.PluginsController.getInstance().reloadPlugin(pluginId, null);
+        app.luminegram.plugins.PluginsController.getInstance().reloadPlugin(pluginId, null);
     }
 
     public void loadPluginFromFile(String filePath, Plugin pluginMetadata,
@@ -63,7 +63,7 @@ public abstract class PythonPluginsEngine {
             }
             return;
         }
-        app.exteraless.plugins.PluginsController.getInstance().installPlugin(
+        app.luminegram.plugins.PluginsController.getInstance().installPlugin(
                 new java.io.File(filePath), true, true, (ok, error, plugin) -> {
                     if (callback != null) {
                         callback.run(ok ? null : (android.text.TextUtils.isEmpty(error) ? "install failed" : error));
@@ -79,7 +79,7 @@ public abstract class PythonPluginsEngine {
         if (plugin == null || fragment == null) {
             return;
         }
-        fragment.presentFragment(app.exteraless.plugins.ui.PluginSettingsActivity
+        fragment.presentFragment(app.luminegram.plugins.ui.PluginSettingsActivity
                 .newInstance(plugin.getId(), targetSetting));
     }
 }

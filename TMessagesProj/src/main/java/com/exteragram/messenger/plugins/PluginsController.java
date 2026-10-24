@@ -18,27 +18,27 @@ public abstract class PluginsController {
     };
 
     public static PluginsController getInstance() {
-        return app.exteraless.plugins.PluginsController.getInstance();
+        return app.luminegram.plugins.PluginsController.getInstance();
     }
 
     public static java.util.Map<String, ? extends PythonPluginsEngine> getEngines() {
-        return app.exteraless.plugins.PluginsController.getEngines();
+        return app.luminegram.plugins.PluginsController.getEngines();
     }
 
     public static void openPluginSettings(String pluginId) {
-        app.exteraless.plugins.PluginsController.openPluginSettings(pluginId);
+        app.luminegram.plugins.PluginsController.openPluginSettings(pluginId);
     }
 
     public static void openPluginSettings(String pluginId, String targetSetting) {
-        app.exteraless.plugins.PluginsController.openPluginSettings(pluginId, targetSetting);
+        app.luminegram.plugins.PluginsController.openPluginSettings(pluginId, targetSetting);
     }
 
     public static boolean isPlugin(org.telegram.messenger.MessageObject message) {
-        return app.exteraless.plugins.PluginsController.isPlugin(message);
+        return app.luminegram.plugins.PluginsController.isPlugin(message);
     }
 
     public static boolean isPlugin(java.io.File file, org.telegram.messenger.MessageObject message) {
-        return app.exteraless.plugins.PluginsController.isPlugin(file, message);
+        return app.luminegram.plugins.PluginsController.isPlugin(file, message);
     }
 
     public void showInstallDialog(org.telegram.ui.ActionBar.BaseFragment fragment,
@@ -46,7 +46,7 @@ public abstract class PluginsController {
         if (android.text.TextUtils.isEmpty(filePath)) {
             return;
         }
-        app.exteraless.plugins.PythonPluginsEngine.getInstance().showInstallDialog(fragment,
+        app.luminegram.plugins.PythonPluginsEngine.getInstance().showInstallDialog(fragment,
                 new com.exteragram.messenger.plugins.ui.components.InstallPluginBottomSheet
                         .PluginInstallParams(filePath, trusted));
     }
@@ -82,15 +82,15 @@ public abstract class PluginsController {
     public abstract void shutdown(Runnable onDone);
 
     public static boolean isPluginPinned(String pluginId) {
-        return app.exteraless.plugins.PluginsController.isPluginPinned(pluginId);
+        return app.luminegram.plugins.PluginsController.isPluginPinned(pluginId);
     }
 
     public static void setPluginPinned(String pluginId, boolean isPinned) {
-        app.exteraless.plugins.PluginsController.setPluginPinned(pluginId, isPinned);
+        app.luminegram.plugins.PluginsController.setPluginPinned(pluginId, isPinned);
     }
 
     public static void runOnPluginsQueue(Runnable runnable) {
-        app.exteraless.plugins.PluginsController.runOnPluginsQueue(runnable);
+        app.luminegram.plugins.PluginsController.runOnPluginsQueue(runnable);
     }
 
     public abstract String getPluginPath(String id);
@@ -98,7 +98,7 @@ public abstract class PluginsController {
     public abstract PythonPluginsEngine getPluginEngine(String pluginId);
 
     public static PythonPluginsEngine getPluginEngine(java.io.File file) {
-        return app.exteraless.plugins.PluginsController.engineForFile(file);
+        return app.luminegram.plugins.PluginsController.engineForFile(file);
     }
 
     public abstract boolean isPluginEngineAvailable();

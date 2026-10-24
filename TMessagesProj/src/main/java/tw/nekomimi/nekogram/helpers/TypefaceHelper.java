@@ -328,10 +328,10 @@ public class TypefaceHelper {
         // openExtera: заголовок списка чатов (AppearanceConfig.titleText).
         // Перенесено из exteraGram 12.9.0, LocaleUtils.getActionBarTitle(int).
         // 0 — имя приложения (NagramX customTitle), 1 — username, 2 — имя, 3 — «Чаты».
-        final int oeTitleText = app.exteraless.appearance.AppearanceConfig.titleText();
+        final int oeTitleText = app.luminegram.appearance.AppearanceConfig.titleText();
         if (oeTitleText == 3) {
             title = LocaleController.getString(R.string.FilterChats);
-        } else if (oeTitleText == app.exteraless.appearance.AppearanceConfig.TITLE_TEXT_CUSTOM) {
+        } else if (oeTitleText == app.luminegram.appearance.AppearanceConfig.TITLE_TEXT_CUSTOM) {
             String customTitle = NaConfig.INSTANCE.getCustomTitle().String();
             if (!TextUtils.isEmpty(customTitle)) {
                 title = customTitle;

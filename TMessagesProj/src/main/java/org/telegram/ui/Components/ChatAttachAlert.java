@@ -186,7 +186,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import app.exteraless.chats.ChatsConfig;
+import app.luminegram.chats.ChatsConfig;
 import kotlin.Unit;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.helpers.ChatsHelper;
@@ -6059,7 +6059,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         if (cameraFloatingButton == null) {
             return;
         }
-        final boolean show = app.exteraless.chats.ChatsConfig.hideCameraTile.Bool()
+        final boolean show = app.luminegram.chats.ChatsConfig.hideCameraTile.Bool()
                 && (nextAttachLayout != null ? nextAttachLayout == photoLayout : currentAttachLayout == photoLayout)
                 && photoLayout != null
                 && hasGoodCameraForFloatingButton()
@@ -6730,7 +6730,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     private boolean shownAiButton;
     private void showAiButton(boolean show_) {
-        final boolean show = show_ && (baseFragment instanceof ChatActivity && !((ChatActivity) baseFragment).isSecretChat()) && !app.exteraless.appearance.AiFeaturesHelper.isAiEditorHidden();
+        final boolean show = show_ && (baseFragment instanceof ChatActivity && !((ChatActivity) baseFragment).isSecretChat()) && !app.luminegram.appearance.AiFeaturesHelper.isAiEditorHidden();
 
         if (shownAiButton == show) return;
         if (show) {

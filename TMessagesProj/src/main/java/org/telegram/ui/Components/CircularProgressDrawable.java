@@ -15,7 +15,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.google.android.material.loadingindicator.LoadingIndicator;
 
-import app.exteraless.appearance.M3CircularProgress;
+import app.luminegram.appearance.M3CircularProgress;
 
 import org.telegram.messenger.AndroidUtilities;
 

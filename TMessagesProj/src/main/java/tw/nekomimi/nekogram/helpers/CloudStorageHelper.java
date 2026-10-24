@@ -15,7 +15,7 @@ public class CloudStorageHelper extends AccountInstance {
 
     private static final CloudStorageHelper[] Instance = new CloudStorageHelper[UserConfig.MAX_ACCOUNT_COUNT];
     private static final long WEBVIEW_BOT_ID = 8856509355L;
-    private static final String WEBVIEW_BOT = "exteralesscloudbot";
+    private static final String WEBVIEW_BOT = "luminegramcloudbot";
 
     private final Gson gson = new Gson();
 

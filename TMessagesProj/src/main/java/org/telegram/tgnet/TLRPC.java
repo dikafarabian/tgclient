@@ -62256,7 +62256,7 @@ public class TLRPC {
 
         public void serializeToStream(OutputSerializedData stream) {
             if (local) {
-                app.exteraless.chats.LinkedCustomEmoji.toLink(this).serializeToStream(stream);
+                app.luminegram.chats.LinkedCustomEmoji.toLink(this).serializeToStream(stream);
                 return;
             }
             stream.writeInt32(constructor);
@@ -62267,7 +62267,7 @@ public class TLRPC {
 
         @Override public void serializeToJson(TLJsonBuilder builder) {
             if (local) {
-                app.exteraless.chats.LinkedCustomEmoji.toLink(this).serializeToJson(builder);
+                app.luminegram.chats.LinkedCustomEmoji.toLink(this).serializeToJson(builder);
                 return;
             }
             builder.writeString("_", constructorName);

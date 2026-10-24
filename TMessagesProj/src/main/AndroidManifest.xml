@@ -113,13 +113,13 @@
         android:restoreAnyVersion="true"
         android:backupAgent=".BackupAgent"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher_exteraless"
+        android:icon="@mipmap/ic_launcher_luminegram"
         android:label="@string/NagramX"
         android:largeHeap="true"
         android:theme="@style/Theme.TMessages.Start"
         android:manageSpaceActivity="org.telegram.ui.ExternalActionActivity"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@mipmap/ic_launcher_exteraless_round"
+        android:roundIcon="@mipmap/ic_launcher_luminegram_round"
         android:supportsRtl="false"
         android:requestLegacyExternalStorage="true"
         android:hasFragileUserData="true"
@@ -136,10 +136,10 @@
              на рабочем столе появлялась синяя иконка апстрима. -->
         <activity-alias
             android:enabled="true"
-            android:name="org.telegram.messenger.ExteralessIcon"
+            android:name="org.telegram.messenger.LuminegramIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_exteraless"
-            android:roundIcon="@mipmap/ic_launcher_exteraless_round"
+            android:icon="@mipmap/ic_launcher_luminegram"
+            android:roundIcon="@mipmap/ic_launcher_luminegram_round"
             android:exported="true">
 
             <intent-filter>
@@ -462,7 +462,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="vnd.android.cursor.item/vnd.com.lumine.gram.android.profile"/>
             </intent-filter>
-            <!-- exteraless plugins: файл плагина, открытый из чата, файлового
+            <!-- luminegram plugins: файл плагина, открытый из чата, файлового
                  менеджера или «Поделиться». Без этого фильтра система показывает
                  обычный выбор приложения, а установить плагин негде. -->
             <intent-filter>
@@ -492,13 +492,13 @@
                 <data android:host="www.keepassdx.com" android:scheme="http" />
                 <data android:host="www.keepassdx.com" android:scheme="https" />
             </intent-filter>
-            <intent-filter android:icon="@mipmap/ic_launcher_exteraless" android:roundIcon="@mipmap/ic_launcher_exteraless_round" android:priority="1">
+            <intent-filter android:icon="@mipmap/ic_launcher_luminegram" android:roundIcon="@mipmap/ic_launcher_luminegram_round" android:priority="1">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="tonsite" />
             </intent-filter>
-            <intent-filter android:icon="@mipmap/ic_launcher_exteraless" android:roundIcon="@mipmap/ic_launcher_exteraless_round" android:priority="1">
+            <intent-filter android:icon="@mipmap/ic_launcher_luminegram" android:roundIcon="@mipmap/ic_launcher_luminegram_round" android:priority="1">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -540,7 +540,7 @@
             </intent-filter>
         </activity-alias>
         <activity
-            android:name="app.exteraless.shortcuts.QuickToggleActivity"
+            android:name="app.luminegram.shortcuts.QuickToggleActivity"
             android:exported="true"
             android:excludeFromRecents="true"
             android:noHistory="true"
@@ -563,7 +563,7 @@
             android:stateNotNeeded="true"
             android:theme="@style/Theme.TMessages.Transparent"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher_exteraless" android:roundIcon="@mipmap/ic_launcher_exteraless_round" android:priority="1">
+            <intent-filter android:icon="@mipmap/ic_launcher_luminegram" android:roundIcon="@mipmap/ic_launcher_luminegram_round" android:priority="1">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -576,7 +576,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher_exteraless" android:roundIcon="@mipmap/ic_launcher_exteraless_round">
+            <intent-filter android:icon="@mipmap/ic_launcher_luminegram" android:roundIcon="@mipmap/ic_launcher_luminegram_round">
                 <action android:name="org.telegram.passport.AUTHORIZE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
@@ -587,7 +587,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher_exteraless" android:roundIcon="@mipmap/ic_launcher_exteraless_round">
+            <intent-filter android:icon="@mipmap/ic_launcher_luminegram" android:roundIcon="@mipmap/ic_launcher_luminegram_round">
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
@@ -597,7 +597,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher_exteraless" android:roundIcon="@mipmap/ic_launcher_exteraless_round">
+            <intent-filter android:icon="@mipmap/ic_launcher_luminegram" android:roundIcon="@mipmap/ic_launcher_luminegram_round">
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
@@ -606,7 +606,7 @@
 <!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"-->
 <!--            android:hardwareAccelerated="true"-->
 <!--            android:windowSoftInputMode="adjustPan">-->
-<!--            <intent-filter android:icon="@mipmap/ic_launcher_exteraless" android:roundIcon="@mipmap/ic_launcher_exteraless_round">-->
+<!--            <intent-filter android:icon="@mipmap/ic_launcher_luminegram" android:roundIcon="@mipmap/ic_launcher_luminegram_round">-->
 <!--                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>-->
 <!--            </intent-filter>-->
 <!--        </activity>-->
@@ -938,7 +938,7 @@
 
         <provider
             android:authorities="${applicationId}.icon_pack_provider"
-            android:name="app.exteraless.icons.IconPackProvider"
+            android:name="app.luminegram.icons.IconPackProvider"
             android:exported="false"
             android:grantUriPermissions="true"/>
 

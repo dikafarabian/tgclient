@@ -278,7 +278,7 @@ android {
 androidComponents {
     onVariants(selector().all()) { variant ->
         variant.outputs.forEach { output ->
-            String gramName = 'exteraless'
+            String gramName = 'luminegram'
             String first = String.format('%s-v%s(%s)', gramName, verName, verCode)
             output.outputFileName.set(
                 output.outputFileName.get()
@@ -384,7 +384,7 @@ dependencies {
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'androidx.car.app:app:1.7.0'
     implementation 'androidx.car.app:app-projected:1.7.0'
-    // CameraX для круглых видеосообщений (app.exteraless.camera.CameraXSession).
+    // CameraX для круглых видеосообщений (app.luminegram.camera.CameraXSession).
     // Не ниже 1.6: в 1.5 нет SessionConfig, setPreviewStabilizationEnabled
     // и параллельной привязки двух камер. 1.6.2 чинит краш записи на Android 16.
     implementation 'androidx.camera:camera-core:1.6.2'

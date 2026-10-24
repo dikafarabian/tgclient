@@ -1,14 +1,14 @@
-"""Имена Java-классов exteraGram → имена классов exteraless.
+"""Имена Java-классов exteraGram → имена классов luminegram.
 
 Плагины каталога написаны под exteraGram и берут его классы по полному имени:
 ``find_class("com.exteragram.messenger.pillstack.core.PillRegistry")``,
 ``jclass(...)`` или ``from com.exteragram.messenger.plugins import PluginsController``.
-У нас тот же код лежит в ``app.exteraless.*``, поэтому без подстановки плагин
+У нас тот же код лежит в ``app.luminegram.*``, поэтому без подстановки плагин
 получает ``None`` и падает на первом же обращении.
 
 Подстановка работает только на имени: если класса с полученным именем у нас нет,
 вызывающий получает прежний отказ. Разрешения проверяются уже по нашему имени —
-правила в ``plugin_loader._JAVA_CLASS_RULES`` записаны для ``app.exteraless.*``.
+правила в ``plugin_loader._JAVA_CLASS_RULES`` записаны для ``app.luminegram.*``.
 """
 
 import importlib as _importlib
@@ -44,7 +44,7 @@ _EXACT = {
     "com.exteragram.messenger.utils.system.VibratorUtils":
         "com.exteragram.messenger.utils.system.VibratorUtils",
     "com.exteragram.messenger.ai.AiConfig":
-        "app.exteraless.ai.AiConfig",
+        "app.luminegram.ai.AiConfig",
     "com.exteragram.messenger.ai.AiController":
         "com.exteragram.messenger.ai.AiController",
     "com.exteragram.messenger.ai.ui.ResponseAlert":
@@ -58,47 +58,47 @@ _EXACT = {
     "com.exteragram.messenger.utils.SystemUtils":
         "com.exteragram.messenger.utils.system.SystemUtils",
     "com.exteragram.messenger.preferences.MainPreferencesActivity":
-        "app.exteraless.settings.OpenExteraSettingsActivity",
+        "app.luminegram.settings.OpenExteraSettingsActivity",
     "com.exteragram.messenger.preferences.GeneralPreferencesActivity":
-        "app.exteraless.settings.OpenExteraGeneralActivity",
+        "app.luminegram.settings.OpenExteraGeneralActivity",
     "com.exteragram.messenger.preferences.AppearancePreferencesActivity":
-        "app.exteraless.settings.OpenExteraAppearanceActivity",
+        "app.luminegram.settings.OpenExteraAppearanceActivity",
     "com.exteragram.messenger.preferences.ChatsPreferencesActivity":
-        "app.exteraless.settings.OpenExteraChatsActivity",
+        "app.luminegram.settings.OpenExteraChatsActivity",
     "com.exteragram.messenger.preferences.OtherPreferencesActivity":
-        "app.exteraless.settings.OpenExteraOtherActivity",
+        "app.luminegram.settings.OpenExteraOtherActivity",
     "com.exteragram.messenger.preferences.AppNavigationPreferencesActivity":
-        "app.exteraless.settings.OpenExteraAppNavigationActivity",
+        "app.luminegram.settings.OpenExteraAppNavigationActivity",
     "com.exteragram.messenger.preferences.BasePreferencesActivity":
         "com.exteragram.messenger.preferences.BasePreferencesActivity",
     "com.exteragram.messenger.preferences.components.AltSeekbar":
-        "app.exteraless.appearance.AltSeekbar",
+        "app.luminegram.appearance.AltSeekbar",
     "com.exteragram.messenger.utils.chats.MainMenuHelper":
-        "app.exteraless.drawer.MainMenuHelper",
+        "app.luminegram.drawer.MainMenuHelper",
     "com.exteragram.messenger.icons.ui.IconPacksActivity":
-        "app.exteraless.icons.IconPacksActivity",
+        "app.luminegram.icons.IconPacksActivity",
     "com.exteragram.messenger.pillstack.ui.pills.crypto.utils.ColoredBackground":
-        "app.exteraless.pillstack.pills.ColoredBackground",
+        "app.luminegram.pillstack.pills.ColoredBackground",
     "com.exteragram.messenger.pillstack.ui.pills.weather.WeatherPill":
-        "app.exteraless.pillstack.pills.WeatherPill",
+        "app.luminegram.pillstack.pills.WeatherPill",
     "com.exteragram.messenger.pillstack.ui.PillStackPreferencesActivity":
-        "app.exteraless.pillstack.PillStackSettingsActivity",
+        "app.luminegram.pillstack.PillStackSettingsActivity",
     "com.exteragram.messenger.pillstack.ui.PillStackLayout":
-        "app.exteraless.pillstack.PillStackView",
+        "app.luminegram.pillstack.PillStackView",
     "com.exteragram.messenger.pillstack.ui.pills.weather.WeatherPreferencesActivity":
-        "app.exteraless.pillstack.pills.weather.WeatherSettingsActivity",
+        "app.luminegram.pillstack.pills.weather.WeatherSettingsActivity",
     "com.exteragram.messenger.preferences.appearance.AppearancePreferencesActivity":
-        "app.exteraless.settings.OpenExteraAppearanceActivity",
+        "app.luminegram.settings.OpenExteraAppearanceActivity",
     "com.exteragram.messenger.nowplaying.ui.components.NowPlayingCard":
-        "app.exteraless.components.ProfileMusicCard",
+        "app.luminegram.components.ProfileMusicCard",
     "com.exteragram.messenger.nowplaying.NowPlayingController":
-        "app.exteraless.nowplaying.NowPlayingController",
+        "app.luminegram.nowplaying.NowPlayingController",
     "com.exteragram.messenger.proxy.ProxyController":
-        "app.exteraless.proxy.ProxyController",
+        "app.luminegram.proxy.ProxyController",
     "com.exteragram.messenger.utils.ui.UIUtil":
-        "app.exteraless.utils.UIUtil",
+        "app.luminegram.utils.UIUtil",
     "com.exteragram.messenger.utils.ui.MainTabsUiHelper":
-        "app.exteraless.appearance.MainTabsUiHelper",
+        "app.luminegram.appearance.MainTabsUiHelper",
     "com.google.android.exoplayer2.util.Consumer":
         "androidx.media3.common.util.Consumer",
     "com.google.android.exoplayer2.video.VideoSize":
@@ -114,20 +114,20 @@ _EXACT = {
 }
 
 _PREFIXES = (
-    ("com.exteragram.messenger.ai.data.", "app.exteraless.ai.data."),
-    ("com.exteragram.messenger.ai.network.", "app.exteraless.ai.network."),
-    ("com.exteragram.messenger.pillstack.core.", "app.exteraless.pillstack."),
-    ("com.exteragram.messenger.pillstack.ui.pills.", "app.exteraless.pillstack.pills."),
-    ("com.exteragram.messenger.pillstack.ui.", "app.exteraless.pillstack."),
-    ("com.exteragram.messenger.preferences.", "app.exteraless.settings."),
-    ("com.exteragram.messenger.plugins.", "app.exteraless.plugins."),
-    ("com.exteragram.messenger.icons.", "app.exteraless.icons."),
-    ("com.exteragram.messenger.camera.", "app.exteraless.camera."),
-    ("com.exteragram.messenger.backup.", "app.exteraless.backup."),
-    ("com.exteragram.messenger.feed.", "app.exteraless.feed."),
-    ("com.exteragram.messenger.drawer.", "app.exteraless.drawer."),
-    ("com.exteragram.messenger.components.", "app.exteraless.components."),
-    ("com.exteragram.messenger.utils.", "app.exteraless.utils."),
+    ("com.exteragram.messenger.ai.data.", "app.luminegram.ai.data."),
+    ("com.exteragram.messenger.ai.network.", "app.luminegram.ai.network."),
+    ("com.exteragram.messenger.pillstack.core.", "app.luminegram.pillstack."),
+    ("com.exteragram.messenger.pillstack.ui.pills.", "app.luminegram.pillstack.pills."),
+    ("com.exteragram.messenger.pillstack.ui.", "app.luminegram.pillstack."),
+    ("com.exteragram.messenger.preferences.", "app.luminegram.settings."),
+    ("com.exteragram.messenger.plugins.", "app.luminegram.plugins."),
+    ("com.exteragram.messenger.icons.", "app.luminegram.icons."),
+    ("com.exteragram.messenger.camera.", "app.luminegram.camera."),
+    ("com.exteragram.messenger.backup.", "app.luminegram.backup."),
+    ("com.exteragram.messenger.feed.", "app.luminegram.feed."),
+    ("com.exteragram.messenger.drawer.", "app.luminegram.drawer."),
+    ("com.exteragram.messenger.components.", "app.luminegram.components."),
+    ("com.exteragram.messenger.utils.", "app.luminegram.utils."),
 )
 
 
@@ -380,33 +380,33 @@ class _FieldShapedObject:
                     setters[field] = target[1]
             else:
                 getters[field] = target
-        object.__setattr__(self, "_exteraless_java", java_obj)
-        object.__setattr__(self, "_exteraless_fields", getters)
-        object.__setattr__(self, "_exteraless_setters", setters)
+        object.__setattr__(self, "_luminegram_java", java_obj)
+        object.__setattr__(self, "_luminegram_fields", getters)
+        object.__setattr__(self, "_luminegram_setters", setters)
 
     def __getattr__(self, attr):
-        target = object.__getattribute__(self, "_exteraless_java")
-        method = object.__getattribute__(self, "_exteraless_fields").get(attr)
+        target = object.__getattribute__(self, "_luminegram_java")
+        method = object.__getattribute__(self, "_luminegram_fields").get(attr)
         if method is not None:
             return getattr(target, method)()
         return getattr(target, attr)
 
     def __setattr__(self, attr, value):
-        target = object.__getattribute__(self, "_exteraless_java")
-        method = object.__getattribute__(self, "_exteraless_setters").get(attr)
+        target = object.__getattribute__(self, "_luminegram_java")
+        method = object.__getattribute__(self, "_luminegram_setters").get(attr)
         if method is not None:
             getattr(target, method)(value)
             return
         setattr(target, attr, value)
 
     def __eq__(self, other):
-        return object.__getattribute__(self, "_exteraless_java") == unwrap(other)
+        return object.__getattribute__(self, "_luminegram_java") == unwrap(other)
 
     def __hash__(self):
-        return hash(object.__getattribute__(self, "_exteraless_java"))
+        return hash(object.__getattribute__(self, "_luminegram_java"))
 
     def __repr__(self):
-        return repr(object.__getattribute__(self, "_exteraless_java"))
+        return repr(object.__getattribute__(self, "_luminegram_java"))
 
 
 def wrap_instance(obj, java_name):
@@ -439,39 +439,39 @@ class _FieldShapedClass:
                     setters[field] = target[1]
             else:
                 getters[field] = target
-        object.__setattr__(self, "_exteraless_java", java_class)
-        object.__setattr__(self, "_exteraless_fields", getters)
-        object.__setattr__(self, "_exteraless_setters", setters)
-        object.__setattr__(self, "_exteraless_wraps", wraps or {})
+        object.__setattr__(self, "_luminegram_java", java_class)
+        object.__setattr__(self, "_luminegram_fields", getters)
+        object.__setattr__(self, "_luminegram_setters", setters)
+        object.__setattr__(self, "_luminegram_wraps", wraps or {})
 
     def __getattr__(self, attr):
-        target = object.__getattribute__(self, "_exteraless_java")
-        method = object.__getattribute__(self, "_exteraless_fields").get(attr)
+        target = object.__getattribute__(self, "_luminegram_java")
+        method = object.__getattribute__(self, "_luminegram_fields").get(attr)
         if method is not None:
             value = getattr(target, method)()
         else:
             value = getattr(target, attr)
-        wrapped = object.__getattribute__(self, "_exteraless_wraps").get(attr)
+        wrapped = object.__getattribute__(self, "_luminegram_wraps").get(attr)
         if wrapped is not None:
             return wrap_instance(value, wrapped)
         return value
 
     def __setattr__(self, attr, value):
-        target = object.__getattribute__(self, "_exteraless_java")
-        method = object.__getattribute__(self, "_exteraless_setters").get(attr)
+        target = object.__getattribute__(self, "_luminegram_java")
+        method = object.__getattribute__(self, "_luminegram_setters").get(attr)
         if method is not None:
             getattr(target, method)(value)
             return
         setattr(target, attr, value)
 
     def __repr__(self):
-        return repr(object.__getattribute__(self, "_exteraless_java"))
+        return repr(object.__getattribute__(self, "_luminegram_java"))
 
 
 def unwrap(obj):
     """Настоящий Java-класс из обёртки; чужие объекты возвращаются как есть."""
     if isinstance(obj, (_FieldShapedClass, _FieldShapedObject)):
-        return object.__getattribute__(obj, "_exteraless_java")
+        return object.__getattribute__(obj, "_luminegram_java")
     return obj
 
 

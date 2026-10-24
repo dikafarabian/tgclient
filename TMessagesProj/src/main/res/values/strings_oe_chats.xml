@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Строки экрана «Chats» раздела exteraless. -->
+<!-- Строки экрана «Chats» раздела luminegram. -->
 <resources>
     <string name="OEChatsStickerTime">Time on Stickers</string>
     <string name="OEChatsStickerTimeSide">On the Side</string>

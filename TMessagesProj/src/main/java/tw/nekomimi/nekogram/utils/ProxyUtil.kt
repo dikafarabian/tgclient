@@ -22,8 +22,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.graphics.createBitmap
-import app.exteraless.OpenExteraConfig
-import app.exteraless.proxy.ProxyDisableCondition
+import app.luminegram.OpenExteraConfig
+import app.luminegram.proxy.ProxyDisableCondition
 import androidx.core.view.setPadding
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap

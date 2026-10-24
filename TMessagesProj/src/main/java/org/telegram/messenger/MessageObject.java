@@ -136,7 +136,7 @@ import xyz.nextalone.nagram.NaConfig;
 import tw.nekomimi.nekogram.helpers.MessageHelper;
 import tw.nekomimi.nekogram.syntaxhighlight.SyntaxHighlight;
 
-import app.exteraless.chats.LinkedCustomEmoji;
+import app.luminegram.chats.LinkedCustomEmoji;
 
 public class MessageObject {
     private static final int MESSAGE_ID_RESERVED_BITS_MASK = 0x70000000;
@@ -739,10 +739,10 @@ public class MessageObject {
 
     private boolean oeReactionsHiddenForDialog() {
         try {
-            app.exteraless.chats.ChatsConfig.ensureLoaded();
-            final boolean inChannels = app.exteraless.chats.ChatsConfig.hideReactionsInChannels.Bool();
-            final boolean inGroups = app.exteraless.chats.ChatsConfig.hideReactionsInGroups.Bool();
-            final boolean inPrivate = app.exteraless.chats.ChatsConfig.hideReactionsInPrivate.Bool();
+            app.luminegram.chats.ChatsConfig.ensureLoaded();
+            final boolean inChannels = app.luminegram.chats.ChatsConfig.hideReactionsInChannels.Bool();
+            final boolean inGroups = app.luminegram.chats.ChatsConfig.hideReactionsInGroups.Bool();
+            final boolean inPrivate = app.luminegram.chats.ChatsConfig.hideReactionsInPrivate.Bool();
             if (!inChannels && !inGroups && !inPrivate) {
                 return false;
             }
@@ -1454,8 +1454,8 @@ public class MessageObject {
             calculatedForWideChannelPosts = wideChannelPost;
             if (wideChannelPost) {
                 maxSizeWidth = groupedMediaViewportWidth > 0
-                        ? app.exteraless.chats.WideChannelPostLayout.groupedMediaContentSpanCount(groupedMediaViewportWidth)
-                        : app.exteraless.chats.WideChannelPostLayout.groupedMediaContentSpanCount();
+                        ? app.luminegram.chats.WideChannelPostLayout.groupedMediaContentSpanCount(groupedMediaViewportWidth)
+                        : app.luminegram.chats.WideChannelPostLayout.groupedMediaContentSpanCount();
             } else {
                 maxSizeWidth = 800;
             }
@@ -1880,8 +1880,8 @@ public class MessageObject {
             int expectedSpanCount;
             if (wideChannelPost) {
                 expectedSpanCount = groupedMediaViewportWidth > 0
-                        ? app.exteraless.chats.WideChannelPostLayout.groupedMediaContentSpanCount(groupedMediaViewportWidth)
-                        : app.exteraless.chats.WideChannelPostLayout.groupedMediaContentSpanCount();
+                        ? app.luminegram.chats.WideChannelPostLayout.groupedMediaContentSpanCount(groupedMediaViewportWidth)
+                        : app.luminegram.chats.WideChannelPostLayout.groupedMediaContentSpanCount();
             } else {
                 expectedSpanCount = 800;
             }
@@ -8629,7 +8629,7 @@ public class MessageObject {
                     && (run.flags & (TextStyleSpan.FLAG_STYLE_BOLD | TextStyleSpan.FLAG_STYLE_ITALIC)) != 0) {
                 Typeface linkTypeface = run.getTypeface();
                 if (linkTypeface != null) {
-                    spannable.setSpan(new app.exteraless.chats.LinkTypefaceSpan(linkTypeface), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannable.setSpan(new app.luminegram.chats.LinkTypefaceSpan(linkTypeface), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
             if (!setRun && (run.flags & TextStyleSpan.FLAG_STYLE_SPOILER) != 0) {
@@ -8780,7 +8780,7 @@ public class MessageObject {
             int leadingInset = sideMenuEnabled
                     ? dp(64)
                     : needDrawAvatarInternal && !isOutOwner() && !messageOwner.isThreadMessage ? dp(52) : 0;
-            maxWidth = app.exteraless.chats.WideChannelPostLayout.messageTextWidth(
+            maxWidth = app.luminegram.chats.WideChannelPostLayout.messageTextWidth(
                     generatedWithMinSize, leadingInset);
         } else if (hasCode && !isSaved) {
             maxWidth = generatedWithMinSize - dp(45 + 15);
@@ -10159,7 +10159,7 @@ public class MessageObject {
 
     public boolean hasWideChannelPostHeader() {
         final boolean inFeed = searchType == 4;
-        if (!(inFeed ? app.exteraless.chats.ChatsConfig.wideFeedPosts() : app.exteraless.chats.ChatsConfig.wideChannelPosts())
+        if (!(inFeed ? app.luminegram.chats.ChatsConfig.wideFeedPosts() : app.luminegram.chats.ChatsConfig.wideChannelPosts())
                 || messageOwner == null
                 || messageOwner.action != null
                 || messageOwner.peer_id == null
@@ -11784,8 +11784,8 @@ public class MessageObject {
                 if (attribute.voice) {
                     return null;
                 } else {
-                    String performer = app.exteraless.nowplaying.ZeroWidthCodec.stripToString(attribute.performer);
-                    String title = app.exteraless.nowplaying.ZeroWidthCodec.stripToString(attribute.title);
+                    String performer = app.luminegram.nowplaying.ZeroWidthCodec.stripToString(attribute.performer);
+                    String title = app.luminegram.nowplaying.ZeroWidthCodec.stripToString(attribute.title);
                     if (!TextUtils.isEmpty(performer)) {
                         for (int a = 0; a < excludeWords.length; a++) {
                             performer = performer.replace(excludeWords[a], " ");

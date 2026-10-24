@@ -34,7 +34,7 @@ public final class BadgesController {
 
     private static final ApiBadgeSource apiBadgeSource = new ApiBadgeSource();
 
-    private static final String PREFS_NAME = "exteraless_badges";
+    private static final String PREFS_NAME = "luminegram_badges";
     private static final String KEY_DOCUMENT = "badge_document_";
     private static final String KEY_TEXT = "badge_text_";
 

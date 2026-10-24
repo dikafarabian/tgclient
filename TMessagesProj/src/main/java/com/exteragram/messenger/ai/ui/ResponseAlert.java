@@ -7,9 +7,9 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.LaunchActivity;
 
-import app.exteraless.ai.AiConfig;
-import app.exteraless.ai.network.Client;
-import app.exteraless.ai.ui.AiResponseSheet;
+import app.luminegram.ai.AiConfig;
+import app.luminegram.ai.network.Client;
+import app.luminegram.ai.ui.AiResponseSheet;
 
 public final class ResponseAlert {
 

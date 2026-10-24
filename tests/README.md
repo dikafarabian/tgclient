@@ -17,8 +17,8 @@ python3 -m pytest tests/ -q
 
 | переменная | что содержит |
 |---|---|
-| `EXTERALESS_PLUGIN_CORPUS` | каталог с `*.plugin` — по одному Python-файлу на плагин |
-| `EXTERALESS_PLUGIN_ARCHIVES` | каталог с `*.eaf` — ZIP-архивы многофайловых плагинов |
+| `LUMINEGRAM_PLUGIN_CORPUS` | каталог с `*.plugin` — по одному Python-файлу на плагин |
+| `LUMINEGRAM_PLUGIN_ARCHIVES` | каталог с `*.eaf` — ZIP-архивы многофайловых плагинов |
 
 Если каталога нет, тесты скипаются, а не падают.
 

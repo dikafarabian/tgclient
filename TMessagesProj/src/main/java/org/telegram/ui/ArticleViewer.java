@@ -8,7 +8,7 @@
 
 package org.telegram.ui;
 
-import app.exteraless.utils.AppUtils;
+import app.luminegram.utils.AppUtils;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.lerp;
@@ -1985,7 +1985,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
             int count = webPage.cached_page.blocks.size();
             for (int a = 0; a < count; a++) {
                 TL_iv.PageBlock block = webPage.cached_page.blocks.get(a);
-                if (app.exteraless.appearance.AiFeaturesHelper.shouldHideIvBlock(block)) {
+                if (app.luminegram.appearance.AiFeaturesHelper.shouldHideIvBlock(block)) {
                     continue;
                 }
                 if (a == 0) {

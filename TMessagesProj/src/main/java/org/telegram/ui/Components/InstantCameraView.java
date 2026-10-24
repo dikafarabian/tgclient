@@ -197,11 +197,11 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
      * (InstantCameraView.java:1235); у нас системный вариант остаётся за
      * SharedConfig, как было, а два других выбираются явно в настройках.
      */
-    private final int cameraType = app.exteraless.chats.ChatsConfig.cameraType();
-    private final boolean useCameraX = cameraType == app.exteraless.chats.ChatsConfig.CAMERA_TYPE_CAMERA_X;
+    private final int cameraType = app.luminegram.chats.ChatsConfig.cameraType();
+    private final boolean useCameraX = cameraType == app.luminegram.chats.ChatsConfig.CAMERA_TYPE_CAMERA_X;
     private final boolean useCamera2 = !useCameraX
-            && (cameraType == app.exteraless.chats.ChatsConfig.CAMERA_TYPE_CAMERA_2
-                || cameraType == app.exteraless.chats.ChatsConfig.CAMERA_TYPE_TELEGRAM
+            && (cameraType == app.luminegram.chats.ChatsConfig.CAMERA_TYPE_CAMERA_2
+                || cameraType == app.luminegram.chats.ChatsConfig.CAMERA_TYPE_TELEGRAM
                 || SharedConfig.isUsingCamera2(currentAccount));
     /** Зум у Camera2 и CameraX — кратность (min..max), у Camera1 — доля 0..1. */
     private final boolean useRatioZoom = useCamera2 || useCameraX;
@@ -209,8 +209,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
     private boolean bothCameras;
     private Camera2Session[] camera2Sessions = new Camera2Session[2];
     private Camera2Session camera2SessionCurrent;
-    private volatile app.exteraless.camera.CameraXSession cameraXSession;
-    private app.exteraless.camera.CameraXSession.CameraLifecycle camLifecycle;
+    private volatile app.luminegram.camera.CameraXSession cameraXSession;
+    private app.luminegram.camera.CameraXSession.CameraLifecycle camLifecycle;
     private boolean needDrawFlickerStub;
     private volatile long legacyCameraSwitchStartedNs;
     private volatile int legacyCameraSwitchSequence;
@@ -297,7 +297,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
     private final LinearLayout buttonsLayout;
     private final int buttonsSizePx;
     private final ZoomControlView zoomControlView;
-    private final app.exteraless.camera.InstantCameraZoomSlider zoomSlider;
+    private final app.luminegram.camera.InstantCameraZoomSlider zoomSlider;
     private float lockedZoom;
 
 
@@ -331,9 +331,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         flashViews = new FlashViews(getContext(), null, this, null);
         // Тёплость и яркость фронтальной вспышки берём из настроек, а не константой.
         // ensureLoaded — на случай раннего вызова до init().
-        app.exteraless.chats.ChatsConfig.ensureLoaded();
-        flashViews.setWarmth(app.exteraless.chats.ChatsConfig.flashWarmth());
-        flashViews.setIntensity(app.exteraless.chats.ChatsConfig.flashIntensity());
+        app.luminegram.chats.ChatsConfig.ensureLoaded();
+        flashViews.setWarmth(app.luminegram.chats.ChatsConfig.flashWarmth());
+        flashViews.setIntensity(app.luminegram.chats.ChatsConfig.flashIntensity());
         addView(flashViews.backgroundView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
 
         cameraContainer = new InstantViewCameraContainer(context) {
@@ -367,7 +367,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         zoomControlView.setVisibility(GONE);
         addView(zoomControlView, new LayoutParams(LayoutHelper.MATCH_PARENT, dp(50), Gravity.CENTER));
 
-        zoomSlider = new app.exteraless.camera.InstantCameraZoomSlider(context, resourcesProvider);
+        zoomSlider = new app.luminegram.camera.InstantCameraZoomSlider(context, resourcesProvider);
         zoomSlider.setOpenAlpha(0f);
         zoomSlider.setOnCameraZoomChangeListener(this::onZoomSliderChanged);
         addView(zoomSlider, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
@@ -460,9 +460,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
             flashOptions = ItemOptions.makeOptions(this, resourcesProvider, flashButton)
                 .addView(
                     new SliderView(getContext(), SliderView.TYPE_WARMTH)
-                        .setValue(app.exteraless.chats.ChatsConfig.flashWarmth())
+                        .setValue(app.luminegram.chats.ChatsConfig.flashWarmth())
                         .setOnValueChange(value -> {
-                            app.exteraless.chats.ChatsConfig.flashWarmth.setConfigInt(Math.round(value * 100));
+                            app.luminegram.chats.ChatsConfig.flashWarmth.setConfigInt(Math.round(value * 100));
                             flashViews.setWarmth(value);
                         })
                 )
@@ -471,9 +471,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                     // нижняя граница яркости у кружка 0.5f, а не.65f как в сторис
                     new SliderView(getContext(), SliderView.TYPE_INTENSITY)
                         .setMinMax(.5f, 1f)
-                        .setValue(app.exteraless.chats.ChatsConfig.flashIntensity())
+                        .setValue(app.luminegram.chats.ChatsConfig.flashIntensity())
                         .setOnValueChange(value -> {
-                            app.exteraless.chats.ChatsConfig.flashIntensity.setConfigInt(Math.round(value * 100));
+                            app.luminegram.chats.ChatsConfig.flashIntensity.setConfigInt(Math.round(value * 100));
                             flashViews.setIntensity(value);
                         })
                 )
@@ -828,7 +828,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         if (useCameraX && camLifecycle == null) {
             // CameraX привязывается к чужому жизненному циклу, а у кружка своей
             // Activity нет — держим собственный.
-            camLifecycle = new app.exteraless.camera.CameraXSession.CameraLifecycle();
+            camLifecycle = new app.luminegram.camera.CameraXSession.CameraLifecycle();
         }
 
         if (switchCameraDrawable == null) {
@@ -905,7 +905,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         }
 
         if (useCameraX) {
-            bothCameras = app.exteraless.camera.CameraXSession.isRoundDualAvailable(getContext());
+            bothCameras = app.luminegram.camera.CameraXSession.isRoundDualAvailable(getContext());
             surfaceIndex = (!bothCameras || isFrontface) ? 0 : 1;
             // Размер превью CameraX сообщает уже после привязки, а GL-потоку он нужен
             // сразу — до первого кадра ставим квадрат по размеру кружка.
@@ -1053,7 +1053,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         animatorSet.playTogether(
                 ObjectAnimator.ofFloat(buttonsLayout, View.ALPHA, open ? 1.0f : 0.0f),
                 ObjectAnimator.ofFloat(zoomControlView, View.ALPHA, open ? 1.0f : 0.0f),
-                ObjectAnimator.ofFloat(zoomSlider, app.exteraless.camera.InstantCameraZoomSlider.OPEN_ALPHA, open ? 1.0f : 0.0f),
+                ObjectAnimator.ofFloat(zoomSlider, app.luminegram.camera.InstantCameraZoomSlider.OPEN_ALPHA, open ? 1.0f : 0.0f),
                 ObjectAnimator.ofFloat(muteImageView, View.ALPHA, 0.0f),
                 ObjectAnimator.ofInt(paint, AnimationProperties.PAINT_ALPHA, open ? 255 : 0),
                 ObjectAnimator.ofFloat(cameraContainer, View.ALPHA, open ? 1.0f : 0.0f),
@@ -1316,8 +1316,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         resetZoomOnCameraSwitch();
         final boolean dual = cameraXSession != null && cameraXSession.isDualMode();
         isFrontface = !isFrontface;
-        app.exteraless.chats.ChatsConfig.ensureLoaded();
-        if (app.exteraless.chats.ChatsConfig.rememberLastUsedCamera.Bool()
+        app.luminegram.chats.ChatsConfig.ensureLoaded();
+        if (app.luminegram.chats.ChatsConfig.rememberLastUsedCamera.Bool()
                 && NaConfig.INSTANCE.getCameraInVideoMessages().Int() != 2) {
             NaConfig.INSTANCE.getCameraInVideoMessages().setConfigInt(isFrontface ? 0 : 1);
         }
@@ -1344,7 +1344,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
     }
 
     private void releaseCameraXSession() {
-        final app.exteraless.camera.CameraXSession session = cameraXSession;
+        final app.luminegram.camera.CameraXSession session = cameraXSession;
         if (session == null) {
             return;
         }
@@ -1387,8 +1387,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         // exteraGram 12.9.0, InstantCameraView.java:2597-2600: «запоминать последнюю камеру»
         // дописывает выбор в ту же настройку, из которой камера берётся при старте записи
         // (см. :801 выше). Режим «спрашивать» (2) не трогаем — запоминать в нём нечего.
-        app.exteraless.chats.ChatsConfig.ensureLoaded();
-        if (app.exteraless.chats.ChatsConfig.rememberLastUsedCamera.Bool()
+        app.luminegram.chats.ChatsConfig.ensureLoaded();
+        if (app.luminegram.chats.ChatsConfig.rememberLastUsedCamera.Bool()
                 && NaConfig.INSTANCE.getCameraInVideoMessages().Int() != 2) {
             NaConfig.INSTANCE.getCameraInVideoMessages().setConfigInt(isFrontface ? 0 : 1);
         }
@@ -1609,7 +1609,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
 
             if (useCameraX) {
                 final Preview.SurfaceProvider surfaceProvider =
-                        app.exteraless.camera.CameraXSession.createSurfaceProvider(
+                        app.luminegram.camera.CameraXSession.createSurfaceProvider(
                                 getContext(), surfaceTexture,
                                 (width, height) -> {
                                     if (cameraThread != null) {
@@ -1617,8 +1617,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                                     }
                                 });
                 if (index == 0) {
-                    final app.exteraless.camera.CameraXSession session =
-                            new app.exteraless.camera.CameraXSession(camLifecycle, surfaceProvider);
+                    final app.luminegram.camera.CameraXSession session =
+                            new app.luminegram.camera.CameraXSession(camLifecycle, surfaceProvider);
                     cameraXSession = session;
                     session.initCamera(getContext(), isFrontface, bothCameras, () -> {
                         if (cameraXSession != session) {
@@ -2346,7 +2346,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                 }
                 case DO_SETORIENTATION_MESSAGE: {
                     // У CameraX нет getWorldAngle(): поворот берём с дисплея.
-                    final app.exteraless.camera.CameraXSession session = cameraXSession;
+                    final app.luminegram.camera.CameraXSession session = cameraXSession;
                     final int rotationAngle = session != null ? session.getDisplayOrientation() : 0;
                     android.opengl.Matrix.setIdentityM(mMVPMatrix, 0);
                     if (rotationAngle != 0) {
@@ -2509,11 +2509,11 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         private int encoderFrameRate = FRAME_RATE;
 
         private int resolveEncoderFrameRate() {
-            if (!app.exteraless.chats.ChatsConfig.extendedFramesPerSecond.Bool()) {
+            if (!app.luminegram.chats.ChatsConfig.extendedFramesPerSecond.Bool()) {
                 return FRAME_RATE;
             }
             if (useCameraX) {
-                final app.exteraless.camera.CameraXSession session = cameraXSession;
+                final app.luminegram.camera.CameraXSession session = cameraXSession;
                 return session != null ? session.getRecordingFrameRate() : FRAME_RATE;
             }
             if (useCamera2) {
@@ -3258,7 +3258,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
             animatorSet.playTogether(
                     ObjectAnimator.ofFloat(buttonsLayout, View.ALPHA, 0.0f),
                     ObjectAnimator.ofFloat(zoomControlView, View.ALPHA, 0.0f),
-                    ObjectAnimator.ofFloat(zoomSlider, app.exteraless.camera.InstantCameraZoomSlider.OPEN_ALPHA, 0.0f),
+                    ObjectAnimator.ofFloat(zoomSlider, app.luminegram.camera.InstantCameraZoomSlider.OPEN_ALPHA, 0.0f),
                     ObjectAnimator.ofInt(paint, AnimationProperties.PAINT_ALPHA, 0),
                     ObjectAnimator.ofFloat(muteImageView, View.ALPHA, 1.0f));
             animatorSet.setDuration(180);
@@ -4356,7 +4356,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
         zoomSlider.endPinchZoomGesture();
         // exteraGram 12.9.0, InstantCameraView.java:2856-2860 — при staticZoom зум остаётся
         // там, где его оставили пальцы, и не анимируется обратно.
-        if (finishZoomTransition != null || app.exteraless.chats.ChatsConfig.staticZoom.Bool()) {
+        if (finishZoomTransition != null || app.luminegram.chats.ChatsConfig.staticZoom.Bool()) {
             return;
         }
 
@@ -4431,7 +4431,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
 
     private float zoomMinRatio() {
         if (useCameraX) {
-            final app.exteraless.camera.CameraXSession session = cameraXSession;
+            final app.luminegram.camera.CameraXSession session = cameraXSession;
             return session == null ? 1f : session.getMinZoomRatio();
         }
         return camera2SessionCurrent == null ? 1f : camera2SessionCurrent.getMinZoom();
@@ -4439,7 +4439,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
 
     private float zoomMaxRatio() {
         if (useCameraX) {
-            final app.exteraless.camera.CameraXSession session = cameraXSession;
+            final app.luminegram.camera.CameraXSession session = cameraXSession;
             return session == null ? 1f : session.getMaxZoomRatio();
         }
         return camera2SessionCurrent == null ? 1f : camera2SessionCurrent.getMaxZoom();
@@ -4447,7 +4447,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
 
     private float currentCameraZoomRatio() {
         if (useCameraX) {
-            final app.exteraless.camera.CameraXSession session = cameraXSession;
+            final app.luminegram.camera.CameraXSession session = cameraXSession;
             return session == null ? 1f : session.getZoomRatio();
         }
         return camera2SessionCurrent == null ? 1f : camera2SessionCurrent.getZoom();
@@ -4455,7 +4455,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
 
     private void setCameraZoomRatio(float zoom) {
         if (useCameraX) {
-            final app.exteraless.camera.CameraXSession session = cameraXSession;
+            final app.luminegram.camera.CameraXSession session = cameraXSession;
             if (session != null) {
                 session.setZoomRatio(zoom);
             }
@@ -4564,7 +4564,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
     private void applyLockedZoomToCamera() {
         bindZoomSlider();
         if (useCameraX) {
-            final app.exteraless.camera.CameraXSession session = cameraXSession;
+            final app.luminegram.camera.CameraXSession session = cameraXSession;
             if (session == null) {
                 return;
             }
@@ -4587,7 +4587,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
             final float zoom;
             if (lockedZoom > 0f && max > min) {
                 zoom = min + lockedZoom * (max - min);
-            } else if (session.isFront() || app.exteraless.chats.ChatsConfig.startWithWideAngleCamera.Bool()) {
+            } else if (session.isFront() || app.luminegram.chats.ChatsConfig.startWithWideAngleCamera.Bool()) {
                 zoom = min;
             } else {
                 zoom = Utilities.clamp(1f, max, min);

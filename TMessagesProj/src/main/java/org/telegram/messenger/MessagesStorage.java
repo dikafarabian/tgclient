@@ -31,7 +31,7 @@ import androidx.annotation.UiThread;
 
 import androidx.collection.LongSparseArray;
 
-import app.exteraless.feed.FeedController;
+import app.luminegram.feed.FeedController;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.SQLite.SQLiteCursor;
@@ -252,7 +252,7 @@ public class MessagesStorage extends BaseController {
     }
 
     public SQLiteDatabase getDatabase() {
-        if (!app.exteraless.plugins.PluginSinkGate.allowDatabaseAccess()) {
+        if (!app.luminegram.plugins.PluginSinkGate.allowDatabaseAccess()) {
             return null;
         }
         return database;

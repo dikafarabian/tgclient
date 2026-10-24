@@ -1,6 +1,6 @@
 package org.telegram.ui.Components;
 
-import app.exteraless.OpenExteraConfig;
+import app.luminegram.OpenExteraConfig;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 

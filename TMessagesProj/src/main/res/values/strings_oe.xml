@@ -26,7 +26,7 @@
     <string name="QrWifiUnknownNetwork">Network name is missing from the code</string>
     <string name="QrLoginHint">This code logs into an account. Use Settings → Devices → Link Desktop Device — that screen checks the code and protects your account.</string>
     <string name="QrLoginConfirm">This code signs a new device into your account. Allow only if you are logging in on your own device.</string>
-    <string name="AppIconExteraless" translatable="false">luminegram</string>
+    <string name="AppIconLuminegram" translatable="false">luminegram</string>
     <string name="AppIconBlueprint" translatable="false">Blueprint</string>
     <string name="AppIconRed" translatable="false">Red</string>
     <string name="AppIconNya" translatable="false">Nya</string>
@@ -39,7 +39,7 @@
     <string name="AppIconPlus" translatable="false">Plus</string>
     <string name="AppIconsSelect">Select</string>
     <string name="AppIconsKeep">Keep this one</string>
-    <string name="AppIconInfoExteraless"><!-- сюда подпись --></string>
+    <string name="AppIconInfoLuminegram"><!-- сюда подпись --></string>
     <string name="AppIconInfoBlueprint"><!-- сюда подпись --></string>
     <string name="AppIconInfoRed"><!-- сюда подпись --></string>
     <string name="AppIconInfoNya"><!-- сюда подпись --></string>

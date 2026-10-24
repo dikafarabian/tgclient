@@ -48,8 +48,8 @@ import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.ScaleStateListAnimator;
 import org.telegram.ui.MainTabsLayout;
 
-import app.exteraless.appearance.MainTabsUiHelper;
-import app.exteraless.components.ChatActivityEnterViewStaticIconView;
+import app.luminegram.appearance.MainTabsUiHelper;
+import app.luminegram.components.ChatActivityEnterViewStaticIconView;
 
 import me.vkryl.android.AnimatorUtils;
 import me.vkryl.android.animator.BoolAnimator;

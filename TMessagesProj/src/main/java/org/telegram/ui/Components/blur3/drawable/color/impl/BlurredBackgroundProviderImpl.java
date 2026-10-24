@@ -28,7 +28,7 @@ public class BlurredBackgroundProviderImpl {
             })
             .setShadowColor(0x20000000, 0x04FFFFFF)
             .setShadowLayer(dpf2(2.667f), 0, dpf2(0.85f));
-        return app.exteraless.appearance.MainTabsUiHelper.applyBackgroundStroke(builder)
+        return app.luminegram.appearance.MainTabsUiHelper.applyBackgroundStroke(builder)
             .build();
     }
 

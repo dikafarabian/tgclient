@@ -68,7 +68,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import app.exteraless.components.TranslateBeforeSendWrapper;
+import app.luminegram.components.TranslateBeforeSendWrapper;
 
 import org.telegram.SQLite.SQLiteCursor;
 import org.telegram.messenger.AccountInstance;

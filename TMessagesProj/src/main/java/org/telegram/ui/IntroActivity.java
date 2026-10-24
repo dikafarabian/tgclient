@@ -727,7 +727,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             Bitmap icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
             Canvas iconCanvas = new Canvas(icon);
             Resources resources = getParentActivity().getResources();
-            for (int resId : new int[]{R.drawable.exteraless_icon_background, R.drawable.exteraless_icon_foreground}) {
+            for (int resId : new int[]{R.drawable.luminegram_icon_background, R.drawable.luminegram_icon_foreground}) {
                 Drawable layer = resources.getDrawable(resId);
                 if (layer == null) {
                     continue;

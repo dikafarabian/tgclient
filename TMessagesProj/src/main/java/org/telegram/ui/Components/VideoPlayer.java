@@ -433,7 +433,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
                 break;
             default:
                 if (progressiveMediaSourceFactory == null) {
-                    progressiveMediaSourceFactory = new ProgressiveMediaSource.Factory(mediaDataSourceFactory, new app.exteraless.player.SeekableFragmentsExtractorsFactory());
+                    progressiveMediaSourceFactory = new ProgressiveMediaSource.Factory(mediaDataSourceFactory, new app.luminegram.player.SeekableFragmentsExtractorsFactory());
                 }
                 mediaSource = progressiveMediaSourceFactory.createMediaSource(mediaItem);
                 break;
@@ -540,8 +540,8 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
         // молча проигрывала бы прошлому выбору пользователя в этом же чате.
         // ensureLoaded обязателен: ChatsConfig грузится лениво, без него поле вернуло бы
         // значение по умолчанию, а не то, что выставил пользователь.
-        app.exteraless.chats.ChatsConfig.ensureLoaded();
-        if (qualities != null && app.exteraless.chats.ChatsConfig.preferOriginalQuality.Bool()) {
+        app.luminegram.chats.ChatsConfig.ensureLoaded();
+        if (qualities != null && app.luminegram.chats.ChatsConfig.preferOriginalQuality.Bool()) {
             for (Quality q : qualities) {
                 if (q.original) return q;
             }

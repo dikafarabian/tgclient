@@ -10,8 +10,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import corpus
 
 PY_ALIASES = os.path.join(corpus.PYTHON_ROOT, "extera_utils", "class_aliases.py")
-JAVA_ALIASES = os.path.join(corpus.JAVA_ROOT, "app", "exteraless", "plugins", "ClassAliases.java")
-GATE = os.path.join(corpus.JAVA_ROOT, "app", "exteraless", "plugins", "PluginSinkGate.java")
+JAVA_ALIASES = os.path.join(corpus.JAVA_ROOT, "app", "luminegram", "plugins", "ClassAliases.java")
+GATE = os.path.join(corpus.JAVA_ROOT, "app", "luminegram", "plugins", "PluginSinkGate.java")
 
 _PAIR = re.compile(r'\{"([^"]+)",\s*"([^"]+)"\}')
 
@@ -33,9 +33,9 @@ def _block(source, name):
 def python_aliases():
     if not os.path.isfile(PY_ALIASES):
         pytest.skip(f"missing {PY_ALIASES}")
-    spec = importlib.util.spec_from_file_location("exteraless_aliases_bridge", PY_ALIASES)
+    spec = importlib.util.spec_from_file_location("luminegram_aliases_bridge", PY_ALIASES)
     module = importlib.util.module_from_spec(spec)
-    sys.modules["exteraless_aliases_bridge"] = module
+    sys.modules["luminegram_aliases_bridge"] = module
     spec.loader.exec_module(module)
     return module
 

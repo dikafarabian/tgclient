@@ -125,7 +125,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
             actionBar.setDrawBlurBackground(frameLayout);
         }
 
-        listView = new app.exteraless.appearance.SectionCardRecyclerView(context);
+        listView = new app.luminegram.appearance.SectionCardRecyclerView(context);
         listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -156,7 +156,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
             var holder = listView.findViewHolderForAdapterPosition(position);
             var key = getKey();
             if (key != null && holder != null && listAdapter.isEnabled(holder) && rowMapReverse.containsKey(position)) {
-                app.exteraless.settings.utils.SettingsRowMenu.show(this, view, String.format(Locale.getDefault(), "https://%s/%s?r=%s", getMessagesController().linkPrefix, tw.nekomimi.nekogram.helpers.SettingsHelper.linkPathFor(getKey()), rowMapReverse.get(position)));
+                app.luminegram.settings.utils.SettingsRowMenu.show(this, view, String.format(Locale.getDefault(), "https://%s/%s?r=%s", getMessagesController().linkPrefix, tw.nekomimi.nekogram.helpers.SettingsHelper.linkPathFor(getKey()), rowMapReverse.get(position)));
                 return true;
             }
             return false;
@@ -165,7 +165,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
         // Карточки-секции: штатная геометрия декоратора + радиус из AppearanceConfig.
         // Тень-elevation форсируется в SectionCardRecyclerView.drawBackgroundRect.
         // При sectionRadius == 0 — стоковый плоский вид (карточки визуально отсутствуют).
-        listView.setSections(dp(12), dp(app.exteraless.appearance.AppearanceConfig.sectionRadius()), true);
+        listView.setSections(dp(12), dp(app.luminegram.appearance.AppearanceConfig.sectionRadius()), true);
         setupAdaptiveBackground();
         return fragmentView;
     }
@@ -205,13 +205,13 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
 
     /**
      * Фон actionBar, зависящий от прокрутки. Вынесено в метод, чтобы экран мог
-     * сделать шапку прозрачной наверху (topColorKey = -1) — как корневой экран exteraless.
+     * сделать шапку прозрачной наверху (topColorKey = -1) — как корневой экран luminegram.
      * Повторный вызов setAdaptiveBackground после первого не перекрашивает шапку,
      * поэтому настраивать нужно именно здесь, а не после createView.
      */
     /**
      * Рисовать ли блюр-подложку под actionBar. Экраны с прозрачной шапкой
-     * (корневой экран exteraless) её отключают: подложка закрывает контент под шапкой.
+     * (корневой экран luminegram) её отключают: подложка закрывает контент под шапкой.
      * Снять её после вызова нельзя — {@code setDrawBlurBackground(null)} падает.
      */
     protected boolean needActionBarBlur() {
@@ -461,7 +461,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
         /**
          * openExtera: готовит фон ячейки под механизм карточек-секций.
          * Единый скруглённый фон группы с тенью-elevation рисует сам список
-         * ({@link app.exteraless.appearance.SectionCardRecyclerView}) в {@code dispatchDraw}
+         * ({@link app.luminegram.appearance.SectionCardRecyclerView}) в {@code dispatchDraw}
          * позади контента. Здесь остаётся только выставить прозрачность ячейки:
          * при sectionRadius > 0 фон ячейки прозрачный (просвечивает карточка), селектор
          * нажатия рисует сам список отдельно — кликаемость не страдает. При sectionRadius == 0
@@ -472,7 +472,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
             if (!isSectionContent(viewType)) {
                 return;
             }
-            int radiusDp = app.exteraless.appearance.AppearanceConfig.sectionRadius();
+            int radiusDp = app.luminegram.appearance.AppearanceConfig.sectionRadius();
             if (radiusDp <= 0) {
                 // Дефолт-safe (0) = сток: сплошной фон, ровно как задавалось при создании ячейки.
                 holder.itemView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
@@ -492,7 +492,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
             if (!isSectionContent(typeA) || !isSectionContent(typeB)) {
                 return false;
             }
-            if (app.exteraless.appearance.AppearanceConfig.separateHeaders()
+            if (app.luminegram.appearance.AppearanceConfig.separateHeaders()
                     && (typeA == TYPE_HEADER || typeB == TYPE_HEADER)) {
                 return false;
             }
@@ -503,7 +503,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
         protected boolean isSectionContent(int viewType) {
             // exteraGram: при вынесенных заголовках заголовок лежит на фоне окна,
             // а не в своей карточке — поэтому он вообще не участвует в секциях.
-            if (viewType == TYPE_HEADER && app.exteraless.appearance.AppearanceConfig.separateHeaders()) {
+            if (viewType == TYPE_HEADER && app.luminegram.appearance.AppearanceConfig.separateHeaders()) {
                 return false;
             }
             switch (viewType) {
@@ -552,7 +552,7 @@ public abstract class BaseNekoSettingsActivity extends BaseFragment {
                     // exteraGram: вынесенный заголовок лежит на фоне окна — без белой подложки
                     // и вне карточки. Группировку карточек делает RecyclerListView.setSections
                     // по предикату вью, поэтому исключаем заголовок именно тегом.
-                    if (app.exteraless.appearance.AppearanceConfig.separateHeaders()) {
+                    if (app.luminegram.appearance.AppearanceConfig.separateHeaders()) {
                         headerCell.setTag(RecyclerListView.TAG_NOT_SECTION);
                         // Метрики сняты с 12.9.0 на устройстве (420 dpi): контейнер 114px,
                         // сверху 16, текст 90, снизу 8 до карточки; левый отступ 63px.

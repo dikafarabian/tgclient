@@ -9,7 +9,7 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
-import app.exteraless.appearance.AltSeekbar
+import app.luminegram.appearance.AltSeekbar
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R

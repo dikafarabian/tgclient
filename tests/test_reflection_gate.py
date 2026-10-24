@@ -42,10 +42,10 @@ def test_ordinary_targets_allowed_without_frame_walk(loader, monkeypatch):
 
 def test_interior_targets_denied_for_plugin_frames(loader, monkeypatch, audit):
     gate = owner_gate(loader, monkeypatch)
-    for target in ["app.exteraless.plugins.PluginRuntime",
-                   "app.exteraless.plugins.PluginGrantStore",
-                   "app.exteraless.plugins.PluginPermissions",
-                   "app.exteraless.plugins.PluginTrustLevel"]:
+    for target in ["app.luminegram.plugins.PluginRuntime",
+                   "app.luminegram.plugins.PluginGrantStore",
+                   "app.luminegram.plugins.PluginPermissions",
+                   "app.luminegram.plugins.PluginTrustLevel"]:
         for op in ["Class.forName", "ClassLoader.loadClass", "Method.invoke",
                    "Field.get", "Field.set", "AccessibleObject.setAccessible",
                    "Constructor.newInstance", "Class.newInstance", "cast",
@@ -56,9 +56,9 @@ def test_interior_targets_denied_for_plugin_frames(loader, monkeypatch, audit):
 
 def test_published_plugin_surface_stays_reflectable(loader, monkeypatch, audit):
     gate = owner_gate(loader, monkeypatch)
-    for target in ["app.exteraless.plugins.PluginsController",
-                   "app.exteraless.plugins.ui.PluginSettingsActivity",
-                   "app.exteraless.plugins.models.SwitchSetting",
+    for target in ["app.luminegram.plugins.PluginsController",
+                   "app.luminegram.plugins.ui.PluginSettingsActivity",
+                   "app.luminegram.plugins.models.SwitchSetting",
                    "com.exteragram.messenger.plugins.PluginsController",
                    "com.exteragram.messenger.plugins.ui.PluginSettingsActivity"]:
         for op in ["Class.forName", "Method.invoke", "Field.get",
@@ -69,16 +69,16 @@ def test_published_plugin_surface_stays_reflectable(loader, monkeypatch, audit):
 
 def test_interior_targets_allowed_for_engine_frames(loader, monkeypatch):
     gate = owner_gate(loader, monkeypatch, owner=None)
-    assert gate("Class.forName", "app.exteraless.plugins.PluginRuntime", None) is True
-    assert gate("Method.invoke", "app.exteraless.plugins.PluginSinkGate", "hook") is True
+    assert gate("Class.forName", "app.luminegram.plugins.PluginRuntime", None) is True
+    assert gate("Method.invoke", "app.luminegram.plugins.PluginSinkGate", "hook") is True
 
 
 def test_interior_denied_via_alias_and_signatures(loader, monkeypatch):
     gate = owner_gate(loader, monkeypatch)
     assert gate("Class.forName", "com.exteragram.messenger.plugins.PluginRuntime",
                 None) is False
-    assert gate("Class.forName", "[Lapp/exteraless/plugins/PluginRuntime;", None) is False
-    assert gate("ClassLoader.loadClass", "app/exteraless/plugins/PluginRuntime",
+    assert gate("Class.forName", "[Lapp/luminegram/plugins/PluginRuntime;", None) is False
+    assert gate("ClassLoader.loadClass", "app/luminegram/plugins/PluginRuntime",
                 None) is False
 
 
@@ -124,16 +124,16 @@ def test_proxy_interface_tuples(loader, monkeypatch):
                 None) is True
     assert gate("Proxy.newProxyInstance",
                 ("com.chaquo.python.DynamicProxy",
-                 "app.exteraless.plugins.PluginRuntime"), None) is False
+                 "app.luminegram.plugins.PluginRuntime"), None) is False
     assert gate("Proxy.getProxyClass", (), None) is True
 
 
 def test_unsafe_mode_and_engine_lookup_allow_everything(loader, monkeypatch):
     gate = owner_gate(loader, monkeypatch, unsafe=True, perms=())
-    assert gate("Class.forName", "app.exteraless.plugins.PluginRuntime", None) is True
+    assert gate("Class.forName", "app.luminegram.plugins.PluginRuntime", None) is True
     assert gate("Unsafe", "sun.misc.Unsafe", "allocateInstance") is True
     gate = owner_gate(loader, monkeypatch, engine=True, perms=())
-    assert gate("Method.invoke", "app.exteraless.plugins.PluginRuntime", "run") is True
+    assert gate("Method.invoke", "app.luminegram.plugins.PluginRuntime", "run") is True
 
 
 def test_non_string_targets_allowed(loader, monkeypatch):
@@ -150,8 +150,8 @@ def test_verdict_cache_reuses_classification(loader, monkeypatch):
     assert 'org.telegram.messenger.MessagesStorage' in cache
     assert cache['org.telegram.messenger.MessagesStorage'] == \
         ('perm', 'messages.read')
-    assert gate("Class.forName", "app.exteraless.plugins.PluginRuntime", None) is False
-    assert cache['app.exteraless.plugins.PluginRuntime'] == 'deny'
+    assert gate("Class.forName", "app.luminegram.plugins.PluginRuntime", None) is False
+    assert cache['app.luminegram.plugins.PluginRuntime'] == 'deny'
 
 
 def test_install_reflection_gate_installs_policy(loader, monkeypatch):

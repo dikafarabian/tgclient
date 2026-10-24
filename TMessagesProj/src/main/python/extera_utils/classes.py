@@ -1,8 +1,8 @@
-"""extera_utils.classes — class-proxy DSL for the exteraless plugin engine.
+"""extera_utils.classes — class-proxy DSL for the luminegram plugin engine.
 
 Generates REAL Java classes at runtime (subclass Java classes, override methods,
 implement interfaces, declare fields) via the dexmaker-backed
-app.exteraless.plugins.utils.ClassProxyFactory on the Java side.
+app.luminegram.plugins.utils.ClassProxyFactory on the Java side.
 
 Scope notes for this port (stock Chaquopy 17.0.0):
 - The built-in J-modifiers of exteraGram's Chaquopy fork (obj.JA/JGS/JIR/JS,
@@ -42,7 +42,7 @@ def _internal(name):
 
 
 try:
-    from app.exteraless.plugins import PluginServices
+    from app.luminegram.plugins import PluginServices
 except Exception:  # host interpreter (no Chaquopy) — generation paths raise
     PluginServices = None
 
@@ -400,7 +400,7 @@ def super():
 
 def _invoke_super(info, proxy, py_key, args):
     if PluginServices is None:
-        raise RuntimeError("class proxy requires the exteraless Android runtime")
+        raise RuntimeError("class proxy requires the luminegram Android runtime")
     return PluginServices.invokeSuper(info.class_key, proxy, py_key, _object_array(args))
 
 
@@ -524,7 +524,7 @@ def _ensure_java_class(info):
     if info.class_key is not None:
         return info.class_key
     if PluginServices is None:
-        raise RuntimeError("class proxy requires the exteraless Android runtime (Chaquopy)")
+        raise RuntimeError("class proxy requires the luminegram Android runtime (Chaquopy)")
     with info.lock:
         if info.class_key is not None:
             return info.class_key
@@ -708,7 +708,7 @@ def _log(message):
         return
     except Exception:
         pass
-    print(f"[exteraless:classes] {message}", file=sys.stderr)
+    print(f"[luminegram:classes] {message}", file=sys.stderr)
 
 
 def _return_defaults(info):

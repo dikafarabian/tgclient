@@ -79,7 +79,7 @@ def loader(sdk, monkeypatch):
 def test_java_bridge_import_does_not_reenter_plugin_directory(sdk, loader, monkeypatch,
                                                             tmp_path, entry):
     files = load_module(monkeypatch, 'file_utils')
-    native = types.ModuleType('app.exteraless.plugins')
+    native = types.ModuleType('app.luminegram.plugins')
     calls = []
     directory = str(tmp_path)
     native.PythonBridge = types.SimpleNamespace(
@@ -107,7 +107,7 @@ def test_java_bridge_import_does_not_reenter_plugin_directory(sdk, loader, monke
     assert calls == [directory]
 
 
-@pytest.mark.parametrize('name', ['app.exteraless.plugins', 'dalvik.system', 'kotlinx.coroutines'])
+@pytest.mark.parametrize('name', ['app.luminegram.plugins', 'dalvik.system', 'kotlinx.coroutines'])
 def test_import_module_java_packages_does_not_probe_neighbour_plugins(loader, monkeypatch, name):
     module = types.ModuleType(name)
     probes = []
@@ -327,7 +327,7 @@ def test_thread_state_pin_keeps_only_foreign_thread_states(sdk, monkeypatch):
 
 
 def test_first_sdk_import_and_permission_lookup_do_not_reenter(loader, monkeypatch, tmp_path):
-    native = types.ModuleType('app.exteraless.plugins')
+    native = types.ModuleType('app.luminegram.plugins')
     permissions, imports = [], []
     directory = str(tmp_path)
     native.PythonBridge = types.SimpleNamespace(
@@ -336,7 +336,7 @@ def test_first_sdk_import_and_permission_lookup_do_not_reenter(loader, monkeypat
     original = builtins.__import__
 
     def java_import(name, globals=None, locals=None, fromlist=(), level=0):
-        if name in ('app.exteraless.plugins', 'file_utils'):
+        if name in ('app.luminegram.plugins', 'file_utils'):
             imports.append(name)
         if name == native.__name__:
             return native
@@ -352,7 +352,7 @@ def test_first_sdk_import_and_permission_lookup_do_not_reenter(loader, monkeypat
     assert result == directory
     assert mode is False
     assert permissions == [False]
-    assert imports == ['app.exteraless.plugins', 'file_utils', 'app.exteraless.plugins']
+    assert imports == ['app.luminegram.plugins', 'file_utils', 'app.luminegram.plugins']
 
 
 def test_settings_error_names_the_recursion_cycle(sdk, loader, monkeypatch):
@@ -467,7 +467,7 @@ def test_send_message_with_media_does_not_become_a_text_message(sdk, monkeypatch
 
 
 def test_bulletin_buttons_keep_java_owned_runnables(sdk, monkeypatch):
-    native = types.ModuleType('app.exteraless.plugins')
+    native = types.ModuleType('app.luminegram.plugins')
     runnable = object()
     native.PluginServices = types.SimpleNamespace(runnable=lambda fn: runnable)
     monkeypatch.setitem(sys.modules, native.__name__, native)
@@ -496,7 +496,7 @@ def test_short_menu_form_retains_the_callback(sdk, monkeypatch):
     plugin = sdk.base.BasePlugin()
     callback = lambda context: None
     assert plugin.add_menu_item(plugin.MenuType.CHAT_CONTEXT, 'Action', on_click=callback, item_id='action') == 'action'
-    assert plugin._exteraless_menu_callbacks['action'] is callback
+    assert plugin._luminegram_menu_callbacks['action'] is callback
     assert plugin.MenuType.CHAT_CONTEXT == sdk.base.MenuItemType.MESSAGE_CONTEXT_MENU
     with pytest.raises(TypeError):
         plugin.add_menu_item(sdk.base.MenuItemData(plugin.MenuType.CHAT_CONTEXT, 'Action', callback), text='conflict')
@@ -575,7 +575,7 @@ def test_dialog_buttons_do_not_require_a_listener(sdk, monkeypatch):
 
 
 def test_text_setting_has_both_eight_argument_layouts():
-    source = Path(corpus.JAVA_ROOT, 'app/exteraless/plugins/models/TextSetting.java').read_text()
+    source = Path(corpus.JAVA_ROOT, 'app/luminegram/plugins/models/TextSetting.java').read_text()
     constructors = re.findall(r'public TextSetting\((.*?)\)\s*\{', javaapi.strip_noise(source), re.S)
     types = [tuple(param.strip().split()[0] for param in args.split(',')) for args in constructors]
     assert ('String', 'String', 'boolean', 'boolean', 'PyObject', 'PyObject', 'PyObject', 'String') in types
@@ -583,7 +583,7 @@ def test_text_setting_has_both_eight_argument_layouts():
 
 
 def test_media_and_message_sinks_keep_nx_chat_arguments():
-    media = Path(corpus.JAVA_ROOT, 'app/exteraless/plugins/PluginMediaServices.java').read_text()
+    media = Path(corpus.JAVA_ROOT, 'app/luminegram/plugins/PluginMediaServices.java').read_text()
     sending = Path(corpus.JAVA_ROOT, 'org/telegram/messenger/SendMessagesHelper.java').read_text()
     assert 'SendMessageChatArguments.EMPTY' in media
     assert 'DeletedReplyQuote.rewrite(currentAccount, sendMessageParams)' in sending
@@ -665,18 +665,18 @@ def test_markdown_link_to_a_document_id_is_a_custom_emoji(sdk, monkeypatch):
 def test_alt_seekbar_resolves_to_our_appearance_component(sdk, monkeypatch):
     aliases = load_module(monkeypatch, 'extera_utils.class_aliases')
     name = 'com.exteragram.messenger.preferences.components.AltSeekbar'
-    assert aliases.resolve(name) == 'app.exteraless.appearance.AltSeekbar'
-    assert aliases.resolve(name + '$OnDrag') == 'app.exteraless.appearance.AltSeekbar$OnDrag'
+    assert aliases.resolve(name) == 'app.luminegram.appearance.AltSeekbar'
+    assert aliases.resolve(name + '$OnDrag') == 'app.luminegram.appearance.AltSeekbar$OnDrag'
     assert Path(corpus.PYTHON_ROOT).parent.joinpath(
-        'java', 'app', 'exteraless', 'appearance', 'AltSeekbar.java').is_file()
+        'java', 'app', 'luminegram', 'appearance', 'AltSeekbar.java').is_file()
 
 
 def test_hooks_unwrap_field_shaped_class_wrappers(sdk, monkeypatch):
     aliases = load_module(monkeypatch, 'extera_utils.class_aliases')
     java_class = object()
     wrapper = aliases._FieldShapedClass(java_class, {})
-    assert sdk.base.BasePlugin._exteraless_resolve_class(wrapper) is java_class
-    assert sdk.base.BasePlugin._exteraless_resolve_class(java_class) is java_class
+    assert sdk.base.BasePlugin._luminegram_resolve_class(wrapper) is java_class
+    assert sdk.base.BasePlugin._luminegram_resolve_class(java_class) is java_class
 
 
 def test_broken_sub_page_item_does_not_drop_the_whole_page(sdk, loader, monkeypatch):
@@ -965,7 +965,7 @@ def test_substituted_factory_class_exposes_the_java_singleton(sdk, monkeypatch):
     monkeypatch.setitem(sys.modules, 'java', types.SimpleNamespace(
         jclass=lambda name: (asked.append(name), peer)[1]))
     assert factory_class.getInstance() is singleton
-    assert asked == ['app.exteraless.plugins.models.PluginItemFactory']
+    assert asked == ['app.luminegram.plugins.models.PluginItemFactory']
     assert sdk.settings.SimpleSettingFactory().java is singleton
 
 
@@ -989,7 +989,7 @@ def test_settings_factory_reaches_the_java_singleton_through_the_jclass_guard(sd
     assert factory is sdk.settings.SimpleSettingFactory
     assert factory.getInstance() is singleton
     assert sdk.settings.SimpleSettingFactory().java is singleton
-    assert asked == ['app.exteraless.plugins.models.PluginItemFactory'] * 3
+    assert asked == ['app.luminegram.plugins.models.PluginItemFactory'] * 3
 
 
 def test_find_class_substitutes_only_the_reference_name(sdk, loader, monkeypatch):
@@ -998,7 +998,7 @@ def test_find_class_substitutes_only_the_reference_name(sdk, loader, monkeypatch
     hooks = load_module(monkeypatch, 'hook_utils')
     reference = hooks.find_class('com.exteragram.messenger.plugins.models.PluginItemFactory')
     assert reference is sdk.settings.SimpleSettingFactory
-    assert hooks.find_class('app.exteraless.plugins.models.PluginItemFactory') is peer
+    assert hooks.find_class('app.luminegram.plugins.models.PluginItemFactory') is peer
 
 
 def test_java_interface_called_with_a_python_callable_becomes_a_proxy(loader, monkeypatch):
@@ -1073,7 +1073,7 @@ def test_get_setting_survives_repeated_reads(sdk, monkeypatch):
     bridge = types.SimpleNamespace(getSetting=lambda plugin_id, key: 'true', log=lambda *args: None)
     monkeypatch.setattr(sdk.base, 'PythonBridge', bridge)
     plugin = sdk.base.BasePlugin()
-    plugin._exteraless_attach('test_plugin')
+    plugin._luminegram_attach('test_plugin')
     assert plugin.get_setting('flag', False) is True
     assert plugin.get_setting('flag', False) is True
     assert plugin.get_setting('other', False) is True
@@ -1085,7 +1085,7 @@ def test_plugin_method_named_like_old_internals_survives_attach(sdk):
             return f"id:{other}"
 
     plugin = Plugin()
-    plugin._exteraless_attach('test_plugin')
+    plugin._luminegram_attach('test_plugin')
     assert plugin._plugin_id('x') == 'id:x'
     assert plugin.plugin_id == 'test_plugin'
 
@@ -1412,7 +1412,7 @@ def test_plain_class_fast_path_skips_gated_and_aliased_names(loader):
     assert loader.plain_java_class('java.util.ArrayList')
     assert not loader.plain_java_class('org.telegram.messenger.SendMessagesHelper')
     assert not loader.plain_java_class('de.robv.android.xposed.XposedBridge')
-    assert not loader.plain_java_class('app.exteraless.plugins.PluginPermissions')
+    assert not loader.plain_java_class('app.luminegram.plugins.PluginPermissions')
     assert not loader.plain_java_class('com.exteragram.messenger.plugins.models.PluginItemFactory')
     assert not loader.plain_java_class(None)
 
@@ -1423,7 +1423,7 @@ def test_plain_import_fast_path_skips_internal_gated_and_java_roots(loader):
     assert not loader._plain_import('extera_utils.plugin_loader')
     assert not loader._plain_import('socket')
     assert not loader._plain_import('java')
-    assert not loader._plain_import('app.exteraless.plugins')
+    assert not loader._plain_import('app.luminegram.plugins')
 
 
 def test_cached_internal_import_still_refused_for_plugins(loader, monkeypatch):

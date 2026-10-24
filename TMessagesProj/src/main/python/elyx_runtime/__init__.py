@@ -1,4 +1,4 @@
-"""Elyx structured-plugin runtime for the exteraless plugin engine.
+"""Elyx structured-plugin runtime for the luminegram plugin engine.
 
 Loads .elyx/.eaf archives (ZIP with a root refmap) as ordinary BasePlugin
 instances inside an isolated ElyxPlugins.<plugin_id> import namespace, with

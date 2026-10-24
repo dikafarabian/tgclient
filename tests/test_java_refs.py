@@ -14,7 +14,7 @@ import baseline
 import corpus
 
 BASELINE_NAME = "java_refs.json"
-OWNED_PREFIXES = ("org.telegram.", "com.exteragram.", "app.exteraless.")
+OWNED_PREFIXES = ("org.telegram.", "com.exteragram.", "app.luminegram.")
 GENERATED = ("R", "BuildConfig")
 ALIASES_PATH = os.path.join(corpus.PYTHON_ROOT, "extera_utils", "class_aliases.py")
 PROGUARD_RULES = os.path.join(corpus.REPO, "TMessagesProj", "proguard-rules.pro")
@@ -42,7 +42,7 @@ _ANY_DECL = re.compile(
 @functools.lru_cache(maxsize=1)
 def aliases():
     spec = importlib.util.spec_from_file_location(
-        "exteraless_class_aliases_under_test", ALIASES_PATH)
+        "luminegram_class_aliases_under_test", ALIASES_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

@@ -3,7 +3,7 @@
 SettingsController is bound to a plugin id and stores values in the same host
 setting system that BasePlugin.get_setting / ui.settings rows use: JSON values
 in the per-plugin SharedPreferences, reached through
-app.exteraless.plugins.PythonBridge. On a host interpreter (no Chaquopy) an
+app.luminegram.plugins.PythonBridge. On a host interpreter (no Chaquopy) an
 in-memory per-plugin store is used, which keeps plugins and tests runnable off
 device.
 """
@@ -14,7 +14,7 @@ import json
 from typing import Any, Dict
 
 try:
-    from app.exteraless.plugins import PythonBridge
+    from app.luminegram.plugins import PythonBridge
 except Exception:  # host interpreter (no Chaquopy)
     PythonBridge = None
 

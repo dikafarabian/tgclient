@@ -394,7 +394,7 @@ public class NotificationCenter {
     // custom
     public static final int updateLoginToken = totalEvents++;
 
-    // exteraless plugins
+    // luminegram plugins
     /** Плагин завис или отвис: слушатели перерисовывают его строку. */
     public static final int pluginIsNotResponding = totalEvents++;
     /** Реестр пунктов меню плагинов изменился: пересобрать подменю. */

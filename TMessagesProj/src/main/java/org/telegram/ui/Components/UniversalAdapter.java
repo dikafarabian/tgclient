@@ -201,7 +201,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
      * со строки под ним.
      */
     private int skipLeadingHeaders(int start, int end) {
-        if (!app.exteraless.appearance.AppearanceConfig.sectionsSeparatedHeaders()) return start;
+        if (!app.luminegram.appearance.AppearanceConfig.sectionsSeparatedHeaders()) return start;
         int position = start;
         while (position <= end && isHeader(getItemViewType(position))) {
             position++;
@@ -617,7 +617,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
         UItem item = getItem(position);
         UItem nextItem = getItem(position + 1);
         if (item == null || nextItem == null || item.hideDivider) return false;
-        if (isHeader(nextItem.viewType) && app.exteraless.appearance.AppearanceConfig.sectionsSeparatedHeaders()) {
+        if (isHeader(nextItem.viewType) && app.luminegram.appearance.AppearanceConfig.sectionsSeparatedHeaders()) {
             return false;
         }
         return isShadow(nextItem.viewType) == isShadow(item.viewType);
@@ -813,7 +813,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
                     TextInfoPrivacyCell cell2 = (TextInfoPrivacyCell) holder.itemView;
                     if (TextUtils.isEmpty(item.text)) {
                         cell2.setFixedSize(viewType == VIEW_TYPE_LARGE_SHADOW ? 220
-                                : app.exteraless.appearance.M3ListItems.shadowHeight(nextItem != null && isHeader(nextItem.viewType), 12));
+                                : app.luminegram.appearance.M3ListItems.shadowHeight(nextItem != null && isHeader(nextItem.viewType), 12));
                         cell2.setText("");
                     } else {
                         cell2.setFixedSize(0);

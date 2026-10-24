@@ -14,7 +14,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import app.exteraless.appearance.AppearanceConfig;
+import app.luminegram.appearance.AppearanceConfig;
 
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.MessagesController;

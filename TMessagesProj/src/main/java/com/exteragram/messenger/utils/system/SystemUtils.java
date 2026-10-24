@@ -4,7 +4,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 
-import app.exteraless.utils.AppUtils;
+import app.luminegram.utils.AppUtils;
 
 public final class SystemUtils {
 

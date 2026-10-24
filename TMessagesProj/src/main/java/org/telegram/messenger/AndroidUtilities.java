@@ -4268,8 +4268,8 @@ public class AndroidUtilities {
             f = FileLoader.getInstance(UserConfig.selectedAccount).getPathToMessage(message.messageOwner);
         }
         if (f != null && f.exists()) {
-            // exteraless plugins: плагин может перехватить открытие файла по расширению.
-            if (app.exteraless.plugins.files.FilesControllerJava.dispatchOpenFile(f, fileName, document.mime_type, message, activity, parentFragment, UserConfig.selectedAccount)) {
+            // luminegram plugins: плагин может перехватить открытие файла по расширению.
+            if (app.luminegram.plugins.files.FilesControllerJava.dispatchOpenFile(f, fileName, document.mime_type, message, activity, parentFragment, UserConfig.selectedAccount)) {
                 return;
             }
             if (parentFragment != null && f.getName().toLowerCase().endsWith("attheme")) {
@@ -4347,8 +4347,8 @@ public class AndroidUtilities {
 
     public static boolean openForView(File f, String fileName, String mimeType, final Activity activity, Theme.ResourcesProvider resourcesProvider, boolean restrict) {
         if (f != null && f.exists()) {
-            // exteraless plugins: плагин может перехватить открытие файла по расширению.
-            if (app.exteraless.plugins.files.FilesControllerJava.dispatchOpenFile(f, fileName, mimeType, null, activity, null, UserConfig.selectedAccount)) {
+            // luminegram plugins: плагин может перехватить открытие файла по расширению.
+            if (app.luminegram.plugins.files.FilesControllerJava.dispatchOpenFile(f, fileName, mimeType, null, activity, null, UserConfig.selectedAccount)) {
                 return true;
             }
             String realMimeType = null;

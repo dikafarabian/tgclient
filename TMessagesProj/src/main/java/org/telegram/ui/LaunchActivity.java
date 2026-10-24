@@ -274,8 +274,8 @@ import tw.nekomimi.nekogram.helpers.SettingsHelper;
 import tw.nekomimi.nekogram.helpers.remote.EmojiHelper;
 import tw.nekomimi.nekogram.helpers.remote.PagePreviewRulesHelper;
 import tw.nekomimi.nekogram.helpers.remote.UpdateHelper;
-import app.exteraless.chats.UserLookup;
-import app.exteraless.settings.OpenExteraSettingsActivity;
+import app.luminegram.chats.UserLookup;
+import app.luminegram.settings.OpenExteraSettingsActivity;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.AndroidUtil;
 import tw.nekomimi.nekogram.utils.ProxyUtil;
@@ -481,7 +481,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         flagSecureReason.attach();
 
         super.onCreate(savedInstanceState);
-        app.exteraless.general.GeneralHelper.applyContentCapture(this);
+        app.luminegram.general.GeneralHelper.applyContentCapture(this);
         if (Build.VERSION.SDK_INT >= 24) {
             AndroidUtilities.isInMultiwindow = isInMultiWindowMode();
         }
@@ -1324,9 +1324,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         if (drawerLayoutContainer == null) {
             return;
         }
-        if (app.exteraless.appearance.AppearanceConfig.navigationDrawer()) {
+        if (app.luminegram.appearance.AppearanceConfig.navigationDrawer()) {
             if (drawerLayoutContainer.getDrawerContainer() == null) {
-                drawerLayoutContainer.setDrawerContainer(new app.exteraless.drawer.DrawerContainer(this));
+                drawerLayoutContainer.setDrawerContainer(new app.luminegram.drawer.DrawerContainer(this));
             }
         } else if (drawerLayoutContainer.getDrawerContainer() != null) {
             drawerLayoutContainer.setDrawerContainer(null);
@@ -1600,21 +1600,21 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         return handleIntent(intent, isNew, restore, fromPassword, null, true, false);
     }
 
-    // exteraless plugins: обёртка маршрутизации интентов с before/after-хендлерами плагинов.
+    // luminegram plugins: обёртка маршрутизации интентов с before/after-хендлерами плагинов.
     // before, вернувший true, глотает интент (оригинальная обработка не выполняется);
     // after зовётся всегда (finally) после оригинальной обработки.
     private boolean handleIntent(Intent intent, boolean isNew, boolean restore, boolean fromPassword, Browser.Progress progress, boolean rebuildFragments, boolean openedTelegram) {
-        if (intent != null && app.exteraless.plugins.PluginsController.getInstance().isEngineEnabled()
-                && app.exteraless.plugins.intents.IntentsDispatcher.hasHandlers()) {
-            java.util.Map<String, Object> pluginContext = app.exteraless.plugins.intents.IntentsDispatcher.buildIntentContext(
+        if (intent != null && app.luminegram.plugins.PluginsController.getInstance().isEngineEnabled()
+                && app.luminegram.plugins.intents.IntentsDispatcher.hasHandlers()) {
+            java.util.Map<String, Object> pluginContext = app.luminegram.plugins.intents.IntentsDispatcher.buildIntentContext(
                     intent, intent.getIntExtra("currentAccount", UserConfig.selectedAccount), true);
-            if (app.exteraless.plugins.intents.IntentsDispatcher.dispatchBefore(pluginContext)) {
+            if (app.luminegram.plugins.intents.IntentsDispatcher.dispatchBefore(pluginContext)) {
                 return true;
             }
             try {
                 return handleIntentInternal(intent, isNew, restore, fromPassword, progress, rebuildFragments, openedTelegram);
             } finally {
-                app.exteraless.plugins.intents.IntentsDispatcher.dispatchAfter(pluginContext);
+                app.luminegram.plugins.intents.IntentsDispatcher.dispatchAfter(pluginContext);
             }
         }
         return handleIntentInternal(intent, isNew, restore, fromPassword, progress, rebuildFragments, openedTelegram);
@@ -1801,7 +1801,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                             } else if ((text.startsWith("http://") || text.startsWith("https://")) && !TextUtils.isEmpty(subject)) {
                                 text = subject + "\n" + text;
                             }
-                            sendingText = app.exteraless.links.LinkCleaner.cleanString(text);
+                            sendingText = app.luminegram.links.LinkCleaner.cleanString(text);
                         } else if (!TextUtils.isEmpty(subject)) {
                             sendingText = subject;
                         }
@@ -2022,9 +2022,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
                     Uri data = intent.getData();
 
-                    // exteraless plugins: файл плагина, открытый снаружи (тап в чате,
+                    // luminegram plugins: файл плагина, открытый снаружи (тап в чате,
                     // файловый менеджер). Проверка по расширению, до разбора ссылок.
-                    if (app.exteraless.plugins.PluginInstallHelper.handleViewIntent(this, data)) {
+                    if (app.luminegram.plugins.PluginInstallHelper.handleViewIntent(this, data)) {
                         return true;
                     }
 
@@ -2118,8 +2118,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                         String path = data.getPath();
                                         if (path != null && path.length() > 1) {
                                             path = path.substring(1);
-                                            if (app.exteraless.plugins.PluginsController.isSettingsLink(path, data)) {
-                                                app.exteraless.plugins.PluginsController.openSettingsLink(data);
+                                            if (app.luminegram.plugins.PluginsController.isSettingsLink(path, data)) {
+                                                app.luminegram.plugins.PluginsController.openSettingsLink(data);
                                             } else if (path.startsWith("$")) {
                                                 inputInvoiceSlug = path.substring(1);
                                             } else if (path.startsWith("invoice/")) {
@@ -3279,7 +3279,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             } else if (showPlayer) {
                 if (!actionBarLayout.getFragmentStack().isEmpty()) {
                     BaseFragment fragment = actionBarLayout.getFragmentStack().get(0);
-                    fragment.showDialog(app.exteraless.player.Md3Player.create(this, null));
+                    fragment.showDialog(app.luminegram.player.Md3Player.create(this, null));
                 }
                 pushOpened = false;
             } else if (showLocations) {
@@ -6190,7 +6190,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             if (progress != null) {
                 progress.end();
             }
-            app.exteraless.updater.GitHubUpdater.check(force || progress != null);
+            app.luminegram.updater.GitHubUpdater.check(force || progress != null);
             return;
         }
        /*if (!ApplicationLoader.isStandaloneBuild() && !ApplicationLoader.isBetaBuild()) {
@@ -6966,7 +6966,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         MediaController.getInstance().pauseInBackgroundIfNeeded();
         super.onPause();
         isResumed = false;
-        app.exteraless.plugins.PluginsController.getInstance().executeOnAppEvent(app.exteraless.plugins.PluginsConstants.EVENT_APP_PAUSE);
+        app.luminegram.plugins.PluginsController.getInstance().executeOnAppEvent(app.luminegram.plugins.PluginsConstants.EVENT_APP_PAUSE);
         pipActivityHandler.onPause();
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.stopAllHeavyOperations, 4096);
         ApplicationLoader.mainInterfacePaused = true;
@@ -7092,8 +7092,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
     @Override
     protected void onDestroy() {
-        app.exteraless.icons.picker.IconPickerController.onDestroy();
-        app.exteraless.plugins.PluginsController.getInstance().executeOnAppEvent(app.exteraless.plugins.PluginsConstants.EVENT_APP_STOP);
+        app.luminegram.icons.picker.IconPickerController.onDestroy();
+        app.luminegram.plugins.PluginsController.getInstance().executeOnAppEvent(app.luminegram.plugins.PluginsConstants.EVENT_APP_STOP);
         GramWalletStorageAuth.onActivityDestroyed(this);
         isActive = false;
         activeInstanceCount--;
@@ -7215,9 +7215,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     protected void onResume() {
         super.onResume();
         isResumed = true;
-        app.exteraless.plugins.PluginsController.getInstance().executeOnAppEvent(app.exteraless.plugins.PluginsConstants.EVENT_APP_RESUME);
-        app.exteraless.plugins.PluginDenialNotice.flush();
-        app.exteraless.crash.CrashReportDialog.showIfPending(this);
+        app.luminegram.plugins.PluginsController.getInstance().executeOnAppEvent(app.luminegram.plugins.PluginsConstants.EVENT_APP_RESUME);
+        app.luminegram.plugins.PluginDenialNotice.flush();
+        app.luminegram.crash.CrashReportDialog.showIfPending(this);
         pipActivityHandler.onResume();
         if (onResumeStaticCallback != null) {
             onResumeStaticCallback.run();
@@ -7272,7 +7272,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
         }
 
-        if (app.exteraless.OpenExteraConfig.hasProxyDisableConditions()) {
+        if (app.luminegram.OpenExteraConfig.hasProxyDisableConditions()) {
             ProxyUtil.registerNetworkCallback();
         }
 
@@ -8589,7 +8589,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     public boolean onBackPressed(boolean invoked) {
-        if (app.exteraless.icons.picker.IconPickerController.onBackPressed(invoked)) {
+        if (app.luminegram.icons.picker.IconPickerController.onBackPressed(invoked)) {
             return false;
         }
         if (FloatingDebugController.onBackPressed(invoked)) {
@@ -8729,7 +8729,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         showVoiceChatTooltip(mute ? UndoView.ACTION_VOIP_SOUND_MUTED : UndoView.ACTION_VOIP_SOUND_UNMUTED);
                     }
                 }
-            } else if (app.exteraless.chats.ChatsConfig.INSTANCE.unmuteWithVolumeButtons()
+            } else if (app.luminegram.chats.ChatsConfig.INSTANCE.unmuteWithVolumeButtons()
                     && !mainFragmentsStack.isEmpty() && (!PhotoViewer.hasInstance() || !PhotoViewer.getInstance().isVisible()) && event.getRepeatCount() == 0) {
                 BaseFragment fragment = mainFragmentsStack.get(mainFragmentsStack.size() - 1);
                 if (fragment instanceof ChatActivity && !BaseFragment.hasSheets(fragment)) {
@@ -9366,8 +9366,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     private static void dismissPlayerSheets() {
-        if (app.exteraless.player.PlayerSheet.instance != null) {
-            app.exteraless.player.PlayerSheet.instance.dismissImmediately();
+        if (app.luminegram.player.PlayerSheet.instance != null) {
+            app.luminegram.player.PlayerSheet.instance.dismissImmediately();
         }
         if (AudioPlayerAlert.instance != null) {
             AudioPlayerAlert.instance.dismiss();
