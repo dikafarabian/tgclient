@@ -54,7 +54,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
         }
         val next = ChatActivityContainer(context, host.parentLayout, args)
         container = next
-        addView(next, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT))
+        addView(next, LayoutHelper.createFrameMatchParent())
     }
 
     private fun release() {
