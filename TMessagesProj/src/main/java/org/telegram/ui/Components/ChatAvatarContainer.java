@@ -970,6 +970,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         return actionBar.titlePillRight - actionBar.getPillTextInsetRight() - containerLeft();
     }
 
+    private boolean isStylePreview() {
+        return parentFragment != null && parentFragment.stylePreview;
+    }
+
     private boolean isRealChatHeader() {
         return parentFragment != null
                 && !parentFragment.isReplyChatComment()
@@ -1432,7 +1436,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             parentFragment.getMessagesController().getSavedMessagesController().getAllCount() >= 3 &&
             (showingSavedMessagesHint || (MessagesController.getGlobalMainSettings().getInt("savedmsgschatshint", 0) < 3))
         );
-        if ((UserObject.isUserSelf(user) && !showSavedMessagesHint || UserObject.isReplyUser(user) || user != null && user.id == UserObject.VERIFY || parentFragment.getChatMode() != 0 && parentFragment.getChatMode() != ChatActivity.MODE_SUGGESTIONS) && parentFragment.getChatMode() != ChatActivity.MODE_SAVED) {
+        if ((UserObject.isUserSelf(user) && !showSavedMessagesHint && !isStylePreview() || UserObject.isReplyUser(user) || user != null && user.id == UserObject.VERIFY || parentFragment.getChatMode() != 0 && parentFragment.getChatMode() != ChatActivity.MODE_SUGGESTIONS) && parentFragment.getChatMode() != ChatActivity.MODE_SAVED) {
             if (getSubtitleTextView().getVisibility() != GONE) {
                 getSubtitleTextView().setVisibility(GONE);
             }
@@ -1555,7 +1559,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                     newStatus = "";
                 } else if (user.id == UserObject.VERIFY) {
                     newStatus = "";//LocaleController.getString(R.string.VerifyCodesNotifications);
-                } else if (user.id == UserConfig.getInstance(currentAccount).getClientUserId()) {
+                } else if (user.id == UserConfig.getInstance(currentAccount).getClientUserId() && !isStylePreview()) {
                     if (showSavedMessagesHint) {
                         newStatus = replaceArrows(getString(R.string.SavedMessagesViewAsChatsHint), false);
                     } else {
@@ -1731,7 +1735,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             if (avatarImageView != null) {
                 avatarImageView.setImage(null, null, avatarDrawable, user);
             }
-        } else if (UserObject.isUserSelf(user) && !showSelf) {
+        } else if (UserObject.isUserSelf(user) && !showSelf && !isStylePreview()) {
             avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
             avatarDrawable.setScaleSize(.8f);
             if (avatarImageView != null) {
@@ -1778,14 +1782,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                     avatarImageView.setAnimatedEmojiDrawable(null);
                     avatarImageView.setImage(null, null, avatarDrawable, user);
                 }
-            } else if (UserObject.isUserSelf(user) && parentFragment.getChatMode() == ChatActivity.MODE_SAVED) {
+            } else if (UserObject.isUserSelf(user) && !isStylePreview() && parentFragment.getChatMode() == ChatActivity.MODE_SAVED) {
                 avatarDrawable.setScaleSize(.8f);
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_MY_NOTES);
                 if (avatarImageView != null) {
                     avatarImageView.setAnimatedEmojiDrawable(null);
                     avatarImageView.setImage(null, null, avatarDrawable, user);
                 }
-            } else if (UserObject.isUserSelf(user)) {
+            } else if (UserObject.isUserSelf(user) && !isStylePreview()) {
                 avatarDrawable.setScaleSize(.8f);
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                 if (avatarImageView != null) {

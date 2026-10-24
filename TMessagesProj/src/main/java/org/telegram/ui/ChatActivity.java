@@ -4219,7 +4219,7 @@ public class ChatActivity extends BaseFragment implements
                 backDrawable.setShowStick(false);
             }
             actionBar.setBackButtonDrawable(backDrawable);
-            app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount);
+            app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount, stylePreview);
         }
 
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
@@ -4785,6 +4785,9 @@ public class ChatActivity extends BaseFragment implements
         updateTopicTitleIcon();
         if (inPreviewMode || inBubbleMode || isInsideContainer) {
             avatarContainer.setOccupyStatusBar(false);
+        }
+        if (stylePreview) {
+            actionBar.setOccupyStatusBar(false);
         }
         if (isReport()) {
             actionBar.setTitle(reportTitle);
@@ -21088,8 +21091,10 @@ public class ChatActivity extends BaseFragment implements
         } else if (currentChat != null) {
             avatarContainer.setTitle(AndroidUtilities.removeRTL(AndroidUtilities.removeDiacritics(currentChat.title)), currentChat.scam, currentChat.fake, currentChat.verified, false, currentChat.emoji_status, animated);
         } else if (currentUser != null) {
-            if (currentUser.self) {
+            if (currentUser.self && !stylePreview) {
                 avatarContainer.setTitle(LocaleController.getString(R.string.SavedMessages));
+            } else if (currentUser.self) {
+                avatarContainer.setTitle(AndroidUtilities.removeRTL(AndroidUtilities.removeDiacritics(UserObject.getUserName(currentUser))), currentUser.scam, currentUser.fake, currentUser.verified, getMessagesController().isPremiumUser(currentUser), currentUser.emoji_status, animated);
             } else if (!MessagesController.isSupportUser(currentUser) && getContactsController().contactsDict.get(currentUser.id) == null && (getContactsController().contactsDict.size() != 0 || !getContactsController().isLoadingContacts())) {
                 if (!TextUtils.isEmpty(currentUser.phone)) {
                     avatarContainer.setTitle(PhoneFormat.getInstance().format("+" + currentUser.phone), currentUser.scam, currentUser.fake, currentUser.verified, getMessagesController().isPremiumUser(currentUser), currentUser.emoji_status, animated);
@@ -26070,7 +26075,7 @@ public class ChatActivity extends BaseFragment implements
                     avatarContainer.updateSubtitle();
                 }
             } else if (id == NotificationCenter.dialogsUnreadCounterChanged) {
-                app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, account);
+                app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, account, stylePreview);
             }
         } else if (id == NotificationCenter.dialogTranslate) {
             final long dialogId = (long) args[0];
@@ -41550,7 +41555,7 @@ public class ChatActivity extends BaseFragment implements
                         startMessageUnselect();
                     }
                 }
-                app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount);
+                app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount, stylePreview);
             } else if (holder.itemView instanceof ChatActionCell) {
                 final ChatActionCell actionCell = (ChatActionCell) holder.itemView;
                 actionCell.isAllChats = isAllChats();
@@ -47874,6 +47879,12 @@ public class ChatActivity extends BaseFragment implements
         if (contentView == null || parentThemeDelegate != null) {
             return;
         }
+        if (stylePreview) {
+            if (contentView.getBackgroundImage() == null) {
+                contentView.setBackgroundImage(new app.lumine.ios.IosCheckerDrawable(), false);
+            }
+            return;
+        }
         if (themeDelegate.backgroundDrawable != null && contentView.getBackgroundImage() != null) {
             return;
         }
@@ -51505,7 +51516,7 @@ public class ChatActivity extends BaseFragment implements
             avatarContainer.setScaleY(scale);
             avatarContainer.setAlpha(factor);
             avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
-            app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount);
+            app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount, stylePreview);
         }
     }
 
