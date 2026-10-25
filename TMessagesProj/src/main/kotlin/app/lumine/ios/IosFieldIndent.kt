@@ -6,8 +6,10 @@ package app.lumine.ios
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.text.Editable
 import android.text.Layout
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.LeadingMarginSpan
 import android.text.style.UpdateLayout
 import android.widget.EditText
@@ -15,6 +17,7 @@ import android.widget.TextView
 import java.util.WeakHashMap
 
 object IosFieldIndent {
+    private const val MAX_SYNC_PASSES = 3
     private val indents = WeakHashMap<TextView, Int>()
 
     private class LastLineSpan(
@@ -37,10 +40,24 @@ object IosFieldIndent {
     }
 
     @JvmStatic
+    fun attach(view: EditText) {
+        view.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) {
+                for (pass in 0 until MAX_SYNC_PASSES) {
+                    if (!sync(view)) break
+                }
+            }
+        })
+    }
+
+    @JvmStatic
     fun setIndent(view: TextView, indentPx: Int) {
         val current = indents[view] ?: 0
         if (current == indentPx) return
         if (indentPx > 0) indents[view] = indentPx else indents.remove(view)
+        (view as? EditText)?.let { sync(it) }
         view.requestLayout()
     }
 

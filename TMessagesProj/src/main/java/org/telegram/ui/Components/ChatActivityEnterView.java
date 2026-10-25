@@ -7089,6 +7089,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (isKeyboardSupportIncognitoMode() && encryptedChat != null) {
             flags |= EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING;
         }
+        app.lumine.ios.IosFieldIndent.attach(messageEditText);
         messageEditText.setIncludeFontPadding(false);
         messageEditText.setImeOptions(flags);
         messageEditText.setInputType(commonInputType = (messageEditText.getInputType() | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE));
