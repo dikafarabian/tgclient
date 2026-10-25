@@ -2808,7 +2808,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 if (isIosInputAppearance()) {
                     if (child == doneButton) {
                         app.lumine.ios.IosInputHelper.drawBubble(canvas, doneBubbleDrawable, child);
-                    } else if (!isIosButtonPlacement() && child == aiButton) {
+                    } else if (child == aiButton) {
                         app.lumine.ios.IosInputHelper.drawBubble(canvas, aiBubbleDrawable, child);
                     } else if (child == richButton) {
                         app.lumine.ios.IosInputHelper.drawBubble(canvas, richBubbleDrawable, child);
@@ -2861,7 +2861,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                     }
                 }
                 if (child != null && child == messageEditText) {
-                    return drawMessageEditText(canvas, () -> super.drawChild(canvas, child, drawingTime));
+                    final boolean cutAvatar = isIosInputAppearance() && app.lumine.ios.IosInputHelper.cutOutAvatar(canvas, senderSelectView);
+                    final boolean drawn = drawMessageEditText(canvas, () -> super.drawChild(canvas, child, drawingTime));
+                    if (cutAvatar) {
+                        canvas.restore();
+                    }
+                    return drawn;
                 }
                 if (shouldDrawRecordedAudioPanelInParent && child == recordedAudioPanel) {
                     return true;
@@ -3036,7 +3041,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         aiButton.setScaleType(ImageView.ScaleType.CENTER);
         aiButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
         aiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16)));
-        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, isIosInputAppearance() && !isIosButtonPlacement() ? 1 - Math.min(iosGapDp, 2) : 1, aiButtonRightMarginDp, 0));
+        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, isIosButtonPlacement() ? IOS_LEFT_EDGE_MARGIN_DP : 0, isIosInputAppearance() ? 1 - Math.min(iosGapDp, 2) : 1, aiButtonRightMarginDp, 0));
         aiButton.setContentDescription(getString(R.string.AIEditor));
         ScaleStateListAnimator.apply(aiButton);
         aiButton.setOnClickListener(v -> {
@@ -5255,8 +5260,8 @@ public class ChatActivityEnterView extends FrameLayout implements
         fieldRightDp = isIosButtonPlacement() ? (DEFAULT_HEIGHT + iosGapDp * 2) : (isChat ? 50 : 2);
         emojiLeftDp = isIosButtonPlacement() ? 0 : 2;
         emojiRightDp = isIosButtonPlacement() ? iosGapDp : 0;
-        aiButtonGravity = isIosButtonPlacement() ? (Gravity.TOP | Gravity.RIGHT) : (Gravity.TOP | Gravity.LEFT);
-        aiButtonRightMarginDp = isIosButtonPlacement() ? (DEFAULT_HEIGHT + iosGapDp) : 0;
+        aiButtonGravity = Gravity.TOP | Gravity.LEFT;
+        aiButtonRightMarginDp = 0;
     }
 
     private void updateFieldLeftIos() {

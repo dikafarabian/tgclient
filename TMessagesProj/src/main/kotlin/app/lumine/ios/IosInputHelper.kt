@@ -5,6 +5,8 @@
 package app.lumine.ios
 
 import android.graphics.Canvas
+import android.graphics.Path
+import android.os.Build
 import android.view.View
 import android.widget.FrameLayout
 import org.telegram.messenger.AndroidUtilities
@@ -16,6 +18,7 @@ object IosInputHelper {
     private const val BUBBLE_INSET_DP = 1
     private const val TOP_VIEW_GAP_DP = 8
 
+    private val cutPath = Path()
     private val slowModePill = WeakHashMap<ChatActivityEnterView, Int>()
 
     @JvmStatic
@@ -29,6 +32,20 @@ object IosInputHelper {
 
     @JvmStatic
     fun getTopViewGapDp(): Int = if (isAppearance()) TOP_VIEW_GAP_DP else 0
+
+    @JvmStatic
+    fun cutOutAvatar(canvas: Canvas, avatar: View?): Boolean {
+        if (avatar == null || avatar.visibility != View.VISIBLE || avatar.alpha <= 0f) return false
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return false
+        val cx = avatar.left + avatar.translationX + avatar.width / 2f
+        val cy = avatar.top + avatar.translationY + avatar.height / 2f
+        val r = avatar.width * avatar.scaleX / 2f + AndroidUtilities.dp(4f)
+        cutPath.rewind()
+        cutPath.addCircle(cx, cy, r, Path.Direction.CW)
+        canvas.save()
+        canvas.clipOutPath(cutPath)
+        return true
+    }
 
     @JvmStatic
     fun drawBubble(canvas: Canvas, bubble: BlurredBackgroundDrawable?, view: View?) {
