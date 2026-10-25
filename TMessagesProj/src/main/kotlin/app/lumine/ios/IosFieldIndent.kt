@@ -46,16 +46,12 @@ object IosFieldIndent {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
-                IosFieldRows.refresh(view)
                 for (pass in 0 until MAX_SYNC_PASSES) {
                     if (!sync(view)) break
                 }
             }
         })
     }
-
-    @JvmStatic
-    fun indentOf(view: TextView): Int = indents[view] ?: 0
 
     @JvmStatic
     fun setIndent(view: TextView, indentPx: Int) {
@@ -69,7 +65,7 @@ object IosFieldIndent {
 
     @JvmStatic
     fun trailingCursorShift(view: TextView): Float {
-        val indentPx = if (IosFieldRows.hasIconRow(view)) 0 else indents[view] ?: 0
+        val indentPx = indents[view] ?: 0
         if (indentPx <= 0) return 0f
         val text = view.text ?: return 0f
         val atEmptyLastLine = (text.isEmpty() || text[text.length - 1] == '\n')
@@ -81,7 +77,7 @@ object IosFieldIndent {
     fun sync(view: EditText): Boolean {
         val text = view.text ?: return false
         val layout = view.layout ?: return false
-        val indentPx = if (IosFieldRows.hasIconRow(view)) 0 else indents[view] ?: 0
+        val indentPx = indents[view] ?: 0
         val current = text.getSpans(0, text.length, LastLineSpan::class.java)
         val paragraphStart = text.lastIndexOf('\n') + 1
         if (indentPx <= 0 || paragraphStart >= text.length) {
