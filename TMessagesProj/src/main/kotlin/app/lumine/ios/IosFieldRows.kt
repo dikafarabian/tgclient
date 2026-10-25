@@ -22,6 +22,7 @@ object IosFieldRows {
 
     private val states = WeakHashMap<TextView, Int>()
     private val widened = WeakHashMap<TextView, Int>()
+    private val active = WeakHashMap<TextView, Boolean>()
 
     private fun stateOf(view: TextView): Int = states[view] ?: SINGLE
 
@@ -33,7 +34,10 @@ object IosFieldRows {
 
     @JvmStatic
     fun measureSpec(view: EditText, spec: Int, enabled: Boolean): Int {
-        if (!enabled) {
+        if (enabled) {
+            active[view] = true
+        } else {
+            active.remove(view)
             states.remove(view)
             widened.remove(view)
         }
@@ -45,6 +49,12 @@ object IosFieldRows {
         val extra = maxOf(0, lp.rightMargin - AndroidUtilities.dp(RIGHT_MARGIN_DP))
         widened[view] = extra
         return View.MeasureSpec.makeMeasureSpec(View.MeasureSpec.getSize(spec) + extra, View.MeasureSpec.EXACTLY)
+    }
+
+    @JvmStatic
+    fun refresh(view: EditText) {
+        if (active[view] != true) return
+        if (updateMode(view, true)) view.requestLayout()
     }
 
     @JvmStatic
