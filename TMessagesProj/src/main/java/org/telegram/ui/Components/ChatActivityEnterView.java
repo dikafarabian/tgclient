@@ -7027,9 +7027,15 @@ public class ChatActivityEnterView extends FrameLayout implements
 
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-                for (int pass = 0; pass < 3 && app.lumine.ios.IosFieldIndent.sync(this); pass++) {
-                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                final boolean rows = isIosButtonPlacement() && isIosInputAppearance();
+                super.onMeasure(app.lumine.ios.IosFieldRows.measureSpec(this, widthMeasureSpec, rows), heightMeasureSpec);
+                for (int pass = 0; pass < 4; pass++) {
+                    final boolean modeChanged = app.lumine.ios.IosFieldRows.updateMode(this, rows);
+                    final boolean spansChanged = app.lumine.ios.IosFieldIndent.sync(this);
+                    if (!modeChanged && !spansChanged) {
+                        break;
+                    }
+                    super.onMeasure(app.lumine.ios.IosFieldRows.measureSpec(this, widthMeasureSpec, rows), heightMeasureSpec);
                 }
                 if (lineCount != messageEditText.getLineCount()) {
                     showAiButton(messageEditText.getLineCount() > 2 && messageEditText.getText() != null && !TextUtils.isEmpty(messageEditText.getText().toString().trim()));
