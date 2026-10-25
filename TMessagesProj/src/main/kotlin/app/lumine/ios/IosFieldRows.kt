@@ -13,7 +13,7 @@ import java.util.WeakHashMap
 
 object IosFieldRows {
     private const val BASE_BOTTOM_DP = 10f
-    private const val ROW_EXTRA_DP = 30f
+    private const val ROW_EXTRA_DP = 36f
     private const val RIGHT_MARGIN_DP = 20f
     private const val CURSOR_SLACK_DP = 2f
 

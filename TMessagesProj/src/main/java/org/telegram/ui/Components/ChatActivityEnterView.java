@@ -2861,7 +2861,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     }
                 }
                 if (child != null && child == messageEditText) {
-                    final boolean cutAvatar = isIosInputAppearance() && app.lumine.ios.IosInputHelper.cutOutAvatar(canvas, senderSelectView);
+                    final boolean cutAvatar = isIosInputAppearance() && !app.lumine.ios.IosFieldRows.isMulti(messageEditText) && app.lumine.ios.IosInputHelper.cutOutAvatar(canvas, senderSelectView);
                     final boolean drawn = drawMessageEditText(canvas, () -> super.drawChild(canvas, child, drawingTime));
                     if (cutAvatar) {
                         canvas.restore();
