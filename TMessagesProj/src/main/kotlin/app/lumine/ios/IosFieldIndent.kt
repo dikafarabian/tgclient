@@ -14,6 +14,7 @@ import android.text.style.LeadingMarginSpan
 import android.text.style.UpdateLayout
 import android.widget.EditText
 import android.widget.TextView
+import org.telegram.ui.Components.EditTextBoldCursor
 import java.util.WeakHashMap
 
 object IosFieldIndent {
@@ -57,14 +58,19 @@ object IosFieldIndent {
         val current = indents[view] ?: 0
         if (current == indentPx) return
         if (indentPx > 0) indents[view] = indentPx else indents.remove(view)
+        (view as? EditTextBoldCursor)?.hintLayoutOffset = indentPx
         (view as? EditText)?.let { sync(it) }
         view.requestLayout()
     }
 
     @JvmStatic
-    fun emptyFieldPadding(view: TextView): Int {
-        val text = view.text
-        return if (text != null && text.isEmpty()) indents[view] ?: 0 else 0
+    fun trailingCursorShift(view: TextView): Float {
+        val indentPx = indents[view] ?: 0
+        if (indentPx <= 0) return 0f
+        val text = view.text ?: return 0f
+        val atEmptyLastLine = (text.isEmpty() || text[text.length - 1] == '\n')
+            && view.selectionStart == text.length && view.selectionEnd == text.length
+        return if (atEmptyLastLine) indentPx.toFloat() else 0f
     }
 
     @JvmStatic
@@ -73,11 +79,11 @@ object IosFieldIndent {
         val layout = view.layout ?: return false
         val indentPx = indents[view] ?: 0
         val current = text.getSpans(0, text.length, LastLineSpan::class.java)
-        if (indentPx <= 0 || text.isEmpty()) {
+        val paragraphStart = text.lastIndexOf('\n') + 1
+        if (indentPx <= 0 || paragraphStart >= text.length) {
             current.forEach { text.removeSpan(it) }
             return current.isNotEmpty()
         }
-        val paragraphStart = text.lastIndexOf('\n') + 1
         val upperLines = layout.lineCount - 1 - layout.getLineForOffset(paragraphStart)
         val existing = current.singleOrNull()
         if (existing != null

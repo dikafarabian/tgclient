@@ -876,7 +876,7 @@ public class EditTextBoldCursor extends EditTextEffects {
         InlineMathController inlineMath = getInlineMath();
         int mathLeft = inlineMath == null ? 0 : getTotalPaddingLeft();
         int mathTop = inlineMath == null ? 0 : getTotalPaddingTop();
-        float cursorShiftX = inlineMath == null ? 0 : inlineMath.getCursorShiftX();
+        float cursorShiftX = (inlineMath == null ? 0 : inlineMath.getCursorShiftX()) + app.lumine.ios.IosFieldIndent.trailingCursorShift(this);
         float cursorShiftY = inlineMath == null ? 0 : inlineMath.getCursorShiftY();
         scrollY = Integer.MAX_VALUE;
         try {

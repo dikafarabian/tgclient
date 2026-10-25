@@ -7021,11 +7021,6 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
 
             @Override
-            public int getCompoundPaddingLeft() {
-                return super.getCompoundPaddingLeft() + app.lumine.ios.IosFieldIndent.emptyFieldPadding(this);
-            }
-
-            @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
                 for (int pass = 0; pass < 3 && app.lumine.ios.IosFieldIndent.sync(this); pass++) {
