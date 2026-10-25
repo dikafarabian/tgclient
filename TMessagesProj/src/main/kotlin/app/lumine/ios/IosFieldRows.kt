@@ -16,24 +16,29 @@ object IosFieldRows {
     private const val RIGHT_MARGIN_DP = 20f
     private const val CURSOR_SLACK_DP = 2f
 
-    private val multi = WeakHashMap<TextView, Boolean>()
+    private const val SINGLE = 0
+    private const val SHORT = 1
+    private const val LONG = 2
+
+    private val states = WeakHashMap<TextView, Int>()
     private val widened = WeakHashMap<TextView, Int>()
 
-    @JvmStatic
-    fun isMulti(view: TextView): Boolean = multi[view] == true
+    private fun stateOf(view: TextView): Int = states[view] ?: SINGLE
 
     @JvmStatic
-    fun extraBottom(view: TextView): Int = if (isMulti(view)) AndroidUtilities.dp(ROW_EXTRA_DP) else 0
+    fun hasIconRow(view: TextView): Boolean = stateOf(view) == LONG
+
+    @JvmStatic
+    fun extraBottom(view: TextView): Int = if (hasIconRow(view)) AndroidUtilities.dp(ROW_EXTRA_DP) else 0
 
     @JvmStatic
     fun measureSpec(view: EditText, spec: Int, enabled: Boolean): Int {
         if (!enabled) {
-            multi.remove(view)
+            states.remove(view)
             widened.remove(view)
         }
-        val on = isMulti(view)
         val lp = view.layoutParams as? ViewGroup.MarginLayoutParams
-        if (!on || lp == null) {
+        if (stateOf(view) == SINGLE || lp == null) {
             widened.remove(view)
             return spec
         }
@@ -47,15 +52,27 @@ object IosFieldRows {
         if (!enabled) return false
         val layout = view.layout ?: return false
         val text = view.text ?: return false
-        if (!isMulti(view)) {
-            if (layout.lineCount < 2) return false
-            multi[view] = true
+        val state = stateOf(view)
+        val lines = layout.lineCount
+        if (state == SINGLE) {
+            if (lines < 2) return false
+            states[view] = SHORT
             return true
         }
-        if (layout.lineCount != 1 || text.indexOf('\n') >= 0) return false
-        val avail = view.measuredWidth - (widened[view] ?: 0) - IosFieldIndent.indentOf(view) - AndroidUtilities.dp(CURSOR_SLACK_DP)
-        if (layout.getLineWidth(0) > avail) return false
-        multi.remove(view)
-        return true
+        val baseWidth = view.measuredWidth - (widened[view] ?: 0) - AndroidUtilities.dp(CURSOR_SLACK_DP)
+        if (lines == 1 && text.indexOf('\n') < 0 && layout.getLineWidth(0) <= baseWidth - IosFieldIndent.indentOf(view)) {
+            states.remove(view)
+            return true
+        }
+        if (state == SHORT) {
+            if (layout.getLineMax(lines - 1) <= baseWidth) return false
+            states[view] = LONG
+            return true
+        }
+        if (text.isEmpty() || text[text.length - 1] == '\n') {
+            states[view] = SHORT
+            return true
+        }
+        return false
     }
 }
