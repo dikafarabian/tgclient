@@ -7026,6 +7026,11 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
 
             @Override
+            public int getCompoundPaddingBottom() {
+                return super.getCompoundPaddingBottom() + app.lumine.ios.IosFieldRows.extraBottom(this);
+            }
+
+            @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                 final boolean rows = isIosButtonPlacement() && isIosInputAppearance();
                 super.onMeasure(app.lumine.ios.IosFieldRows.measureSpec(this, widthMeasureSpec, rows), heightMeasureSpec);

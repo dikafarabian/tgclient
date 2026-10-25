@@ -12,7 +12,6 @@ import org.telegram.messenger.AndroidUtilities
 import java.util.WeakHashMap
 
 object IosFieldRows {
-    private const val BASE_BOTTOM_DP = 10f
     private const val ROW_EXTRA_DP = 36f
     private const val RIGHT_MARGIN_DP = 20f
     private const val CURSOR_SLACK_DP = 2f
@@ -24,16 +23,15 @@ object IosFieldRows {
     fun isMulti(view: TextView): Boolean = multi[view] == true
 
     @JvmStatic
+    fun extraBottom(view: TextView): Int = if (isMulti(view)) AndroidUtilities.dp(ROW_EXTRA_DP) else 0
+
+    @JvmStatic
     fun measureSpec(view: EditText, spec: Int, enabled: Boolean): Int {
         if (!enabled) {
             multi.remove(view)
             widened.remove(view)
         }
         val on = isMulti(view)
-        val bottom = AndroidUtilities.dp(BASE_BOTTOM_DP) + if (on) AndroidUtilities.dp(ROW_EXTRA_DP) else 0
-        if (view.paddingBottom != bottom) {
-            view.setPadding(view.paddingLeft, view.paddingTop, view.paddingRight, bottom)
-        }
         val lp = view.layoutParams as? ViewGroup.MarginLayoutParams
         if (!on || lp == null) {
             widened.remove(view)
