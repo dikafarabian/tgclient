@@ -2866,6 +2866,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     if (cutAvatar) {
                         canvas.restore();
                     }
+                    app.lumine.ios.IosFieldRows.drawDebug(canvas, messageEditText);
                     return drawn;
                 }
                 if (shouldDrawRecordedAudioPanelInParent && child == recordedAudioPanel) {

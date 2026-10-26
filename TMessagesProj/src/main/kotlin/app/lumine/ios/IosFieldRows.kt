@@ -4,6 +4,9 @@
 
 package app.lumine.ios
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -15,6 +18,10 @@ object IosFieldRows {
     private const val ROW_EXTRA_DP = 36f
     private const val RIGHT_MARGIN_DP = 20f
     private const val CURSOR_SLACK_DP = 2f
+
+    private const val DEBUG_OVERLAY = true
+    private val debugText = Paint().apply { color = Color.WHITE }
+    private val debugBg = Paint().apply { color = 0xCCB00020.toInt() }
 
     private val multi = WeakHashMap<TextView, Boolean>()
     private val widened = WeakHashMap<TextView, Int>()
@@ -57,5 +64,20 @@ object IosFieldRows {
         if (layout.getLineWidth(0) > avail) return false
         multi.remove(view)
         return true
+    }
+
+    @JvmStatic
+    fun drawDebug(canvas: Canvas, view: EditText) {
+        if (!DEBUG_OVERLAY) return
+        val layout = view.layout
+        val a = "m=${isMulti(view)} ln=${layout?.lineCount} h=${view.height} lh=${layout?.height}"
+        val b = "pt=${view.extendedPaddingTop} pb=${view.extendedPaddingBottom} sy=${view.scrollY} len=${view.text?.length} sel=${view.selectionStart}"
+        debugText.textSize = AndroidUtilities.dp(9f).toFloat()
+        val x = view.left + AndroidUtilities.dp(8f).toFloat()
+        val y = view.top + AndroidUtilities.dp(12f).toFloat()
+        val w = maxOf(debugText.measureText(a), debugText.measureText(b)) + AndroidUtilities.dp(6f)
+        canvas.drawRect(x - AndroidUtilities.dp(3f), y - AndroidUtilities.dp(10f), x + w, y + AndroidUtilities.dp(14f), debugBg)
+        canvas.drawText(a, x, y, debugText)
+        canvas.drawText(b, x, y + AndroidUtilities.dp(11f), debugText)
     }
 }
