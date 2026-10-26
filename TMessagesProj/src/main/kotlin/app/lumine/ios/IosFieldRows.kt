@@ -73,8 +73,8 @@ object IosFieldRows {
         val a = "m=${isMulti(view)} ln=${layout?.lineCount} h=${view.height} lh=${layout?.height}"
         val b = "pt=${view.extendedPaddingTop} pb=${view.extendedPaddingBottom} sy=${view.scrollY} len=${view.text?.length} sel=${view.selectionStart}"
         debugText.textSize = AndroidUtilities.dp(9f).toFloat()
-        val x = view.left + AndroidUtilities.dp(8f).toFloat()
-        val y = view.top + AndroidUtilities.dp(12f).toFloat()
+        val x = view.left + AndroidUtilities.dp(70f).toFloat()
+        val y = view.bottom - AndroidUtilities.dp(22f).toFloat()
         val w = maxOf(debugText.measureText(a), debugText.measureText(b)) + AndroidUtilities.dp(6f)
         canvas.drawRect(x - AndroidUtilities.dp(3f), y - AndroidUtilities.dp(10f), x + w, y + AndroidUtilities.dp(14f), debugBg)
         canvas.drawText(a, x, y, debugText)
