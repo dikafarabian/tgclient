@@ -5061,7 +5061,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (clip) {
             final float separatorY = getMeasuredHeight() - animatorInputFieldHeight.getFactor();
             canvas.save();
-            if (child == textFieldContainer) {
+            if (child == textFieldContainer && !isIosInputAppearance()) {
                 canvas.clipRect(0, separatorY, getMeasuredWidth(), getMeasuredHeight());
             }
             if (child == topView) {
