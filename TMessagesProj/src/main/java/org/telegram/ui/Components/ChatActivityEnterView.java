@@ -2866,7 +2866,6 @@ public class ChatActivityEnterView extends FrameLayout implements
                     if (cutAvatar) {
                         canvas.restore();
                     }
-                    app.lumine.ios.IosFieldRows.drawDebug(canvas, messageEditText);
                     return drawn;
                 }
                 if (shouldDrawRecordedAudioPanelInParent && child == recordedAudioPanel) {
@@ -5061,7 +5060,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (clip) {
             final float separatorY = getMeasuredHeight() - animatorInputFieldHeight.getFactor();
             canvas.save();
-            if (child == textFieldContainer && !isIosInputAppearance()) {
+            if (child == textFieldContainer) {
                 canvas.clipRect(0, separatorY, getMeasuredWidth(), getMeasuredHeight());
             }
             if (child == topView) {
