@@ -2861,7 +2861,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     }
                 }
                 if (child != null && child == messageEditText) {
-                    final boolean cutAvatar = isIosInputAppearance() && !app.lumine.ios.IosFieldRows.isMulti(messageEditText) && app.lumine.ios.IosInputHelper.cutOutAvatar(canvas, senderSelectView);
+                    final boolean cutAvatar = isIosInputAppearance() && app.lumine.ios.IosInputHelper.cutOutAvatar(canvas, senderSelectView);
                     final boolean drawn = drawMessageEditText(canvas, () -> super.drawChild(canvas, child, drawingTime));
                     if (cutAvatar) {
                         canvas.restore();
@@ -7026,21 +7026,10 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
 
             @Override
-            public int getCompoundPaddingBottom() {
-                return super.getCompoundPaddingBottom() + app.lumine.ios.IosFieldRows.extraBottom(this);
-            }
-
-            @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                final boolean rows = isIosButtonPlacement() && isIosInputAppearance();
-                super.onMeasure(app.lumine.ios.IosFieldRows.measureSpec(this, widthMeasureSpec, rows), heightMeasureSpec);
-                for (int pass = 0; pass < 4; pass++) {
-                    final boolean modeChanged = app.lumine.ios.IosFieldRows.updateMode(this, rows);
-                    final boolean spansChanged = app.lumine.ios.IosFieldIndent.sync(this);
-                    if (!modeChanged && !spansChanged) {
-                        break;
-                    }
-                    super.onMeasure(app.lumine.ios.IosFieldRows.measureSpec(this, widthMeasureSpec, rows), heightMeasureSpec);
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                for (int pass = 0; pass < 3 && app.lumine.ios.IosFieldIndent.sync(this); pass++) {
+                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
                 }
                 if (lineCount != messageEditText.getLineCount()) {
                     showAiButton(messageEditText.getLineCount() > 2 && messageEditText.getText() != null && !TextUtils.isEmpty(messageEditText.getText().toString().trim()));
