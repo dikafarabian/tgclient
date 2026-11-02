@@ -10,7 +10,7 @@ cd "$(git rev-parse --show-toplevel)"
 export OLD_PKG=fork.risin42.nagramx
 export NEW_PKG=com.lumine.gram
 
-git grep -lIz -F "$OLD_PKG" -- . ':!scripts/rebrand.sh' ':!LICENSE' \
+{ git grep -lIz -F "$OLD_PKG" -- . ':!scripts/rebrand.sh' ':!LICENSE' || true; } \
   | xargs -0 -r perl -pi -e 's/\Q$ENV{OLD_PKG}\E/$ENV{NEW_PKG}/g'
 
 git ls-files -z 'TMessagesProj/src/*/res/values*/*.xml' \
