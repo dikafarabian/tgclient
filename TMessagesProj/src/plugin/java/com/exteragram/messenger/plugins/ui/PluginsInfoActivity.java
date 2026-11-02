@@ -113,7 +113,6 @@ public class PluginsInfoActivity extends BasePreferencesActivity implements Noti
         }
         items.add(UItem.asHeader(LocaleController.getString(R.string.Links)));
         items.add(UItem.asButton(ITEM_DOCUMENTATION, R.drawable.menu_intro, LocaleController.getString(R.string.PluginsDocumentation)));
-        items.add(UItem.asButton(ITEM_TRUSTED, R.drawable.msg2_policy, LocaleController.getString(R.string.PluginsTrusted)).accent());
         items.add(UItem.asShadow(LocaleUtils.formatWithHtmlURLs(new SpannableString(LocaleUtils.fromHtml(LocaleController.getString(R.string.PluginsPoweredBy))))));
     }
 
@@ -217,9 +216,6 @@ public class PluginsInfoActivity extends BasePreferencesActivity implements Noti
                 break;
             case ITEM_DOCUMENTATION:
                 Browser.openUrl(getParentActivity(), "https://plugins.exteragram.app/");
-                break;
-            case ITEM_TRUSTED:
-                Browser.openUrl(getParentActivity(), "https://t.me/NagramXF_T_Plugins");
                 break;
             case ITEM_INSTALL_SMOKE_TEST:
                 installSmokeTestPlugin();
