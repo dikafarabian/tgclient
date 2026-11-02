@@ -64,13 +64,13 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
             sendLogsRow = -1;
             clearLogsRow = -1;
         }
-        donateInfoRow = addRow();
+        donateInfoRow = -1;
 
         linksHeaderRow = addRow();
-        forkChannelRow = addRow();
-        xChannelRow = addRow();
-        channelTipsRow = addRow();
-        sourceCodeRow = addRow();
+        forkChannelRow = -1;
+        xChannelRow = -1;
+        channelTipsRow = -1;
+        sourceCodeRow = -1;
         datacenterStatusRow = addRow();
         linksShadowRow = addRow();
     }
@@ -98,29 +98,10 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
         return "luminegram v" + versionName;
     }
 
-    private void showDonateDialog() {
-        android.app.Activity parent = getParentActivity();
-        if (parent == null) return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(parent, resourceProvider);
-        builder.setTitle(getString(R.string.Donate));
-        builder.setItems(new CharSequence[]{
-                getString(R.string.DonateAfdian),
-                getString(R.string.DonateKoFi)
-        }, (dialog, which) -> {
-            if (which == 0) {
-                Browser.openUrl(parent, "https://ifdian.net/a/nagramxf");
-            } else if (which == 1) {
-                Browser.openUrl(parent, "https://ko-fi.com/nagramxf");
-            }
-        });
-        builder.setNegativeButton(getString(R.string.Cancel), null);
-        showDialog(builder.create());
-    }
-
     @Override
     protected void onItemClick(View view, int position, float x, float y) {
         if (position == versionRow) {
-            Browser.openUrl(getParentActivity(), "https://github.com/Keeperorowner/NagramXF#readme");
+            Browser.openUrl(getParentActivity(), "https://github.com/dikafarabian/tgclient");
         } else if (position == updatesRow) {
             showUpdatesDialog();
         } else if (position == toggleLogsRow) {
@@ -144,38 +125,20 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
             ProfileActivity.sendLogs(getParentActivity(), false);
         } else if (position == clearLogsRow) {
             FileLog.cleanupLogs();
-        } else if (position == forkChannelRow) {
-            MessagesController.getInstance(currentAccount).openByUserName("NagramXF", NekoAboutActivity.this, 1);
-        } else if (position == xChannelRow) {
-            MessagesController.getInstance(currentAccount).openByUserName("NagramX", NekoAboutActivity.this, 1);
-        } else if (position == channelTipsRow) {
-            Browser.openUrl(getParentActivity(), "https://t.me/Nagram_XF_Chat");
-        } else if (position == sourceCodeRow) {
-            Browser.openUrl(getParentActivity(), "https://github.com/Keeperorowner/NagramXF");
         } else if (position == datacenterStatusRow) {
             presentFragment(new DatacenterActivity(0));
         }
     }
 
     private void shiftRowsAfterLogsEnabled() {
-        donateInfoRow += 2;
         linksHeaderRow += 2;
-        forkChannelRow += 2;
-        xChannelRow += 2;
-        channelTipsRow += 2;
-        sourceCodeRow += 2;
         datacenterStatusRow += 2;
         linksShadowRow += 2;
         rowCount += 2;
     }
 
     private void shiftRowsAfterLogsDisabled() {
-        donateInfoRow -= 2;
         linksHeaderRow -= 2;
-        forkChannelRow -= 2;
-        xChannelRow -= 2;
-        channelTipsRow -= 2;
-        sourceCodeRow -= 2;
         datacenterStatusRow -= 2;
         linksShadowRow -= 2;
         rowCount -= 2;
@@ -276,24 +239,12 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
                         textCell.setTextAndIcon(getString(R.string.DebugSendLogs), R.drawable.ic_upward, true);
                     } else if (position == clearLogsRow) {
                         textCell.setTextAndIcon(getString(R.string.DebugClearLogs), R.drawable.msg_clear, false);
-                    } else if (position == forkChannelRow) {
-                        textCell.setTextAndValueAndIcon(getString(R.string.NagramXForkChannel), "@NagramXF", R.drawable.msg_channel, true);
-                    } else if (position == xChannelRow) {
-                        textCell.setTextAndValueAndIcon(getString(R.string.XChannel), "@NagramX", R.drawable.msg_channel, true);
-                    } else if (position == channelTipsRow) {
-                        textCell.setTextAndValueAndIcon(getString(R.string.OfficialGroupChat), "@NagramXF_Chat", R.drawable.msg_viewchats, true);
-                    } else if (position == sourceCodeRow) {
-                        textCell.setTextAndValueAndIcon(getString(R.string.SourceCode), "GitHub", R.drawable.github_logo_white, true);
                     } else if (position == datacenterStatusRow) {
                         textCell.setTextAndIcon(getString(R.string.DatacenterStatus), R.drawable.msg_info, false);
                     }
                     break;
                 case TYPE_INFO_PRIVACY:
                     TextInfoPrivacyCell infoCell = (TextInfoPrivacyCell) holder.itemView;
-                    if (position == donateInfoRow) {
-                        infoCell.setBackground(new ColorDrawable(0x00000000));
-                        infoCell.setText(AndroidUtilities.replaceSingleTag(getString(R.string.DonateInfo), Theme.key_windowBackgroundWhiteLinkText, 0, () -> showDonateDialog(), resourceProvider));
-                    }
                     break;
             }
         }
