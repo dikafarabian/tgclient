@@ -19,14 +19,7 @@
     <string name="ShowMessageID">Показувати ID повідомлення</string>
     <string name="ShowRPCError">Показувати помилки RPC</string>
     <string name="ShowPremiumStickersAnimation">Показувати анімацію Premium-наліпок</string>
-    <string name="AppIconGoogle" translatable="false">Google</string>
-    <string name="AppIconColorful">Барвистий</string>
-    <string name="AppIconDarkGreen">Темно-зелений</string>
-    <string name="AppIconNeon">Неон</string>
-    <string name="AppIconNiello">Ніелло</string>
-    <string name="AppIconBlue">Синій</string>
     <string name="AppIconDarkBlue">Темно-синій</string>
-    <string name="AppIconBlurBlue">Розмитий синій</string>
     <string name="InputMessageId">Введіть ID повідомлення</string>
     <string name="ToTheMessage">Перейти до повідомлення</string>
     <string name="ZalgoFilter">Фільтр тексту Zalgo</string>
