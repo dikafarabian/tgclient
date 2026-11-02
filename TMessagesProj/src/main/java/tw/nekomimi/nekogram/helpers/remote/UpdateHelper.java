@@ -214,8 +214,7 @@ public class UpdateHelper extends BaseRemoteHelper {
     }
 
     public void checkNewVersionAvailable(Delegate delegate, boolean updateAlways) {
-        this.updateAlways = updateAlways;
-        load(delegate);
+        delegate.onTLResponse(null, null);
     }
 
     private static final class InstanceHolder {
