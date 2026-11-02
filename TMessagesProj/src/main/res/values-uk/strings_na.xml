@@ -9,7 +9,7 @@
     <string name="SendReactions">Надіслати реакції</string>
     <string name="ShowReactions">Показувати реакції</string>
     <string name="CustomTitle">Власний заголовок</string>
-    <string name="CustomTitleHint">Залиште порожнім, щоб використовувати Nagram X</string>
+    <string name="CustomTitleHint">Залиште порожнім, щоб використовувати luminegram</string>
     <string name="CreateMono">Створити моноширинний текст</string>
     <string name="CreateMonoLanguage">Мова коду</string>
     <string name="CopyPhoto">Копіювати фото</string>
@@ -39,7 +39,7 @@
     <string name="CustomEditedMessage">Підпис змінених повідомлень</string>
     <string name="NotificationIcon">Іконка сповіщень</string>
     <string name="Official">Офіційний</string>
-    <string name="Nagram" translatable="false">Nagram</string>
+    <string name="Nagram" translatable="false">luminegram</string>
     <string name="HalloWeen">Геловін</string>
     <string name="ShowOnlineStatus">Показувати онлайн-статус</string>
     <string name="ShowOnlineStatusNotice">Показує статус присутності в мережі поруч із фотографією профілю в групах.</string>

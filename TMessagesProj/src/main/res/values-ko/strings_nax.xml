@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="XChannel">Nagram X 채널</string>
-    <string name="NagramXForkChannel">Nagram XF 채널</string>
+    <string name="XChannel">luminegram 채널</string>
+    <string name="NagramXForkChannel">luminegram 채널</string>
     <string name="JoinOfficialChannelTitle">공식 채널 참여</string>
-    <string name="JoinOfficialChannelMessage">Nagram X에 오신 것을 환영합니다! 최신 업데이트와 소식을 받아보려면 공식 채널 @NagramXF에 참여하시겠습니까?</string>
+    <string name="JoinOfficialChannelMessage">luminegram에 오신 것을 환영합니다! 최신 업데이트와 소식을 받아보려면 공식 채널 @NagramXF에 참여하시겠습니까?</string>
     <string name="EnableSaveDeletedMessages">삭제된 메시지 저장</string>
     <string name="OnceVideoMessageNote">이 동영상 메시지는 조회 후 유지됩니다.</string>
     <string name="OncePhotoMessageNote">이 사진 메시지는 조회 후 유지됩니다.</string>
@@ -265,7 +265,7 @@
     <string name="CopySticker">스티커 복사</string>
     <string name="NaxAboutInfo">정보</string>
     <string name="NaxLinks">링크</string>
-    <string name="NaxAboutDesc">Nagram X에 추가 기능을 더한 포크입니다. exteraGram과 AyuGram의 기능 대부분을 포함합니다.</string>
+    <string name="NaxAboutDesc">luminegram에 추가 기능을 더한 포크입니다. exteraGram과 AyuGram의 기능 대부분을 포함합니다.</string>
     <string name="CheckUpdate">업데이트 확인</string>
     <string name="AutoCheckUpdateOFF">꺼짐</string>
     <string name="AutoCheckUpdateSwitch">업데이트 채널</string>
@@ -369,7 +369,7 @@
     <string name="BackAnimationSpring">스프링</string>
     <string name="BackAnimationPredictive">예측형</string>
     <string name="AddToFilter">필터에 추가</string>
-    <string name="UnifiedPushNeverReceivedNotifications">Nagram X가 시작된 이후 UnifiedPush로 알림을 받은 적이 없습니다.</string>
+    <string name="UnifiedPushNeverReceivedNotifications">luminegram가 시작된 이후 UnifiedPush로 알림을 받은 적이 없습니다.</string>
     <string name="UnifiedPushLastReceivedNotification">마지막으로 UnifiedPush 알림을 받은 것은 %1$d초 전입니다.\n\nNagram X가 시작된 이후 %2$d개의 알림을 받았습니다.</string>
     <string name="UnifiedPushCurrentEndpoint">현재 UnifiedPush 엔드포인트: %1$s</string>
     <string name="PlayOnce">한 번 재생</string>

@@ -68,7 +68,7 @@
     <string name="CallTo">**%1$s**에게 전화할까요?</string>
     <string name="DisableNumberRounding">숫자 반올림 끄기</string>
     <string name="Categories">카테고리</string>
-    <string name="OfficialChannel">Nagram 채널</string>
+    <string name="OfficialChannel">luminegram 채널</string>
     <string name="About">정보</string>
     <string name="IgnoreBlockedAbout">그룹에서 차단한 사용자의 메시지가 더 이상 표시되지 않습니다.</string>
     <string name="SourceCode">소스 코드</string>
@@ -264,6 +264,6 @@
     <string name="Chat">채팅</string>
     <string name="Appearance">디자인</string>
     <string name="Donate">후원</string>
-    <string name="DonateDesc">Nagram XF가 마음에 드신다면 개발 후원을 고려해 주세요.</string>
+    <string name="DonateDesc">luminegram가 마음에 드신다면 개발 후원을 고려해 주세요.</string>
     <string name="DonateInfo">이 클라이언트가 마음에 드시나요? **개발 후원하기**</string>
 </resources>

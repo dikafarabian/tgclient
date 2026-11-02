@@ -72,8 +72,8 @@
     <string name="CallTo">Зателефонувати **%1$s**?</string>
     <string name="DisableNumberRounding">Не округлювати числа</string>
     <string name="Categories">Категорії</string>
-    <string name="OfficialChannel">Канал Nagram</string>
-    <string name="About">Про Nagram XF</string>
+    <string name="OfficialChannel">Канал luminegram</string>
+    <string name="About">Про luminegram</string>
     <string name="IgnoreBlockedAbout">Ви більше не бачитимете повідомлень від заблокованих користувачів.</string>
     <string name="SourceCode">Вихідний код</string>
     <string name="ResetStickerSize">Скинути розмір наліпок</string>
@@ -273,7 +273,7 @@
     <string name="Chat">Чати</string>
     <string name="Appearance">Зовнішній вигляд</string>
     <string name="Donate">Підтримати</string>
-    <string name="DonateDesc">Якщо вам подобається Nagram XF, будь ласка, підтримайте розробку.</string>
+    <string name="DonateDesc">Якщо вам подобається luminegram, будь ласка, підтримайте розробку.</string>
     <string name="DonateAfdian">Afdian</string>
     <string name="DonateKoFi">Ko-fi</string>
     <string name="DonateInfo">Подобається цей клієнт? **Підтримати розробку**</string>

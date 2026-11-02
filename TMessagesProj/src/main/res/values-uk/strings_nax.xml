@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="NagramX" translatable="false">Nagram X</string>
-    <string name="XChannel">Канал Nagram X</string>
-    <string name="NagramXForkChannel">Канал Nagram XF</string>
+    <string name="NagramX" translatable="false">luminegram</string>
+    <string name="XChannel">Канал luminegram</string>
+    <string name="NagramXForkChannel">Канал luminegram</string>
     <string name="JoinOfficialChannelTitle">Приєднатися до офіційного каналу</string>
-    <string name="JoinOfficialChannelMessage">Ласкаво просимо до Nagram X! Бажаєте приєднатися до офіційного каналу @NagramXF, щоб отримувати останні новини та оновлення?</string>
+    <string name="JoinOfficialChannelMessage">Ласкаво просимо до luminegram! Бажаєте приєднатися до офіційного каналу @NagramXF, щоб отримувати останні новини та оновлення?</string>
     <string name="EnableSaveDeletedMessages">Зберігати видалені повідомлення</string>
     <string name="OnceVideoMessageNote">Це відеоповідомлення буде збережено після перегляду.</string>
     <string name="OncePhotoMessageNote">Це фото буде збережено після перегляду.</string>
@@ -284,7 +284,7 @@
     <string name="CopySticker">Копіювати наліпку</string>
     <string name="NaxAboutInfo">Інформація</string>
     <string name="NaxLinks">Посилання</string>
-    <string name="NaxAboutDesc">Форк Nagram X з додатковими можливостями. Включає більшість функцій з exteraGram та AyuGram.</string>
+    <string name="NaxAboutDesc">Форк luminegram з додатковими можливостями. Включає більшість функцій з exteraGram та AyuGram.</string>
     <string name="CheckUpdate">Перевірити оновлення</string>
     <string name="AutoCheckUpdateOFF">Вимкнено</string>
     <string name="AutoCheckUpdateSwitch">Канал оновлення</string>
@@ -389,7 +389,7 @@
     <string name="BackAnimationSpring">Пружна</string>
     <string name="BackAnimationPredictive">Предиктивна</string>
     <string name="AddToFilter">Додати до фільтра</string>
-    <string name="UnifiedPushNeverReceivedNotifications">З моменту запуску Nagram X сповіщень через UnifiedPush не надходило.</string>
+    <string name="UnifiedPushNeverReceivedNotifications">З моменту запуску luminegram сповіщень через UnifiedPush не надходило.</string>
     <string name="UnifiedPushLastReceivedNotification">Останнє сповіщення через UnifiedPush надійшло %1$d с тому.\n\nОтримано сповіщень з моменту запуску: %2$d.</string>
     <string name="UnifiedPushCurrentEndpoint">Поточна кінцева точка UnifiedPush: %1$s</string>
     <string name="PlayOnce">Відтворити один раз</string>

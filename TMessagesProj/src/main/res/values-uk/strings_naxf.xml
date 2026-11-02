@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="AppIconTelegram">Telegram</string>
-    <string name="AppIconNagram">Nagram</string>
+    <string name="AppIconNagram">luminegram</string>
     <!-- Pillstack (ported from exteragram/ayuGram) -->
     <string name="PillStackPills">Панель віджетів-капсул</string>
     <string name="PillStackPillsInfo">Інтерактивні плашки в полі пошуку</string>

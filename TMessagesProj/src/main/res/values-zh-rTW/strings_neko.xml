@@ -72,7 +72,7 @@
     <string name="CallTo">撥打給 **%1$s**？</string>
     <string name="DisableNumberRounding">停用數字四捨五入</string>
     <string name="Categories">分類</string>
-    <string name="OfficialChannel">Nagram 頻道</string>
+    <string name="OfficialChannel">luminegram 頻道</string>
     <string name="About">關於</string>
     <string name="IgnoreBlockedAbout">您將不會再看到被封鎖的使用者在群組中的訊息。</string>
     <string name="SourceCode">原始碼</string>
@@ -270,6 +270,6 @@
     <string name="Chat">聊天</string>
     <string name="Appearance">外觀</string>
     <string name="Donate">贊助</string>
-    <string name="DonateDesc">如果你喜歡 Nagram XF，請考慮支持開發。</string>
+    <string name="DonateDesc">如果你喜歡 luminegram，請考慮支持開發。</string>
     <string name="DonateAfdian">愛發電</string>
     <string name="DonateInfo">喜歡這個客戶端？**支持開發**</string></resources>

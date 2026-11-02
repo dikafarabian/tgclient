@@ -72,7 +72,7 @@
     <string name="CallTo">Call to **%1$s**?</string>
     <string name="DisableNumberRounding">Disable Number Rounding</string>
     <string name="Categories">Categories</string>
-    <string name="OfficialChannel">Nagram Channel</string>
+    <string name="OfficialChannel">luminegram Channel</string>
     <string name="About">About</string>
     <string name="IgnoreBlockedAbout">You\'ll no longer see messages from blocked users in groups.</string>
     <string name="SourceCode">Source Code</string>
@@ -273,7 +273,7 @@
     <string name="Chat">Chats</string>
     <string name="Appearance">Appearance</string>
     <string name="Donate">Donate</string>
-    <string name="DonateDesc">If you like Nagram XF, please consider supporting development.</string>
+    <string name="DonateDesc">If you like luminegram, please consider supporting development.</string>
     <string name="DonateAfdian">Afdian</string>
     <string name="DonateKoFi">Ko-fi</string>
     <string name="DonateInfo">Like this client? **Support development**</string>
