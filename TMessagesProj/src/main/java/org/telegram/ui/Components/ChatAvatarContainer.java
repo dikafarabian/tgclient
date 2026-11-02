@@ -809,7 +809,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int padding = isCentered() ? dp(isPreviewMode() ? 35 : 10) : 0;
         final int width = MeasureSpec.getSize(widthMeasureSpec);
-        final int availableWidth = width - dp(((avatarImageView.getVisibility() == VISIBLE || isCentered()) ? 54 : 0) + 16);
+        final int backPillGrowth = !isCentered() && getParent() instanceof ActionBar ? ((ActionBar) getParent()).getBackPillGrowth() : 0;
+        final int availableWidth = width - dp(((avatarImageView.getVisibility() == VISIBLE || isCentered()) ? 54 : 0) + 16) - backPillGrowth;
         avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY));
         titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth - padding, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
         if (subtitleTextView != null) {

@@ -4189,7 +4189,12 @@ public class ChatActivity extends BaseFragment implements
         if (inPreviewMode) {
             actionBar.setBackButtonDrawable(null);
         } else {
-            actionBar.setBackButtonDrawable(new BackDrawable(isReport()));
+            final BackDrawable backDrawable = new BackDrawable(isReport());
+            if (NekoConfig.unreadBadgeOnBackButton.Bool()) {
+                backDrawable.setShowStick(false);
+            }
+            actionBar.setBackButtonDrawable(backDrawable);
+            app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount);
         }
 
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
@@ -26196,9 +26201,7 @@ public class ChatActivity extends BaseFragment implements
                     avatarContainer.updateSubtitle();
                 }
             } else if (id == NotificationCenter.dialogsUnreadCounterChanged) {
-                if (actionBar != null) { // NekoX
-                    actionBar.unreadBadgeSetCount(getMessagesStorage().getMainUnreadCount());
-                }
+                app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, account);
             }
         } else if (id == NotificationCenter.dialogTranslate) {
             final long dialogId = (long) args[0];
@@ -41257,10 +41260,7 @@ public class ChatActivity extends BaseFragment implements
                         startMessageUnselect();
                     }
                 }
-                // na: unread count
-                if (actionBar != null) {
-                    actionBar.unreadBadgeSetCount(getMessagesStorage().getMainUnreadCount());
-                }
+                app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount);
             } else if (holder.itemView instanceof ChatActionCell) {
                 final ChatActionCell actionCell = (ChatActionCell) holder.itemView;
                 actionCell.isAllChats = isAllChats();
@@ -51906,6 +51906,7 @@ public class ChatActivity extends BaseFragment implements
             avatarContainer.setScaleY(scale);
             avatarContainer.setAlpha(factor);
             avatarContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
+            app.lumine.ios.UnreadBackBadgeHelper.update(actionBar, currentAccount);
         }
     }
 
