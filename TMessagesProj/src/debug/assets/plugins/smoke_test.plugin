@@ -1,7 +1,7 @@
 __id__ = "smoke_test"
 __name__ = "Smoke Test"
 __description__ = "Developer helper plugin which records app events, request/update hooks, send-message hooks, and plugin menu callbacks."
-__author__ = "Nagram XF"
+__author__ = "luminegram"
 __version__ = "1.0.0"
 
 from base_plugin import AppEvent, BasePlugin, MenuItemData, MenuItemType
