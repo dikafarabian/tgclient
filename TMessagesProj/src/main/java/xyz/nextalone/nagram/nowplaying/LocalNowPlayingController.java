@@ -31,7 +31,7 @@ public class LocalNowPlayingController {
 
     public static final String PLATFORM_LAST_FM = "LAST_FM";
     public static final String PLATFORM_STATS_FM = "STATS_FM";
-    private static final String WORKER_URL = "https://nowplaying.nagramxf.com";
+    private static final String WORKER_URL = "";
 
     private static final String CACHE_PREFS = "nowplaying_cache";
     private static final String CACHE_KEY_DTO = "last_dto";
@@ -78,8 +78,12 @@ public class LocalNowPlayingController {
         return getLastFmUsername();
     }
 
+    public static boolean isAvailable() {
+        return !WORKER_URL.isEmpty();
+    }
+
     public static boolean isEnabled() {
-        if (getServiceType() == SERVICE_NONE) {
+        if (!isAvailable() || getServiceType() == SERVICE_NONE) {
             return false;
         }
         return !TextUtils.isEmpty(getUsername());
@@ -97,6 +101,10 @@ public class LocalNowPlayingController {
     }
 
     public static void checkWhitelistStatus(long tgUid, WhitelistStatusCallback callback) {
+        if (!isAvailable()) {
+            AndroidUtilities.runOnUIThread(() -> callback.onStatusChecked(false));
+            return;
+        }
         Utilities.globalQueue.postRunnable(() -> {
             try {
                 Request request = new Request.Builder()
@@ -165,6 +173,10 @@ public class LocalNowPlayingController {
 
     public static void getNowPlayingByUid(long tgUid, Callback callback) {
         if (callback == null) return;
+        if (!isAvailable()) {
+            AndroidUtilities.runOnUIThread(() -> callback.onTrackLoaded(null));
+            return;
+        }
         Utilities.globalQueue.postRunnable(() -> {
             NowPlayingDTO dto = null;
             try {

@@ -401,10 +401,12 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
         }
         items.add(UItem.asShadow(birthdayInfo));
 
-        items.add(UItem.asHeader(getString(R.string.NowPlaying)));
-        nowPlayingRow = items.size();
-        items.add(UItem.asButton(BUTTON_NOW_PLAYING, getString(R.string.NowPlayingService), getNowPlayingSummary()));
-        items.add(UItem.asShadow(null));
+        if (LocalNowPlayingController.isAvailable()) {
+            items.add(UItem.asHeader(getString(R.string.NowPlaying)));
+            nowPlayingRow = items.size();
+            items.add(UItem.asButton(BUTTON_NOW_PLAYING, getString(R.string.NowPlayingService), getNowPlayingSummary()));
+            items.add(UItem.asShadow(null));
+        }
         channelRow = items.size();
         if (channel == null) {
             items.add(SettingsActivity.SettingCell.Factory.of(BUTTON_CHANNEL, IconBackgroundColors.ORANGE.top, IconBackgroundColors.ORANGE.bottom, R.drawable.msg_filled_menu_channels, getString(R.string.EditProfileChannelTitle), null, getString(R.string.EditProfileChannelAdd)));
