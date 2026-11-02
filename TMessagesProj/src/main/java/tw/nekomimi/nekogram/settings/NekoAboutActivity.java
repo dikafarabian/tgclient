@@ -55,7 +55,7 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
 
         infoHeaderRow = addRow();
         versionRow = addRow();
-        updatesRow = addRow();
+        updatesRow = -1;
         toggleLogsRow = addRow();
         if (BuildVars.LOGS_ENABLED) {
             sendLogsRow = addRow();
