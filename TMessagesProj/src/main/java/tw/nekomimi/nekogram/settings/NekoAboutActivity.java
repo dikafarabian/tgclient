@@ -226,7 +226,7 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
                     TextDetailSettingsCell detailCell = (TextDetailSettingsCell) holder.itemView;
                     if (position == versionRow) {
                         detailCell.setMultilineDetail(true);
-                        detailCell.setTextAndValue(getSimpleVersion(), getString(R.string.NaxAboutDesc), false);
+                        detailCell.setTextAndValue(getSimpleVersion(), getString(R.string.LumineAboutDesc), false);
                     }
                     break;
                 case TYPE_TEXT:
