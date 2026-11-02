@@ -11,6 +11,13 @@ on:
           - armeabi-v7a
           - all
         default: arm64-v8a
+      build_type:
+        description: Build type
+        type: choice
+        options:
+          - beta
+          - release
+        default: beta
       destination:
         description: Send to
         type: choice
@@ -102,6 +109,8 @@ jobs:
 
       - name: Compute build info
         id: info
+        env:
+          BUILD_TYPE: ${{ inputs.build_type }}
         run: bun scripts/ci/version.ts
 
       - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
@@ -146,6 +155,7 @@ jobs:
         env:
           COMMIT_ID: ${{ github.sha }}
           NATIVE_TARGET: ${{ matrix.abi }}
+          BUILD_TYPE: ${{ inputs.build_type }}
           APK_NAME: ${{ matrix.abi == 'arm64-v8a' && steps.info.outputs.apk-arm64 || steps.info.outputs.apk-arm7 }}
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
           ALIAS_NAME: lumine
@@ -155,9 +165,10 @@ jobs:
           CCACHE_BASEDIR: ${{ github.workspace }}
         run: |
           export BUILD_TIMESTAMP=$(date +%s)
-          ./gradlew --no-daemon :TMessagesProj:assembleNormalRelease
+          if [ "$BUILD_TYPE" = release ]; then variant=Release; dir=release; else variant=Staging; dir=staging; fi
+          ./gradlew --no-daemon ":TMessagesProj:assembleNormal$variant"
           mkdir -p out
-          apks=(TMessagesProj/build/outputs/apk/normal/release/*.apk)
+          apks=(TMessagesProj/build/outputs/apk/normal/$dir/*.apk)
           [ "${#apks[@]}" -eq 1 ] || { ls -laR TMessagesProj/build/outputs/apk >&2; exit 1; }
           cp "${apks[0]}" "out/$APK_NAME"
 
