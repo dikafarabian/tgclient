@@ -53,6 +53,7 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
     }
 
     private LiquidGlassEffect liquidGlassEffect;
+    private int liquidGlassVersion = -1;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     public void setLiquidGlassEffectAllowed() {
@@ -175,6 +176,12 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
         if (!canvas.isHardwareAccelerated()) {
             drawSource(canvas, source);
             return;
+        }
+
+        final int glassVersion = app.lumine.ios.IosStyleHelper.liquidGlassVersion();
+        if (glassVersion != liquidGlassVersion) {
+            liquidGlassVersion = glassVersion;
+            renderNodeInvalidated = true;
         }
 
         if (!renderNode.hasDisplayList()) {

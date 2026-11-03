@@ -26,10 +26,10 @@ class TelegramBuildAppPlugin : Plugin<Project> {
             ) {
                 stringsXml.from(
                     telegramModule.fileTree("src/main/res/values") {
-                        include("strings.xml", "strings_na.xml", "strings_nax.xml", "strings_naxf.xml", "strings_neko.xml")
+                        include("strings.xml", "strings_na.xml", "strings_nax.xml", "strings_naxf.xml", "strings_neko.xml", "strings_lumine.xml")
                     },
                     project.fileTree("src/main/res/values") {
-                        include("strings.xml", "strings_na.xml", "strings_nax.xml", "strings_naxf.xml", "strings_neko.xml")
+                        include("strings.xml", "strings_na.xml", "strings_nax.xml", "strings_naxf.xml", "strings_neko.xml", "strings_lumine.xml")
                     }
                 )
 

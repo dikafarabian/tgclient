@@ -19,6 +19,12 @@ object IosStyleHelper {
     }
 
     @JvmStatic
+    fun liquidGlassVersion(): Int {
+        IosStyleConfig.ensureLoaded()
+        return IosStyleConfig.liquidGlassIntensity.Int() * 101 + IosStyleConfig.liquidGlassTint.Int()
+    }
+
+    @JvmStatic
     fun liquidGlassTint(color: Int): Int {
         IosStyleConfig.ensureLoaded()
         val alpha = (Color.alpha(color) * IosStyleConfig.liquidGlassTint.Int() / 50f).toInt().coerceIn(0, 255)
