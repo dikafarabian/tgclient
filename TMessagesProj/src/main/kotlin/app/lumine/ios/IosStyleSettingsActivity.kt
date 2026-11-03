@@ -41,7 +41,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
             }
         }
         adapter?.whiteSectionEnd()
-        items.add(UItem.asShadow())
+        items.add(UItem.asShadow(null))
 
         adapter?.whiteSectionStart()
         items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool(), R.string.LumineChatTitleMarqueeInfo))
@@ -50,7 +50,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
             items.add(check(TOGGLE_UNREAD_BADGE_IOS, R.string.LumineUnreadBadgeIos, IosStyleConfig.unreadBadgeOnBackButtonIos.Bool()))
         }
         adapter?.whiteSectionEnd()
-        items.add(UItem.asShadow())
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
