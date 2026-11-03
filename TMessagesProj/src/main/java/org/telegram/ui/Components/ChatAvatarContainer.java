@@ -960,7 +960,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
     }
 
     private boolean isStylePreview() {
-        return false;
+        return parentFragment != null && parentFragment.stylePreview;
     }
 
     private boolean isRealChatHeader() {
@@ -1411,6 +1411,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         TLRPC.User user = parentFragment.getCurrentUser();
         TLRPC.Chat chat = parentFragment.getCurrentChat();
         boolean showSavedMessagesHint = (
+            !isStylePreview() &&
             UserObject.isUserSelf(user) &&
             parentFragment.getChatMode() == ChatActivity.MODE_DEFAULT &&
             parentFragment.getMessagesController().getSavedMessagesController().getAllCount() >= 3 &&
@@ -1553,6 +1554,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                     newStatus = LocaleController.formatPluralStringComma("BotUsers", user.bot_active_users, ',');
                 } else if (user.bot) {
                     newStatus = UserObject.getBotStatus(user);
+                } else if (isStylePreview()) {
+                    newStatus = getString(R.string.Online);
+                    useOnlineColor = true;
                 } else {
                     isOnline[0] = false;
                     newStatus = LocaleController.formatUserStatus(currentAccount, user, isOnline, allowShorterStatus ? statusMadeShorter : null);

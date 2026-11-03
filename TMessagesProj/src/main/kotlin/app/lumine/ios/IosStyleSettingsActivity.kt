@@ -27,14 +27,10 @@ class IosStyleSettingsActivity : UniversalFragment() {
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineIosStyleSection)))
         items.add(check(TOGGLE_CENTER_TITLE, R.string.LumineCenterTitle, IosStyleConfig.chatCenterTitle.Bool(), R.string.LumineCenterTitleInfo))
-        if (IosStyleHelper.centerChatTitle()) {
-            items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
-            if (IosStyleHelper.compactChatPill()) {
-                items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool(), R.string.LumineAvatarSlotInfo))
-            }
-            if (!IosStyleHelper.chatAvatarInMenuSlot()) {
-                items.add(check(TOGGLE_AVATAR_RIGHT, R.string.LumineAvatarRight, IosStyleConfig.centerTitleRightAvatar.Bool()))
-            }
+        items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
+        items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool(), R.string.LumineAvatarSlotInfo))
+        if (!IosStyleHelper.chatAvatarInMenuSlot()) {
+            items.add(check(TOGGLE_AVATAR_RIGHT, R.string.LumineAvatarRight, IosStyleConfig.centerTitleRightAvatar.Bool()))
         }
         items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool(), R.string.LumineChatTitleMarqueeInfo))
         items.add(check(TOGGLE_UNREAD_BADGE, R.string.LumineUnreadBadge, NekoConfig.unreadBadgeOnBackButton.Bool(), R.string.LumineUnreadBadgeInfo))
@@ -46,7 +42,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
         items.add(UItem.asShadow(null))
 
         adapter?.whiteSectionStart()
-        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlass)))
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassIntensity)))
         items.add(UItem.asIntSlideView(
             1, 0, IosStyleConfig.liquidGlassIntensity.Int(), 100,
@@ -56,6 +51,10 @@ class IosStyleSettingsActivity : UniversalFragment() {
                 chatPreview?.rebuild()
             }
         ))
+        adapter?.whiteSectionEnd()
+        items.add(UItem.asShadow(null))
+
+        adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassTint)))
         items.add(UItem.asIntSlideView(
             1, 0, IosStyleConfig.liquidGlassTint.Int(), 100,
