@@ -55,7 +55,7 @@ object IosStyleHelper {
 
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
-        if (fragment == null) return false
+        if (fragment == null) return centerScreenTitles()
         if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") return centerChatTitle()
         return centerScreenTitles()
     }
