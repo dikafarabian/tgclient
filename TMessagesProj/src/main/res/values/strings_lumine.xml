@@ -2,4 +2,21 @@
 <resources>
     <string name="LumineAboutDesc">Personal fork of Telegram for Android.</string>
     <string name="AppIconLumine">luminegram</string>
+    <string name="LumineIosStyle">iOS style</string>
+    <string name="LumineIosStyleInfo">Liquid Glass and iOS-style interface</string>
+    <string name="LumineChatHeader">Chat header</string>
+    <string name="LumineChatTitleMarquee">Text marquee for long titles</string>
+    <string name="LumineCompactPill">Compact pill</string>
+    <string name="LumineCompactPillInfo">iOS-style compact chat header pill floating in the middle.</string>
+    <string name="LumineAvatarSlot">Move avatar to the menu button</string>
+    <string name="LumineAvatarSlotInfo">Put the avatar in the menu slot: tap for the profile, long-press for the chat menu.</string>
+    <string name="LumineAvatarStatic">Do not center the avatar</string>
+    <string name="LumineAvatarStaticInfo">Keep the avatar next to the back button; only the title pill is centered.</string>
+    <string name="LumineAvatarRight">Show avatar on the right</string>
+    <string name="LumineUnreadBadge">Show unread chats counter</string>
+    <string name="LumineUnreadBadgeInfo">Show the number of unread chats on the back button in a chat.</string>
+    <string name="LumineUnreadBadgeIos">iOS-styled counter</string>
+    <string name="LumineChatTitleMarqueeInfo">Auto-scrolls long chat header titles and subtitles when they do not fit horizontally.</string>
+    <string name="LumineCenterTitle">Center titles</string>
+    <string name="LumineCenterTitleInfo">Same switch as Use Centered Title in Appearance. Centers the chat title and subtitle.</string>
 </resources>

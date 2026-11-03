@@ -41,6 +41,7 @@ import tw.nekomimi.nekogram.config.cell.ConfigCellCustom;
 import tw.nekomimi.nekogram.config.cell.ConfigCellDivider;
 import tw.nekomimi.nekogram.config.cell.ConfigCellHeader;
 import tw.nekomimi.nekogram.config.cell.ConfigCellSelectBox;
+import tw.nekomimi.nekogram.config.cell.ConfigCellText;
 import tw.nekomimi.nekogram.config.cell.ConfigCellTextCheck;
 import tw.nekomimi.nekogram.config.cell.ConfigCellTextCheckIcon;
 import tw.nekomimi.nekogram.config.cell.ConfigCellTextInput;
@@ -67,6 +68,8 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
 
     private final CellGroup cellGroup = new CellGroup(this);
 
+    private final AbstractConfigCell iosStyleRow = cellGroup.appendCell(new ConfigCellText("LumineIosStyle", getString(R.string.LumineIosStyleInfo), () -> presentFragment(new app.lumine.ios.IosStyleSettingsActivity())));
+    private final AbstractConfigCell dividerIosStyle = cellGroup.appendCell(new ConfigCellDivider());
     private final AbstractConfigCell headerAppearance = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.Appearance)));
     private final AbstractConfigCell typefaceRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.typeface));
     private final AbstractConfigCell hideDividersRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getHideDividers()));
@@ -199,6 +202,10 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
         cellGroup.rows.add(3, headerAppearance);
         cellGroup.rows.add(4, fabShapePreviewRow);
         cellGroup.rows.add(5, typefaceRow);
+        cellGroup.rows.remove(iosStyleRow);
+        cellGroup.rows.remove(dividerIosStyle);
+        cellGroup.rows.add(0, dividerIosStyle);
+        cellGroup.rows.add(0, iosStyleRow);
         List<AbstractConfigCell> dialogsBlock = Arrays.asList(
                 headerDialogs,
                 chatListPreviewRow,
