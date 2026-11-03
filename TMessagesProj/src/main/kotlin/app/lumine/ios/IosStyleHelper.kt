@@ -4,13 +4,20 @@
 
 package app.lumine.ios
 
+import xyz.nextalone.nagram.NaConfig
+
 object IosStyleHelper {
 
-    @JvmStatic
-    fun centerScreenTitles(): Boolean = IosStyleConfig.centerTitleMain.Bool()
+    private const val TYPE_SETTINGS_ONLY = 2
+    private const val TYPE_CHATS_ONLY = 3
 
     @JvmStatic
-    fun centerChatTitle(): Boolean = IosStyleConfig.centerTitleChats.Bool()
+    fun centerScreenTitles(): Boolean =
+        NaConfig.centerActionBarTitle.Bool() && NaConfig.centerActionBarTitleType.Int() != TYPE_CHATS_ONLY
+
+    @JvmStatic
+    fun centerChatTitle(): Boolean =
+        NaConfig.centerActionBarTitle.Bool() && NaConfig.centerActionBarTitleType.Int() != TYPE_SETTINGS_ONLY
 
     @JvmStatic
     fun compactChatPill(): Boolean = centerChatTitle() && IosStyleConfig.chatHeader.Bool()

@@ -22,12 +22,6 @@ object IosStyleConfig {
     fun getPreferences(): SharedPreferences = NekoConfig.getPreferences()
 
     @JvmField
-    val centerTitleMain = addConfig("LumineIosCenterTitleMain", ConfigItem.configTypeBool, false)
-
-    @JvmField
-    val centerTitleChats = addConfig("LumineIosCenterTitleChats", ConfigItem.configTypeBool, true)
-
-    @JvmField
     val centerTitleRightAvatar = addConfig("LumineIosCenterTitleRightAvatar", ConfigItem.configTypeBool, false)
 
     @JvmField
