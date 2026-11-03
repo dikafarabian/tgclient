@@ -315,7 +315,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             animatedSubtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
             animatedSubtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
             animatedSubtitleTextView.setTextSize(dp(14));
-            animatedSubtitleTextView.setPadding(0, 0, dp(10), 0);
+            animatedSubtitleTextView.setPadding(0, 0, app.lumine.ios.IosStyleHelper.compactChatPill() ? 0 : dp(10), 0);
             animatedSubtitleTextView.setTranslationY(-dp(1));
             addView(animatedSubtitleTextView);
         } else {
@@ -325,7 +325,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
             subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
             subtitleTextView.setTextSize(14);
-            subtitleTextView.setPadding(0, 0, dp(10), 0);
+            subtitleTextView.setPadding(0, 0, app.lumine.ios.IosStyleHelper.compactChatPill() ? 0 : dp(10), 0);
             addView(subtitleTextView);
         }
 
@@ -914,7 +914,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         if (!hasVisibleAvatar() || isIosMenuSlotAvatar()) {
             return 0;
         }
-        return dp(avatarSizeInDp) - 2 - dp(6);
+        return dp(avatarSizeInDp) - 2 + dp(2);
     }
 
     public int getMenuSlotAvatarReserve() {
