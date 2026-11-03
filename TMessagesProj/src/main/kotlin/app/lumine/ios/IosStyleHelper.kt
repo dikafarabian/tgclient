@@ -35,11 +35,11 @@ object IosStyleHelper {
     @JvmStatic
     fun centerChatTitle(): Boolean {
         IosStyleConfig.ensureLoaded()
-        return IosStyleConfig.chatCenterTitle.Bool()
+        return IosStyleConfig.chatHeader.Bool()
     }
 
     @JvmStatic
-    fun compactChatPill(): Boolean = centerChatTitle() && IosStyleConfig.chatHeader.Bool()
+    fun compactChatPill(): Boolean = centerChatTitle()
 
     @JvmStatic
     fun chatAvatarInMenuSlot(): Boolean = compactChatPill() && IosStyleConfig.chatHeaderAvatarSlot.Bool()

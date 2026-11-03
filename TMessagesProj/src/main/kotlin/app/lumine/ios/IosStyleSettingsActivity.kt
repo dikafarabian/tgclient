@@ -26,7 +26,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter?) {
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineIosStyleSection)))
-        items.add(check(TOGGLE_CENTER_TITLE, R.string.LumineCenterTitle, IosStyleConfig.chatCenterTitle.Bool(), R.string.LumineCenterTitleInfo))
         items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
         items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool(), R.string.LumineAvatarSlotInfo))
         if (!IosStyleHelper.chatAvatarInMenuSlot()) {
@@ -70,7 +69,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         val toggled = when (item.id) {
-            TOGGLE_CENTER_TITLE -> IosStyleConfig.chatCenterTitle
             TOGGLE_COMPACT_PILL -> IosStyleConfig.chatHeader
             TOGGLE_AVATAR_SLOT -> IosStyleConfig.chatHeaderAvatarSlot
             TOGGLE_AVATAR_RIGHT -> IosStyleConfig.centerTitleRightAvatar
@@ -128,7 +126,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
     private companion object {
         const val PREVIEW_HEIGHT_DP = 228
         const val TOGGLE_CHAT_TITLE_MARQUEE = 1
-        const val TOGGLE_CENTER_TITLE = 2
         const val TOGGLE_COMPACT_PILL = 3
         const val TOGGLE_AVATAR_SLOT = 4
         const val TOGGLE_AVATAR_RIGHT = 6
