@@ -260,7 +260,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             return dp(PILL_TEXT_PADDING_DP);
         }
         final boolean symmetric = !app.lumine.ios.IosStyleHelper.compactChatPill();
-        return symmetric || !pillAvatarOnRight() ? dp(PILL_TEXT_PADDING_DP) + room : dp(PILL_TEXT_PADDING_DP - 3);
+        return symmetric || !pillAvatarOnRight() ? dp(PILL_TEXT_PADDING_DP) + room : dp(PILL_TEXT_PADDING_DP - 6);
     }
 
     public int getPillTextInsetRight() {
@@ -269,7 +269,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             return dp(PILL_TEXT_PADDING_DP);
         }
         final boolean symmetric = !app.lumine.ios.IosStyleHelper.compactChatPill();
-        return symmetric || pillAvatarOnRight() ? dp(PILL_TEXT_PADDING_DP) + room : dp(PILL_TEXT_PADDING_DP - 3);
+        return symmetric || pillAvatarOnRight() ? dp(PILL_TEXT_PADDING_DP) + room : dp(PILL_TEXT_PADDING_DP - 6);
     }
 
     public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
