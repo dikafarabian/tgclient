@@ -260,7 +260,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             return dp(PILL_TEXT_PADDING_DP);
         }
         final boolean symmetric = !app.lumine.ios.IosStyleHelper.compactChatPill();
-        return dp(PILL_TEXT_PADDING_DP) + (symmetric || !pillAvatarOnRight() ? room : 0);
+        return symmetric || !pillAvatarOnRight() ? dp(PILL_TEXT_PADDING_DP) + room : dp(PILL_TEXT_PADDING_DP - 3);
     }
 
     public int getPillTextInsetRight() {
@@ -269,7 +269,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             return dp(PILL_TEXT_PADDING_DP);
         }
         final boolean symmetric = !app.lumine.ios.IosStyleHelper.compactChatPill();
-        return dp(PILL_TEXT_PADDING_DP) + (symmetric || pillAvatarOnRight() ? room : 0);
+        return symmetric || pillAvatarOnRight() ? dp(PILL_TEXT_PADDING_DP) + room : dp(PILL_TEXT_PADDING_DP - 3);
     }
 
     public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
@@ -2530,7 +2530,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                     ? (int) Math.ceil(centeredTextWidth) + dp(PILL_TEXT_SLACK_DP)
                         + getPillTextInsetLeft() + getPillTextInsetRight()
                     : roomRight - roomLeft;
-            target = Math.max(target, dp(PILL_MIN_WIDTH_DP));
+            final boolean hugPill = app.lumine.ios.IosStyleHelper.compactChatPill() && pillAvatarRoom() > 0;
+            target = Math.max(target, hugPill ? 0 : dp(PILL_MIN_WIDTH_DP));
             target = Math.min(target, roomRight - Math.max(roomLeft, leftLimit));
 
             if (animatorPillWidth.getFactor() <= 0f) {
