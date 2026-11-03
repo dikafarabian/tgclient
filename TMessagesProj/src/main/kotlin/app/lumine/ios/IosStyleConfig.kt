@@ -49,6 +49,9 @@ object IosStyleConfig {
     @JvmField
     val stickerTimeSide = addConfig("LumineStickerTimeSide", ConfigItem.configTypeBool, false)
 
+    @JvmField
+    val chatCenterTitle = addConfig("LumineChatCenterTitle", ConfigItem.configTypeBool, true)
+
     private fun addConfig(key: String, type: Int, defaultValue: Any?): ConfigItem {
         val item = ConfigItem(key, type, defaultValue)
         configs.add(item)

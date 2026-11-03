@@ -16,7 +16,6 @@ import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.UniversalFragment
 import tw.nekomimi.nekogram.NekoConfig
-import xyz.nextalone.nagram.NaConfig
 
 class IosStyleSettingsActivity : UniversalFragment() {
 
@@ -27,7 +26,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter?) {
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatHeader)))
-        items.add(check(TOGGLE_CENTER_TITLE, R.string.LumineCenterTitle, NaConfig.centerActionBarTitle.Bool(), R.string.LumineCenterTitleInfo))
+        items.add(check(TOGGLE_CENTER_TITLE, R.string.LumineCenterTitle, IosStyleConfig.chatCenterTitle.Bool(), R.string.LumineCenterTitleInfo))
         if (IosStyleHelper.centerChatTitle()) {
             items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
             if (IosStyleHelper.compactChatPill()) {
@@ -78,7 +77,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         val toggled = when (item.id) {
-            TOGGLE_CENTER_TITLE -> NaConfig.centerActionBarTitle
+            TOGGLE_CENTER_TITLE -> IosStyleConfig.chatCenterTitle
             TOGGLE_COMPACT_PILL -> IosStyleConfig.chatHeader
             TOGGLE_AVATAR_SLOT -> IosStyleConfig.chatHeaderAvatarSlot
             TOGGLE_AVATAR_STATIC -> IosStyleConfig.chatHeaderAvatarStatic

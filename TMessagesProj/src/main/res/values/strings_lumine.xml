@@ -23,5 +23,5 @@
     <string name="LumineUnreadBadgeIos">iOS-styled counter</string>
     <string name="LumineChatTitleMarqueeInfo">Auto-scrolls long chat header titles and subtitles when they do not fit horizontally.</string>
     <string name="LumineCenterTitle">Center titles</string>
-    <string name="LumineCenterTitleInfo">Same switch as Use Centered Title in Appearance. Centers the chat title and subtitle.</string>
+    <string name="LumineCenterTitleInfo">Centers the chat title and subtitle. Separate from Use Centered Title in Appearance, which covers every other screen.</string>
 </resources>

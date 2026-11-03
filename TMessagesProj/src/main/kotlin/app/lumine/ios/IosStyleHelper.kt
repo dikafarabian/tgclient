@@ -9,9 +9,6 @@ import xyz.nextalone.nagram.NaConfig
 
 object IosStyleHelper {
 
-    private const val TYPE_SETTINGS_ONLY = 2
-    private const val TYPE_CHATS_ONLY = 3
-
     @JvmStatic
     fun liquidGlassIntensity(base: Float): Float {
         IosStyleConfig.ensureLoaded()
@@ -33,11 +30,13 @@ object IosStyleHelper {
 
     @JvmStatic
     fun centerScreenTitles(): Boolean =
-        NaConfig.centerActionBarTitle.Bool() && NaConfig.centerActionBarTitleType.Int() != TYPE_CHATS_ONLY
+        NaConfig.centerActionBarTitle.Bool()
 
     @JvmStatic
-    fun centerChatTitle(): Boolean =
-        NaConfig.centerActionBarTitle.Bool() && NaConfig.centerActionBarTitleType.Int() != TYPE_SETTINGS_ONLY
+    fun centerChatTitle(): Boolean {
+        IosStyleConfig.ensureLoaded()
+        return IosStyleConfig.chatCenterTitle.Bool()
+    }
 
     @JvmStatic
     fun compactChatPill(): Boolean = centerChatTitle() && IosStyleConfig.chatHeader.Bool()
