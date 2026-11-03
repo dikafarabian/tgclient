@@ -803,7 +803,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             if (subtitleTextLargerCopyView2 != null) {
                 removeView(subtitleTextLargerCopyView2);
                 this.subtitleTextLargerCopyView.set(null);
-                if (!allowDrawStories && !isIosMenuSlotAvatar() && !isStaticAvatar()) {
+                if (!allowDrawStories && !isIosMenuSlotAvatar()) {
                     setClipChildren(true);
                 }
             }
@@ -911,21 +911,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
     }
 
     public int getPillAvatarRoom() {
-        if (!hasVisibleAvatar() || isIosMenuSlotAvatar() || isStaticAvatar()) {
+        if (!hasVisibleAvatar() || isIosMenuSlotAvatar()) {
             return 0;
         }
         return dp(avatarSizeInDp) - 2 + dp(9);
-    }
-
-    public int getStaticAvatarReserve() {
-        if (!isStaticAvatar()) {
-            return 0;
-        }
-        final ActionBar actionBar = findActionBar();
-        if (actionBar == null) {
-            return 0;
-        }
-        return actionBar.getStaticAvatarLeft() + dp(avatarSizeInDp) - 2 + dp(6);
     }
 
     public int getMenuSlotAvatarReserve() {
@@ -983,7 +972,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
 
     public void followPillEdge(ActionBar bar) {
         float dx = 0f;
-        if (avatarImageView != null && hasVisibleAvatar() && hasPillBand() && !isIosMenuSlotAvatar() && !isStaticAvatar()) {
+        if (avatarImageView != null && hasVisibleAvatar() && hasPillBand() && !isIosMenuSlotAvatar()) {
             dx = isRightAvatar() ? bar.glassTitleRight - bar.titlePillRight : bar.glassTitleLeft - bar.titlePillLeft;
         }
         if (avatarImageView != null && avatarImageView.getTranslationX() != dx) {
@@ -997,10 +986,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
 
     public boolean isIosMenuSlotAvatar() {
         return isCenteredTitle() && app.lumine.ios.IosStyleHelper.chatAvatarInMenuSlot() && hasVisibleAvatar();
-    }
-
-    public boolean isStaticAvatar() {
-        return isCenteredTitle() && app.lumine.ios.IosStyleHelper.chatAvatarStatic() && hasVisibleAvatar();
     }
 
     public void setAvatarSizeInDp(int sizeDp) {
@@ -1046,11 +1031,6 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                     setClipChildren(false);
                 }
                 avatarLeft = (actionBar.getWidth() - containerLeft()) - dp(29) - avatarW / 2;
-            } else if (isStaticAvatar()) {
-                if (getClipChildren()) {
-                    setClipChildren(false);
-                }
-                avatarLeft = actionBar.getStaticAvatarLeft() + 1 - containerLeft();
             } else if (isRightAvatar()) {
                 avatarLeft = actionBar.titlePillRight - containerLeft() - dp(9) - avatarW;
             } else {

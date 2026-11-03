@@ -31,9 +31,6 @@ object IosStyleConfig {
     val chatHeaderAvatarSlot = addConfig("LumineIosChatHeaderAvatarSlot", ConfigItem.configTypeBool, true)
 
     @JvmField
-    val chatHeaderAvatarStatic = addConfig("LumineIosChatHeaderAvatarStatic", ConfigItem.configTypeBool, false)
-
-    @JvmField
     val chatTitleMarquee = addConfig("LumineIosChatTitleMarquee", ConfigItem.configTypeBool, true)
 
     @JvmField

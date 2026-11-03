@@ -25,29 +25,23 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter?) {
         adapter?.whiteSectionStart()
-        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineChatHeader)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineIosStyleSection)))
         items.add(check(TOGGLE_CENTER_TITLE, R.string.LumineCenterTitle, IosStyleConfig.chatCenterTitle.Bool(), R.string.LumineCenterTitleInfo))
         if (IosStyleHelper.centerChatTitle()) {
             items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
             if (IosStyleHelper.compactChatPill()) {
                 items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool(), R.string.LumineAvatarSlotInfo))
-                if (!IosStyleHelper.chatAvatarInMenuSlot()) {
-                    items.add(check(TOGGLE_AVATAR_STATIC, R.string.LumineAvatarStatic, IosStyleConfig.chatHeaderAvatarStatic.Bool(), R.string.LumineAvatarStaticInfo))
-                }
             }
-            if (!IosStyleHelper.chatAvatarInMenuSlot() && !IosStyleHelper.chatAvatarStatic()) {
+            if (!IosStyleHelper.chatAvatarInMenuSlot()) {
                 items.add(check(TOGGLE_AVATAR_RIGHT, R.string.LumineAvatarRight, IosStyleConfig.centerTitleRightAvatar.Bool()))
             }
         }
-        adapter?.whiteSectionEnd()
-        items.add(UItem.asShadow(null))
-
-        adapter?.whiteSectionStart()
         items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool(), R.string.LumineChatTitleMarqueeInfo))
         items.add(check(TOGGLE_UNREAD_BADGE, R.string.LumineUnreadBadge, NekoConfig.unreadBadgeOnBackButton.Bool(), R.string.LumineUnreadBadgeInfo))
         if (NekoConfig.unreadBadgeOnBackButton.Bool()) {
             items.add(check(TOGGLE_UNREAD_BADGE_IOS, R.string.LumineUnreadBadgeIos, IosStyleConfig.unreadBadgeOnBackButtonIos.Bool()))
         }
+        items.add(check(TOGGLE_IOS_INPUT, R.string.iOSMessageInputField, NekoConfig.iOSMessageInputField.Bool(), R.string.iOSMessageInputFieldNotice))
         adapter?.whiteSectionEnd()
         items.add(UItem.asShadow(null))
 
@@ -80,11 +74,11 @@ class IosStyleSettingsActivity : UniversalFragment() {
             TOGGLE_CENTER_TITLE -> IosStyleConfig.chatCenterTitle
             TOGGLE_COMPACT_PILL -> IosStyleConfig.chatHeader
             TOGGLE_AVATAR_SLOT -> IosStyleConfig.chatHeaderAvatarSlot
-            TOGGLE_AVATAR_STATIC -> IosStyleConfig.chatHeaderAvatarStatic
             TOGGLE_AVATAR_RIGHT -> IosStyleConfig.centerTitleRightAvatar
             TOGGLE_CHAT_TITLE_MARQUEE -> IosStyleConfig.chatTitleMarquee
             TOGGLE_UNREAD_BADGE -> NekoConfig.unreadBadgeOnBackButton
             TOGGLE_UNREAD_BADGE_IOS -> IosStyleConfig.unreadBadgeOnBackButtonIos
+            TOGGLE_IOS_INPUT -> NekoConfig.iOSMessageInputField
             else -> return
         }
         toggled.setConfigBool(!toggled.Bool())
@@ -138,9 +132,9 @@ class IosStyleSettingsActivity : UniversalFragment() {
         const val TOGGLE_CENTER_TITLE = 2
         const val TOGGLE_COMPACT_PILL = 3
         const val TOGGLE_AVATAR_SLOT = 4
-        const val TOGGLE_AVATAR_STATIC = 5
         const val TOGGLE_AVATAR_RIGHT = 6
         const val TOGGLE_UNREAD_BADGE = 8
         const val TOGGLE_UNREAD_BADGE_IOS = 9
+        const val TOGGLE_IOS_INPUT = 10
     }
 }

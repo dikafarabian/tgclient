@@ -45,12 +45,8 @@ object IosStyleHelper {
     fun chatAvatarInMenuSlot(): Boolean = compactChatPill() && IosStyleConfig.chatHeaderAvatarSlot.Bool()
 
     @JvmStatic
-    fun chatAvatarStatic(): Boolean =
-        compactChatPill() && !chatAvatarInMenuSlot() && IosStyleConfig.chatHeaderAvatarStatic.Bool()
-
-    @JvmStatic
     fun chatAvatarOnRight(): Boolean =
-        centerChatTitle() && !chatAvatarInMenuSlot() && !chatAvatarStatic() &&
+        centerChatTitle() && !chatAvatarInMenuSlot() &&
             IosStyleConfig.centerTitleRightAvatar.Bool()
 
     @JvmStatic

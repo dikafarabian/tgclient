@@ -254,11 +254,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         return chatAvatarContainer != null && chatAvatarContainer.isRightAvatar();
     }
 
-    public int getStaticAvatarLeft() {
-        final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
-        return (hasBackButton ? dp(46) + dp(6) : 0) + dp(6) + dp(3);
-    }
-
     public int getPillTextInsetLeft() {
         final int room = pillAvatarRoom();
         if (room == 0) {
@@ -2512,8 +2507,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
 
         final int baseLeft = hasBackButton ? s + p : 0;
         final int backPillLeft = hasBackButton ? getBackPillWidth() - p : 0;
-        final int leftLimit = Math.max(Math.max(baseLeft, backPillLeft),
-                chatAvatarContainer == null ? 0 : chatAvatarContainer.getStaticAvatarReserve());
+        final int leftLimit = Math.max(baseLeft, backPillLeft);
         int leftDefault = leftLimit;
         int rightDefault = width - rightOffset;
 
