@@ -115,6 +115,7 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
 
     private final AbstractConfigCell stickerSizeRow = cellGroup.appendCell(new ConfigCellCustom("StickerSize", ConfigCellCustom.CUSTOM_ITEM_StickerSize, false));
     private final AbstractConfigCell hideTimeForStickerRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.hideTimeForSticker));
+    private final AbstractConfigCell stickerTimeSideRow = cellGroup.appendCell(new ConfigCellTextCheck(app.lumine.ios.IosStyleConfig.stickerTimeSide));
     private final AbstractConfigCell dontSendGreetingStickerRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.dontSendGreetingSticker));
     private final AbstractConfigCell hideGroupStickerRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.hideGroupSticker));
     private final AbstractConfigCell maxRecentStickerCountRow = cellGroup.appendCell(new ConfigCellCustom("maxRecentStickerCount", CellGroup.ITEM_TYPE_TEXT_SETTINGS_CELL, true));
@@ -713,7 +714,7 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
                 if (messageSettingsPreviewCell != null) {
                     messageSettingsPreviewCell.refresh();
                 }
-            } else if (key.equals(NekoConfig.hideTimeForSticker.getKey())) {
+            } else if (key.equals(NekoConfig.hideTimeForSticker.getKey()) || key.equals(app.lumine.ios.IosStyleConfig.stickerTimeSide.getKey())) {
                 if (stickerSizeCell != null) {
                     stickerSizeCell.invalidate();
                 }

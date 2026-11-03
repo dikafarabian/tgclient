@@ -46,6 +46,9 @@ object IosStyleConfig {
     @JvmField
     val liquidGlassTint = addConfig("LumineLiquidGlassTint", ConfigItem.configTypeInt, 50)
 
+    @JvmField
+    val stickerTimeSide = addConfig("LumineStickerTimeSide", ConfigItem.configTypeBool, false)
+
     private fun addConfig(key: String, type: Int, defaultValue: Any?): ConfigItem {
         val item = ConfigItem(key, type, defaultValue)
         configs.add(item)

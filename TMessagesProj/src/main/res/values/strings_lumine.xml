@@ -5,6 +5,7 @@
     <string name="LumineIosStyle">iOS style</string>
     <string name="LumineIosStyleInfo">Liquid Glass and iOS-style interface</string>
     <string name="LumineChatHeader">Chat header</string>
+    <string name="LumineStickerTimeSide">Time Beside Stickers</string>
     <string name="LumineLiquidGlass">Liquid Glass</string>
     <string name="LumineLiquidGlassIntensity">Intensity</string>
     <string name="LumineLiquidGlassTint">Glass tint</string>

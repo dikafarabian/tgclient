@@ -1735,6 +1735,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
 
     private boolean hideSideButtonByQuickShare;
+    private final app.lumine.chats.StickerTime.Row stickerTimeRow = new app.lumine.chats.StickerTime.Row();
+    private float stickerTimeOffsetX;
     private int drawSideButton;
     private boolean sideButtonVisible;
     private int drawSideButton2;
@@ -5289,7 +5291,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     } else if (
                         sideButtonVisible &&
                         drawSideButton != 0 &&
-                        x >= sideStartX - dp(24) && x <= sideStartX + dp(40) &&
+                        x >= sideStartX - sideButtonTouchLeft() && x <= sideStartX + sideButtonTouchRight() &&
                         y >= sideStartY - dp(drawSummarizeButton ? 6 : 24) && y <= sideStartY + dp(38 + (drawSideButton == 3 && commentLayout != null ? 18 : 0) + (drawSideButton2 == SIDE_BUTTON_SPONSORED_MORE ? 38 : 0))
                     ) {
                         if (currentMessageObject.isSent()) {
@@ -5452,7 +5454,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
                         if (!(
                             sideButtonVisible &&
-                            x >= sideStartX - dp(24) && x <= sideStartX + dp(40) &&
+                            x >= sideStartX - sideButtonTouchLeft() && x <= sideStartX + sideButtonTouchRight() &&
                             y >= sideStartY - dp(drawSummarizeButton ? 6 : 24) && y <= sideStartY + dp(38 + (drawSideButton == 3 && commentLayout != null ? 18 : 0) + (drawSideButton2 == SIDE_BUTTON_SPONSORED_MORE ? 38 : 0))
                         )) {
                             sideButtonPressed = false;
@@ -22222,6 +22224,34 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         drawSideButton(canvas, false);
     }
 
+    private app.lumine.chats.StickerTime.Row stickerTimeRow() {
+        app.lumine.chats.StickerTime.Row row = stickerTimeRow;
+        row.message = currentMessageObject;
+        row.overStickerOffsetX = -dp(STICKER_STATUS_OFFSET);
+        row.timeWidth = timeWidth;
+        row.stickerLeft = photoImage.getImageX();
+        row.stickerRight = photoImage.getImageX2();
+        row.stickerWidth = photoImage.getImageWidth();
+        row.anchorY = getPhotoBottom() + additionalTimeOffsetY;
+        row.cellWidth = getMeasuredWidth();
+        row.sideButton = drawSideButton != 0 && !hideSideButtonByQuickShare
+                && !(currentPosition != null && currentMessagesGroup != null && currentMessagesGroup.isDocuments && !currentPosition.last);
+        row.hasName = drawNameLayout && nameLayout != null;
+        row.nameLeft = nameX;
+        row.nameWidth = nameWidth;
+        row.nameTop = nameY;
+        row.nameHeight = nameLayout != null ? nameLayout.getHeight() : 0;
+        return row;
+    }
+
+    private float sideButtonTouchLeft() {
+        return app.lumine.chats.StickerTime.getSideButtonTouchLeft(stickerTimeRow(), dp(24));
+    }
+
+    private float sideButtonTouchRight() {
+        return app.lumine.chats.StickerTime.getSideButtonTouchRight(stickerTimeRow(), dp(40));
+    }
+
     public void drawSideButton(Canvas canvas, boolean fromQuickShare) {
         if (hideSideButtonByQuickShare && !fromQuickShare || drawSideButton == 0 && !drawSummarizeButton) {
             return;
@@ -22241,6 +22271,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 sideStartX += currentMessagesGroup.transitionParams.offsetRight - animationOffsetX;
             }
         }
+        sideStartX = app.lumine.chats.StickerTime.getSideButtonX(stickerTimeRow(), sideStartX);
         if (drawSideButton == SIDE_BUTTON_SPONSORED_CLOSE) {
             sideStartY = dp(6);
         } else {
@@ -24624,7 +24655,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 x -= dp(1);
             }
             if (currentMessageObject != null && (currentMessageObject.type == MessageObject.TYPE_ANIMATED_STICKER || currentMessageObject.isAnyKindOfSticker())) {
-                x -= dp(6);
+                x += (int) stickerTimeOffsetX;
             }
             int sz = dp(14);
             int cx = x + sz / 2, cy = y + sz / 2;
@@ -24704,6 +24735,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (transitionParams.animateEditedEnter) {
             timeTitleTimeX -= transitionParams.animateEditedWidthDiff * (1f - transitionParams.animateChangeProgress);
         }
+        stickerTimeOffsetX = app.lumine.chats.StickerTime.getTimeOffsetX(stickerTimeRow(), timeX);
 
         int timeYOffset;
         if (shouldDrawTimeOnMedia()) {
@@ -24738,7 +24770,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             } else {
                 r = dp(4) + (currentMessageObject != null && currentMessageObject.isAnyKindOfSticker() ? dp(8) : 0);
             }
-            timeX += (currentMessageObject != null && currentMessageObject.isAnyKindOfSticker() ? dp(-STICKER_STATUS_OFFSET) : 0);
+            timeX += stickerTimeOffsetX;
             if (effectId != 0) {
                 timeX -= dp(14 + 4);
             }
@@ -24788,7 +24820,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
             alpha = oldAlpha3;
 
-            float additionalX = -timeLayout.getLineLeft(0) + (currentMessageObject != null && currentMessageObject.isAnyKindOfSticker() ? dp(-STICKER_STATUS_OFFSET) : 0);
+            float additionalX = -timeLayout.getLineLeft(0) + stickerTimeOffsetX;
             if (currentMessageObject.shouldDrawReactions() && reactionsLayoutInBubble.isSmall) {
                 updateReactionLayoutPosition();
                 reactionsLayoutInBubble.setScrimProgress(0, false);
@@ -25497,7 +25529,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             bigRadius = false;
         }
 
-        float offsetX = currentMessageObject != null && currentMessageObject.isAnyKindOfSticker() ? dp(-STICKER_STATUS_OFFSET) : 0;
+        float offsetX = currentMessageObject != null && currentMessageObject.isAnyKindOfSticker() ? stickerTimeOffsetX : 0;
         if (drawClock) {
             MsgClockDrawable drawable = Theme.chat_msgClockDrawable;
             int color;
