@@ -914,7 +914,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         if (!hasVisibleAvatar() || isIosMenuSlotAvatar()) {
             return 0;
         }
-        return dp(avatarSizeInDp) - 2 + dp(3);
+        return dp(avatarSizeInDp) - 2 - dp(1);
     }
 
     public int getMenuSlotAvatarReserve() {

@@ -105,6 +105,11 @@ class IosStyleSettingsActivity : UniversalFragment() {
         chatPreview?.onPause()
     }
 
+    override fun onTransitionAnimationEnd(isOpen: Boolean, backward: Boolean) {
+        super.onTransitionAnimationEnd(isOpen, backward)
+        if (isOpen) chatPreview?.rebuild()
+    }
+
     override fun onFragmentDestroy() {
         chatPreview?.destroy()
         chatPreview = null
