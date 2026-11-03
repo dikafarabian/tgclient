@@ -22,6 +22,27 @@ object IosStyleConfig {
     fun getPreferences(): SharedPreferences = NekoConfig.getPreferences()
 
     @JvmField
+    val centerTitleMain = addConfig("LumineIosCenterTitleMain", ConfigItem.configTypeBool, false)
+
+    @JvmField
+    val centerTitleChats = addConfig("LumineIosCenterTitleChats", ConfigItem.configTypeBool, true)
+
+    @JvmField
+    val centerTitleRightAvatar = addConfig("LumineIosCenterTitleRightAvatar", ConfigItem.configTypeBool, false)
+
+    @JvmField
+    val chatHeader = addConfig("LumineIosChatHeader", ConfigItem.configTypeBool, true)
+
+    @JvmField
+    val chatHeaderAvatarSlot = addConfig("LumineIosChatHeaderAvatarSlot", ConfigItem.configTypeBool, true)
+
+    @JvmField
+    val chatHeaderAvatarStatic = addConfig("LumineIosChatHeaderAvatarStatic", ConfigItem.configTypeBool, false)
+
+    @JvmField
+    val chatTitleMarquee = addConfig("LumineIosChatTitleMarquee", ConfigItem.configTypeBool, true)
+
+    @JvmField
     val unreadBadgeOnBackButtonIos =
         addConfig("LumineIosUnreadBadgeOnBackButtonIos", ConfigItem.configTypeBool, true)
 
