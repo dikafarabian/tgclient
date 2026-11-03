@@ -51,6 +51,23 @@ class IosStyleSettingsActivity : UniversalFragment() {
         }
         adapter?.whiteSectionEnd()
         items.add(UItem.asShadow(null))
+
+        adapter?.whiteSectionStart()
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlass)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassIntensity)))
+        items.add(UItem.asIntSlideView(
+            1, 0, IosStyleConfig.liquidGlassIntensity.Int(), 100,
+            { value: Int -> "$value%" },
+            { value: Int -> IosStyleConfig.liquidGlassIntensity.setConfigInt(value) }
+        ))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassTint)))
+        items.add(UItem.asIntSlideView(
+            1, 0, IosStyleConfig.liquidGlassTint.Int(), 100,
+            { value: Int -> "$value%" },
+            { value: Int -> IosStyleConfig.liquidGlassTint.setConfigInt(value) }
+        ))
+        adapter?.whiteSectionEnd()
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineLiquidGlassInfo)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {

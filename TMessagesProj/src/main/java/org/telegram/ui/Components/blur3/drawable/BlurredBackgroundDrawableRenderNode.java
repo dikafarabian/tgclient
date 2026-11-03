@@ -123,9 +123,9 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
                 0, 0, boundProps.boundsWithPadding.width(), boundProps.boundsWithPadding.height(),
                 boundProps.shaderRadii[0], boundProps.shaderRadii[2], boundProps.shaderRadii[4], boundProps.shaderRadii[6],
                 thickness,
-                boundProps.liquidIntensity,
+                app.lumine.ios.IosStyleHelper.liquidGlassIntensity(boundProps.liquidIntensity),
                 boundProps.liquidIndex,
-                backgroundColor
+                app.lumine.ios.IosStyleHelper.liquidGlassTint(backgroundColor)
             );
         }
         source.draw(c, sL, sT, sR, sB);

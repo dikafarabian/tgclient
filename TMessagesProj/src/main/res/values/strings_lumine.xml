@@ -5,6 +5,10 @@
     <string name="LumineIosStyle">iOS style</string>
     <string name="LumineIosStyleInfo">Liquid Glass and iOS-style interface</string>
     <string name="LumineChatHeader">Chat header</string>
+    <string name="LumineLiquidGlass">Liquid Glass</string>
+    <string name="LumineLiquidGlassIntensity">Intensity</string>
+    <string name="LumineLiquidGlassTint">Glass tint</string>
+    <string name="LumineLiquidGlassInfo">50% is the default look. Changes apply when a screen is redrawn, for example after reopening a chat.</string>
     <string name="LumineChatTitleMarquee">Text marquee for long titles</string>
     <string name="LumineCompactPill">Compact pill</string>
     <string name="LumineCompactPillInfo">iOS-style compact chat header pill floating in the middle.</string>

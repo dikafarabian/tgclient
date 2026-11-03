@@ -40,6 +40,12 @@ object IosStyleConfig {
     val unreadBadgeOnBackButtonIos =
         addConfig("LumineIosUnreadBadgeOnBackButtonIos", ConfigItem.configTypeBool, true)
 
+    @JvmField
+    val liquidGlassIntensity = addConfig("LumineLiquidGlassIntensity", ConfigItem.configTypeInt, 50)
+
+    @JvmField
+    val liquidGlassTint = addConfig("LumineLiquidGlassTint", ConfigItem.configTypeInt, 50)
+
     private fun addConfig(key: String, type: Int, defaultValue: Any?): ConfigItem {
         val item = ConfigItem(key, type, defaultValue)
         configs.add(item)

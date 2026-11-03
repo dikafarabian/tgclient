@@ -4,12 +4,26 @@
 
 package app.lumine.ios
 
+import android.graphics.Color
 import xyz.nextalone.nagram.NaConfig
 
 object IosStyleHelper {
 
     private const val TYPE_SETTINGS_ONLY = 2
     private const val TYPE_CHATS_ONLY = 3
+
+    @JvmStatic
+    fun liquidGlassIntensity(base: Float): Float {
+        IosStyleConfig.ensureLoaded()
+        return base * IosStyleConfig.liquidGlassIntensity.Int() / 50f
+    }
+
+    @JvmStatic
+    fun liquidGlassTint(color: Int): Int {
+        IosStyleConfig.ensureLoaded()
+        val alpha = (Color.alpha(color) * IosStyleConfig.liquidGlassTint.Int() / 50f).toInt().coerceIn(0, 255)
+        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
+    }
 
     @JvmStatic
     fun centerScreenTitles(): Boolean =
