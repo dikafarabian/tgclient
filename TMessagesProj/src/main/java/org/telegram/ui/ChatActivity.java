@@ -4718,32 +4718,6 @@ public class ChatActivity extends BaseFragment implements
         }
         avatarContainer = new ChatAvatarContainer(context, this, currentEncryptedChat != null, themeDelegate) {
             @Override
-            protected boolean onAvatarClick() {
-                if (isTitleCentered()) {
-                    if (editTextItem != null && editTextItem.getTag() != null) {
-                        checkEditTextItemMenu();
-                        editTextItem.createView().performClick();
-                        return true;
-                    }
-                    if (headerItem != null) {
-                        if (attachItem != null && chatActivityEnterView.hasText() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer()) && (currentChat == null || ChatObject.canSendPlain(currentChat))) {
-                            attachItem.createView().performClick();
-                            return true;
-                        }
-                        headerItem.performClick();
-                        return true;
-                    }
-                } else if (currentUser != null && currentUser.linked_community_id != 0) {
-                    showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
-                    return true;
-                } else if (currentChat != null && currentChat.linked_community_id != 0) {
-                    showDialog(new CommunitySheet(ChatActivity.this, currentChat.linked_community_id));
-                    return true;
-                }
-                return super.onAvatarClick();
-            }
-
-            @Override
             protected boolean useAnimatedSubtitle() {
                 return chatMode == MODE_SAVED;
             }
@@ -4759,13 +4733,25 @@ public class ChatActivity extends BaseFragment implements
             }
 
             @Override
-            protected boolean isCentered() {
-                return isTitleCentered();
+            public boolean onAvatarClick() {
+                if (currentUser != null && currentUser.linked_community_id != 0) {
+                    showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
+                    return true;
+                } else if (currentChat != null && currentChat.linked_community_id != 0) {
+                    showDialog(new CommunitySheet(ChatActivity.this, currentChat.linked_community_id));
+                    return true;
+                }
+                return super.onAvatarClick();
             }
 
             @Override
-            protected boolean isPreviewMode() {
-                return isInPreviewMode();
+            public boolean onAvatarLongClick() {
+                if (headerItem == null) {
+                    return false;
+                }
+                headerItem.setShowSubmenuByMove(false);
+                headerItem.toggleSubMenu();
+                return true;
             }
         };
         avatarContainer.setGlassMode();
@@ -4903,6 +4889,7 @@ public class ChatActivity extends BaseFragment implements
             context.getResources().getDrawable(R.drawable.mini_attach).mutate()
         );
         otherIcon.setIconTranslate(-dp(6), dp(6.66f));
+        otherIcon.setHideWhen(() -> avatarContainer != null && avatarContainer.isIosMenuSlotAvatar());
 
         if (((chatMode == 0 && (threadMessageId == 0 || isTopic)) || chatMode == MODE_SUGGESTIONS) && !UserObject.isReplyUser(currentUser) && !isReport()) {
             TLRPC.UserFull userFull = null;
@@ -4924,9 +4911,35 @@ public class ChatActivity extends BaseFragment implements
             otherIcon.addView(headerItem.getIconView());
             headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
             if (avatarContainer != null) {
-                avatarContainer.setAvatarOptionsMenuItem(headerItem);
+                final ActionBarMenuItem menuHeaderItem = headerItem;
+                final ActionBarMenu headerMenu = menu;
+                headerItem.setOnClickListener(v -> {
+                    if (!avatarContainer.isIosMenuSlotAvatar()) {
+                        if (menuHeaderItem.hasSubMenu()) {
+                            if (actionBar.actionBarMenuOnItemClick == null || actionBar.actionBarMenuOnItemClick.canOpenMenu()) {
+                                menuHeaderItem.toggleSubMenu();
+                            }
+                        } else if (menuHeaderItem.isSearchField()) {
+                            actionBar.onSearchFieldVisibilityChanged(menuHeaderItem.toggleSearch(true));
+                        } else if (v.getTag() instanceof Integer) {
+                            headerMenu.onItemClick((Integer) v.getTag());
+                        }
+                        return;
+                    }
+                    if (!avatarContainer.onAvatarClick()) {
+                        avatarContainer.openProfile(true);
+                    }
+                });
+                headerItem.setOnLongClickListener(v -> {
+                    if (!avatarContainer.isIosMenuSlotAvatar()) {
+                        return false;
+                    }
+                    menuHeaderItem.setShowSubmenuByMove(false);
+                    menuHeaderItem.toggleSubMenu();
+                    return true;
+                });
+                updateMenuSlotAvatar();
             }
-            headerItem.setForceHidden(isTitleCentered());
 
             if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                 savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
@@ -5257,15 +5270,12 @@ public class ChatActivity extends BaseFragment implements
             ChatObject.isForum(currentChat));
         actionBar.setChatAvatarContainer(avatarContainer);
 
-        if (chatMode == MODE_PINNED) {
-            avatarContainer.setActionBar(actionBar);
-        } else if (chatMode == MODE_WELCOME_MESSAGES) {
+        avatarContainer.setActionBar(actionBar);
+        if (chatMode == MODE_WELCOME_MESSAGES) {
             actionBar.setForcedMenuWidth(dp(46));
             actionBar.doNotDrawGlassMenu = true;
-            avatarContainer.setActionBar(actionBar);
         } else if (isComments) {
             actionBar.setForcedMenuMinWidth(dp(46));
-            avatarContainer.setActionBar(actionBar);
         }
 
         fadeDrawable = new BlurredBackgroundWithFadeDrawable(
@@ -32100,11 +32110,45 @@ public class ChatActivity extends BaseFragment implements
 
     Bulletin.Delegate bulletinDelegate;
 
+    private boolean menuSlotAvatarActive;
+
+    public void updateMenuSlotAvatar() {
+        if (avatarContainer == null) {
+            return;
+        }
+        final boolean active = avatarContainer.isIosMenuSlotAvatar();
+        if (otherIcon != null) {
+            otherIcon.invalidate();
+        }
+        if (!active && !menuSlotAvatarActive) {
+            return;
+        }
+        menuSlotAvatarActive = active;
+        final int visibility = active ? View.INVISIBLE : View.VISIBLE;
+        boolean changed = false;
+        if (headerItem != null) {
+            headerItem.setShowSubmenuByMove(!active);
+            if (headerItem.getIconView() != null && headerItem.getIconView().getVisibility() != visibility) {
+                headerItem.getIconView().setVisibility(visibility);
+                changed = true;
+            }
+        }
+        final ActionBarMenuItem attachCell = attachItem == null ? null : attachItem.getView();
+        if (attachCell != null && attachCell.getIconView() != null && attachCell.getIconView().getVisibility() != visibility) {
+            attachCell.getIconView().setVisibility(visibility);
+            changed = true;
+        }
+        if (changed && actionBar != null) {
+            actionBar.requestLayout();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         cachedIsGestureNavigation = AndroidUtil.isGestureNavigation(getContext());
         checkShowBlur(false);
+        updateMenuSlotAvatar();
         activityResumeTime = System.currentTimeMillis();
         syncRecentDialogsSidebar(false);
         if (openImport && getSendMessagesHelper().getImportingHistory(dialog_id) != null) {
@@ -51554,7 +51598,7 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private boolean isTitleCentered() {
-        return canShowCenteredTitle(this);
+        return false;
     }
 
     private boolean canShowCenteredTitle(ChatActivity parentFragment) {
