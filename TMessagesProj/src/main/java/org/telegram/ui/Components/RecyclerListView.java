@@ -3500,8 +3500,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
             if (
                 child == emptyView || child == draggingChild ||
                 child.getVisibility() != View.VISIBLE || child.getAlpha() <= 0 ||
-                !sectionsItemDecoration.isSectionItem.run(child) ||
-                isInsideForcedSection(getChildAdapterPosition(child))
+                !sectionsItemDecoration.isSectionItem.run(child)
             ) continue;
             drawSegmentedSectionBackground(canvas, child);
         }
@@ -3610,7 +3609,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                             }
                         }
                     }
-                } else if (isInsideForcedSection(viewHolder.getAdapterPosition())) {
+                } else if (!useSegmentedSections() && isInsideForcedSection(viewHolder.getAdapterPosition())) {
                     continue;
                 }
                 sections.add(new SectionsDrawer.Section(from, to, child.getAlpha()));
@@ -3653,7 +3652,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
             drawSectionBackground(canvas, start, prev, hasAbove(start, startIndex), hasBelow(prev, prevIndex));
         }
 
-        if (forcedSections != null) {
+        if (forcedSections != null && !useSegmentedSections()) {
             for (int j = 0; j < forcedSections.size(); ++j) {
                 final long section = forcedSections.get(j);
                 final int beginPosition = AndroidUtilities.unpackA(section);
