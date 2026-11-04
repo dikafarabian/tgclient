@@ -230,8 +230,43 @@ public final class AyuSaveExclusions {
     }
 
     private static Set<String> getStoredIds(SharedPreferences preferences, String key) {
-        Set<String> stored = preferences.getStringSet(key, null);
+        Set<String> stored;
+        try {
+            stored = preferences.getStringSet(key, null);
+        } catch (ClassCastException e) {
+            return repairStoredIds(preferences, key);
+        }
         return stored == null ? new HashSet<>() : new HashSet<>(stored);
+    }
+
+    static Set<String> parseLegacyIds(String raw) {
+        Set<String> ids = new HashSet<>();
+        if (raw == null) {
+            return ids;
+        }
+        for (String part : raw.split("[\\s,;\\[\\]]+")) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            try {
+                Long.parseLong(part);
+                ids.add(part);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return ids;
+    }
+
+    private static Set<String> repairStoredIds(SharedPreferences preferences, String key) {
+        String raw;
+        try {
+            raw = preferences.getString(key, null);
+        } catch (ClassCastException e) {
+            raw = null;
+        }
+        Set<String> ids = parseLegacyIds(raw);
+        preferences.edit().putStringSet(key, new HashSet<>(ids)).apply();
+        return ids;
     }
 
     /**
