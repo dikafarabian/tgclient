@@ -12569,20 +12569,29 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         }
 
         if ((isLiveComment || parentFragment != null && parentFragment.getOtherSameChatsDiff() == 0 && parentFragment.fragmentOpened) && animated) {
-            ValueAnimator anim = ValueAnimator.ofFloat(0, 1).setDuration(150);
+            final boolean moveEmoji = !isIOSInputStyle();
+            ValueAnimator anim = ValueAnimator.ofFloat(0, 1).setDuration(360);
             if (senderSelectView != null) {
-                senderSelectView.setTranslationX(startX);
+                senderSelectView.setTranslationX(0);
             }
             messageTextTranslationX = startX;
             updateMessageTextParams();
             anim.addUpdateListener(animation -> {
                 final float val = (float) animation.getAnimatedValue();
-                final float tx = startX + (endX - startX) * val;
+                final float textP = isVisible ? val / 0.5f : (val - 0.5f) / 0.5f;
+                final float avatarP = isVisible ? (val - 0.4f) / 0.6f : val / 0.6f;
+                final float textEased = CubicBezierInterpolator.EASE_BOTH.getInterpolation(Math.max(0f, Math.min(1f, textP)));
+                final float avatarEased = CubicBezierInterpolator.EASE_BOTH.getInterpolation(Math.max(0f, Math.min(1f, avatarP)));
+                final float tx = startX + (endX - startX) * textEased;
+                final float avatarScale = isVisible ? avatarEased : 1f - avatarEased;
                 if (senderSelectView != null) {
-                    senderSelectView.setAlpha(startAlpha + (endAlpha - startAlpha) * val);
-                    senderSelectView.setTranslationX(tx);
+                    senderSelectView.setScaleX(avatarScale);
+                    senderSelectView.setScaleY(avatarScale);
+                    senderSelectView.setAlpha(avatarScale);
                 }
-                emojiButton.setTranslationX(tx);
+                if (moveEmoji) {
+                    emojiButton.setTranslationX(tx);
+                }
                 messageTextTranslationX = tx;
                 updateMessageTextParams();
             });
@@ -12593,14 +12602,17 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                         createSenderSelectView();
                         senderSelectView.setVisibility(VISIBLE);
                     }
-                    float tx = 0;
                     if (senderSelectView != null) {
+                        final float scale = isVisible ? 0f : 1f;
+                        senderSelectView.setScaleX(scale);
+                        senderSelectView.setScaleY(scale);
                         senderSelectView.setAlpha(startAlpha);
-                        senderSelectView.setTranslationX(startX);
-                        tx = senderSelectView.getTranslationX();
+                        senderSelectView.setTranslationX(0);
                     }
-                    emojiButton.setTranslationX(tx);
-                    messageTextTranslationX = tx;
+                    if (moveEmoji) {
+                        emojiButton.setTranslationX(startX);
+                    }
+                    messageTextTranslationX = startX;
                     updateMessageTextParams();
 
                     if (botCommandsMenuButton != null && botCommandsMenuButton.getTag() == null) {
@@ -12613,8 +12625,12 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                     if (!isVisible) {
                         if (senderSelectView != null) {
                             senderSelectView.setVisibility(GONE);
+                            senderSelectView.setScaleX(1f);
+                            senderSelectView.setScaleY(1f);
                         }
-                        emojiButton.setTranslationX(0);
+                        if (moveEmoji) {
+                            emojiButton.setTranslationX(0);
+                        }
                         messageTextTranslationX = 0;
                         updateMessageTextParams();
                     }
@@ -12629,10 +12645,14 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                     if (senderSelectView != null) {
                         senderSelectView.setVisibility(isVisible ? VISIBLE : GONE);
                         senderSelectView.setAlpha(endAlpha);
-                        senderSelectView.setTranslationX(endX);
-                        tx = senderSelectView.getTranslationX();
+                        senderSelectView.setScaleX(1f);
+                        senderSelectView.setScaleY(1f);
+                        senderSelectView.setTranslationX(0);
+                        tx = endX;
                     }
-                    emojiButton.setTranslationX(tx);
+                    if (moveEmoji) {
+                        emojiButton.setTranslationX(tx);
+                    }
                     messageTextTranslationX = tx;
                     updateMessageTextParams();
                     requestLayout();
@@ -12649,9 +12669,13 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             if (senderSelectView != null) {
                 senderSelectView.setVisibility(isVisible ? VISIBLE : GONE);
                 senderSelectView.setTranslationX(endX);
+                senderSelectView.setScaleX(1f);
+                senderSelectView.setScaleY(1f);
             }
             float translationX = isVisible ? endX : 0;
-            emojiButton.setTranslationX(translationX);
+            if (!isIOSInputStyle()) {
+                emojiButton.setTranslationX(translationX);
+            }
             messageTextTranslationX = translationX;
             updateMessageTextParams();
             if (senderSelectView != null) {
