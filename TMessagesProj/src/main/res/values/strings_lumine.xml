@@ -26,6 +26,10 @@
     <string name="LumineAvatarSenderHide">Always hide</string>
     <string name="LumineAvatarSenderHold">Hold emoji to show or hide</string>
     <string name="LumineAvatarSenderInfo">Controls the send-as avatar in the input bar. With the hold option, the last state is remembered for all chats.</string>
-    <string name="LumineMd3ListItems">Material 3 list items</string>
+    <string name="LumineMd3ListItems">List items</string>
+    <string name="LumineMd3Sliders">Sliders</string>
+    <string name="LumineMd3Switches">Switches</string>
+    <string name="LumineMaterialDesign3">Material Design 3</string>
+    <string name="LumineInterface">Interface</string>
     <string name="LumineSettingsInfo">Your Telegram, a little brighter</string>
 </resources>

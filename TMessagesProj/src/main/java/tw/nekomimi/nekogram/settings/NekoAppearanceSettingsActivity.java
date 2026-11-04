@@ -35,6 +35,8 @@ import org.telegram.ui.LaunchActivity;
 
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.ui.cells.HeaderCell;
+import app.lumine.md3.ConfigCellMd3Group;
+import app.lumine.md3.ConfigCellMd3Option;
 import tw.nekomimi.nekogram.config.CellGroup;
 import tw.nekomimi.nekogram.config.cell.AbstractConfigCell;
 import tw.nekomimi.nekogram.config.cell.ConfigCellCustom;
@@ -44,6 +46,7 @@ import tw.nekomimi.nekogram.config.cell.ConfigCellSelectBox;
 import tw.nekomimi.nekogram.config.cell.ConfigCellText;
 import tw.nekomimi.nekogram.config.cell.ConfigCellTextCheck;
 import tw.nekomimi.nekogram.config.cell.ConfigCellTextCheckIcon;
+import tw.nekomimi.nekogram.config.cell.ConfigCellTextDetailIcon;
 import tw.nekomimi.nekogram.config.cell.ConfigCellTextInput;
 import tw.nekomimi.nekogram.ui.cells.AvatarCornersPreviewCell;
 import tw.nekomimi.nekogram.ui.cells.ChatListPreviewCell;
@@ -68,13 +71,26 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
 
     private final CellGroup cellGroup = new CellGroup(this);
 
-    private final AbstractConfigCell iosStyleRow = cellGroup.appendCell(new ConfigCellText("LumineIosStyle", getString(R.string.LumineIosStyleInfo), () -> presentFragment(new app.lumine.ios.IosStyleSettingsActivity())));
+    private final AbstractConfigCell headerInterface = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.LumineInterface)));
+    private final AbstractConfigCell iosStyleRow = cellGroup.appendCell(new ConfigCellTextDetailIcon("LumineIosStyle", getString(R.string.LumineIosStyle), getString(R.string.LumineIosStyleInfo), R.drawable.msg_discussion, true, () -> presentFragment(new app.lumine.ios.IosStyleSettingsActivity())));
+    private final ConfigCellMd3Group md3GroupRow = (ConfigCellMd3Group) cellGroup.appendCell(new ConfigCellMd3Group(
+            getString(R.string.LumineMaterialDesign3),
+            this::applyMd3Change,
+            () -> addRowsToMap(cellGroup),
+            new ConfigCellMd3Option(getString(R.string.LumineMd3Sliders),
+                    () -> NaConfig.INSTANCE.getSliderStyle().Int() == org.telegram.ui.Components.SeekBarView.SLIDER_STYLE_MD3,
+                    on -> NaConfig.INSTANCE.getSliderStyle().setConfigInt(on ? org.telegram.ui.Components.SeekBarView.SLIDER_STYLE_MD3 : org.telegram.ui.Components.SeekBarView.SLIDER_STYLE_DEFAULT)),
+            new ConfigCellMd3Option(getString(R.string.LumineMd3Switches),
+                    () -> NaConfig.INSTANCE.getSwitchStyle().Int() == org.telegram.ui.Components.Switch.SWITCH_STYLE_MD3,
+                    on -> NaConfig.INSTANCE.getSwitchStyle().setConfigInt(on ? org.telegram.ui.Components.Switch.SWITCH_STYLE_MD3 : org.telegram.ui.Components.Switch.SWITCH_STYLE_DEFAULT)),
+            new ConfigCellMd3Option(getString(R.string.LumineMd3ListItems),
+                    app.lumine.md3.Md3Config::listItemsEnabled,
+                    on -> app.lumine.md3.Md3Config.listItems.setConfigBool(on))));
     private final AbstractConfigCell dividerIosStyle = cellGroup.appendCell(new ConfigCellDivider());
     private final AbstractConfigCell headerAppearance = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.Appearance)));
     private final AbstractConfigCell typefaceRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.typeface));
     private final AbstractConfigCell hideDividersRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getHideDividers()));
     private final AbstractConfigCell sectionsSeparatedHeadersRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getSectionsSeparatedHeaders(), null, getString(R.string.SeparateHeaders)));
-    private final AbstractConfigCell md3ListItemsRow = cellGroup.appendCell(new ConfigCellTextCheck(app.lumine.md3.Md3Config.listItems));
     private final AbstractConfigCell fabShapePreviewRow = cellGroup.appendCell(new ConfigCellCustom("FabShapePreview", ConfigCellCustom.CUSTOM_ITEM_FabShapePreview, false, R.string.SquareFloatingButton));
     private final AbstractConfigCell alwaysShowDownloadIconRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getAlwaysShowDownloadIcon()));
     private final AbstractConfigCell showStickersInTopLevelRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getShowStickersRowToplevel()));
@@ -203,10 +219,18 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
         cellGroup.rows.add(3, headerAppearance);
         cellGroup.rows.add(4, fabShapePreviewRow);
         cellGroup.rows.add(5, typefaceRow);
+        cellGroup.rows.remove(headerInterface);
         cellGroup.rows.remove(iosStyleRow);
+        cellGroup.rows.remove(md3GroupRow);
         cellGroup.rows.remove(dividerIosStyle);
-        cellGroup.rows.add(0, dividerIosStyle);
-        cellGroup.rows.add(0, iosStyleRow);
+        int interfaceIdx = 0;
+        cellGroup.rows.add(interfaceIdx++, headerInterface);
+        cellGroup.rows.add(interfaceIdx++, iosStyleRow);
+        cellGroup.rows.add(interfaceIdx++, md3GroupRow);
+        for (AbstractConfigCell option : md3GroupRow.visibleOptions()) {
+            cellGroup.rows.add(interfaceIdx++, option);
+        }
+        cellGroup.rows.add(interfaceIdx, dividerIosStyle);
         List<AbstractConfigCell> dialogsBlock = Arrays.asList(
                 headerDialogs,
                 chatListPreviewRow,
@@ -297,10 +321,7 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
                 }
                 reloadUI(0);
 
-            } else if (key.equals(NaConfig.INSTANCE.getSwitchStyle().getKey()) || key.equals(NaConfig.INSTANCE.getSliderStyle().getKey()) || key.equals(app.lumine.md3.Md3Config.listItems.getKey())) {
-                if (key.equals(app.lumine.md3.Md3Config.listItems.getKey())) {
-                    Theme.applyCommonTheme();
-                }
+            } else if (key.equals(NaConfig.INSTANCE.getSwitchStyle().getKey()) || key.equals(NaConfig.INSTANCE.getSliderStyle().getKey())) {
                 if (listView.getLayoutManager() != null) {
                     recyclerViewState = listView.getLayoutManager().onSaveInstanceState();
                     parentLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
@@ -444,6 +465,11 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
         } else {
             reloadUI(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
         }
+    }
+
+    private void applyMd3Change() {
+        Theme.applyCommonTheme();
+        reloadUI(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
     }
 
     private void reloadUI(int flags) {
