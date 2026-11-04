@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.PixelCopy
 import android.widget.FrameLayout
@@ -38,6 +39,19 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
     private val rebuildRunnable = Runnable { tryBuild() }
     private val blankCheckRunnable = Runnable { checkBlank() }
     private val captureRunnable = Runnable { capture() }
+    private var scrolling = false
+    private var touching = false
+    private var scrollDir = 0
+    private var scrollCarry = 0f
+    private var lastFrameNanos = 0L
+    private var scrolledContainer: ChatActivityContainer? = null
+    private val frameCallback = object : Choreographer.FrameCallback {
+        override fun doFrame(frameTimeNanos: Long) {
+            if (!scrolling) return
+            stepScroll(frameTimeNanos)
+            Choreographer.getInstance().postFrameCallback(this)
+        }
+    }
 
     init {
         clipChildren = true
@@ -55,8 +69,47 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
         super.dispatchDraw(canvas)
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        stopAutoScroll()
+    }
+
+    private fun startAutoScroll() {
+        if (scrolling) return
+        scrolling = true
+        lastFrameNanos = 0L
+        scrollCarry = 0f
+        Choreographer.getInstance().postFrameCallback(frameCallback)
+    }
+
+    private fun stopAutoScroll() {
+        scrolling = false
+        Choreographer.getInstance().removeFrameCallback(frameCallback)
+    }
+
+    private fun stepScroll(now: Long) {
+        val last = lastFrameNanos
+        lastFrameNanos = now
+        val current = container
+        val list = current?.chatActivity?.chatListView
+        if (current !== scrolledContainer) {
+            scrolledContainer = current
+            scrollDir = 0
+        }
+        if (list == null || touching || pendingReveal || last == 0L) return
+        if (scrollDir == 0) scrollDir = if (list.canScrollVertically(1)) 1 else -1
+        if (!list.canScrollVertically(scrollDir)) scrollDir = -scrollDir
+        scrollCarry += (now - last) / 1_000_000_000f * AndroidUtilities.dp(SCROLL_SPEED_DP)
+        val px = scrollCarry.toInt()
+        if (px > 0) {
+            scrollCarry -= px
+            list.scrollBy(0, px * scrollDir)
+        }
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        startAutoScroll()
         if (container == null) {
             waitAttempts = 0
             blankRetries = 0
@@ -128,13 +181,16 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
 
     fun onResume() {
         container?.onResume()
+        if (isAttachedToWindow) startAutoScroll()
     }
 
     fun onPause() {
+        stopAutoScroll()
         container?.onPause()
     }
 
     fun destroy() {
+        stopAutoScroll()
         AndroidUtilities.cancelRunOnUIThread(rebuildRunnable)
         AndroidUtilities.cancelRunOnUIThread(blankCheckRunnable)
         AndroidUtilities.cancelRunOnUIThread(captureRunnable)
@@ -182,6 +238,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
             NekoConfig.iOSMessageInputField.Bool(),
             IosStyleConfig.liquidGlassIntensity.Int(),
             IosStyleConfig.liquidGlassTint.Int(),
+            IosStyleConfig.hideFadeViews.Bool(),
         ).joinToString("|")
         return Integer.toHexString(key.hashCode())
     }
@@ -240,6 +297,10 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
             touchBlocked = inChrome
         }
         if (touchBlocked) return true
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> touching = true
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> touching = false
+        }
         return super.dispatchTouchEvent(ev)
     }
 
@@ -252,6 +313,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
         const val MAX_BLANK_RETRIES = 2
         const val CAPTURE_DELAY_MS = 700L
         const val FADE_MS = 140L
+        const val SCROLL_SPEED_DP = 36f
         const val HEADER_ZONE_DP = 56
         const val INPUT_ZONE_DP = 56
     }

@@ -58,6 +58,7 @@ public class DialogsActivityTopBubblesFadeView extends View {
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
+        if (app.lumine.ios.IosStyleHelper.shouldHideFadeView()) return;
         canvas.drawRect(0, 0, getMeasuredWidth(), fadeStart + fadeHeight, paint);
     }
 }

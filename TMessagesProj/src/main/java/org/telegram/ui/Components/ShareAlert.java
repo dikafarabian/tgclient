@@ -1373,6 +1373,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         bottomFadeView = new View(context) {
             @Override
             public void draw(@NonNull Canvas canvas) {
+                if (app.lumine.ios.IosStyleHelper.shouldHideFadeView()) return;
                 super.draw(canvas);
                 fadeDrawable.setBounds(0, getMeasuredHeight() - systemInsets.bottom - dp(72), getMeasuredWidth(), getMeasuredHeight());
                 fadeDrawable.draw(canvas);

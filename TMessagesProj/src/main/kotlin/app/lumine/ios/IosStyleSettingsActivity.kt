@@ -39,6 +39,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
             items.add(check(TOGGLE_UNREAD_BADGE_IOS, R.string.LumineUnreadBadgeIos, IosStyleConfig.unreadBadgeOnBackButtonIos.Bool()))
         }
         items.add(check(TOGGLE_IOS_INPUT, R.string.iOSMessageInputField, NekoConfig.iOSMessageInputField.Bool(), R.string.iOSMessageInputFieldNotice))
+        items.add(check(TOGGLE_HIDE_FADE, R.string.LumineHideFade, IosStyleConfig.hideFadeViews.Bool(), R.string.LumineHideFadeInfo))
         adapter?.whiteSectionEnd()
         items.add(UItem.asShadow(null))
 
@@ -78,6 +79,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
             TOGGLE_UNREAD_BADGE -> NekoConfig.unreadBadgeOnBackButton
             TOGGLE_UNREAD_BADGE_IOS -> IosStyleConfig.unreadBadgeOnBackButtonIos
             TOGGLE_IOS_INPUT -> NekoConfig.iOSMessageInputField
+            TOGGLE_HIDE_FADE -> IosStyleConfig.hideFadeViews
             else -> return
         }
         toggled.setConfigBool(!toggled.Bool())
@@ -139,5 +141,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
         const val TOGGLE_UNREAD_BADGE = 8
         const val TOGGLE_UNREAD_BADGE_IOS = 9
         const val TOGGLE_IOS_INPUT = 10
+        const val TOGGLE_HIDE_FADE = 11
     }
 }

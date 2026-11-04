@@ -16,6 +16,12 @@ object IosStyleHelper {
     }
 
     @JvmStatic
+    fun shouldHideFadeView(): Boolean {
+        IosStyleConfig.ensureLoaded()
+        return IosStyleConfig.hideFadeViews.Bool()
+    }
+
+    @JvmStatic
     fun liquidGlassVersion(): Int {
         IosStyleConfig.ensureLoaded()
         return IosStyleConfig.liquidGlassIntensity.Int() * 101 + IosStyleConfig.liquidGlassTint.Int()

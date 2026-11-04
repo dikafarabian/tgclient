@@ -380,7 +380,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
         contentView.addView(fadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM));
 
-        tabsViewWrapper = new FrameLayout(context);
+        tabsViewWrapper = new FrameLayout(context) {
+            @Override
+            public boolean onTouchEvent(android.view.MotionEvent event) {
+                if (app.lumine.ios.IosStyleHelper.shouldHideFadeView()) return false;
+                return super.onTouchEvent(event);
+            }
+        };
         tabsViewWrapper.setOnClickListener(v -> {});
         tabsViewWrapper.setClipChildren(false);
         tabsViewWrapper.setClipToPadding(false);
@@ -1216,6 +1222,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         }
         if (isBottomBarHidden()) {
             fadeView.setAlpha(0f);
+            fadeView.setVisibility(View.GONE);
+            return;
+        }
+        if (app.lumine.ios.IosStyleHelper.shouldHideFadeView()) {
             fadeView.setVisibility(View.GONE);
             return;
         }

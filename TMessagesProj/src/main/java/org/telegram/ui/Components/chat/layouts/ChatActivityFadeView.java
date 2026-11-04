@@ -104,6 +104,7 @@ public class ChatActivityFadeView extends View implements Theme.Colorable {
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
+        if (app.lumine.ios.IosStyleHelper.shouldHideFadeView()) return;
         super.onDraw(canvas);
         fadeDrawableTop.draw(canvas);
         fadeDrawableBottom.draw(canvas);

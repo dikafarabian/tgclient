@@ -55,6 +55,7 @@ public class ChatInputViewsContainer extends FrameLayout {
         fadeView = new View(context) {
             @Override
             protected void dispatchDraw(@NonNull Canvas canvas) {
+                if (app.lumine.ios.IosStyleHelper.shouldHideFadeView()) return;
                 if (backgroundWithFadeDrawable != null) {
                     backgroundWithFadeDrawable.draw(canvas);
                 }
