@@ -200,7 +200,7 @@ public class AyuGhostUtils {
             }
             if (block) {
                 FileLog.d("GhostMode: Blocking read status request and sending fake response.");
-                sendFakeReadResponse(onCompleteOrig);
+                sendFakeReadResponse(object, onCompleteOrig);
                 return InterceptResult.Blocked(onCompleteOrig);
             }
         }
@@ -355,10 +355,16 @@ public class AyuGhostUtils {
         return null;
     }
 
-    private static void sendFakeReadResponse(RequestDelegate onCompleteOrig) {
-        var fakeRes = new TLRPC.TL_messages_affectedMessages();
-        fakeRes.pts = -1;
-        fakeRes.pts_count = 0;
+    private static void sendFakeReadResponse(TLObject request, RequestDelegate onCompleteOrig) {
+        final TLObject fakeRes;
+        if (request instanceof TLRPC.TL_messages_getMessagesViews) {
+            fakeRes = new TLRPC.TL_messages_messageViews();
+        } else {
+            var affected = new TLRPC.TL_messages_affectedMessages();
+            affected.pts = -1;
+            affected.pts_count = 0;
+            fakeRes = affected;
+        }
         Utilities.stageQueue.postRunnable(() -> {
             try {
                 if (onCompleteOrig != null) {
