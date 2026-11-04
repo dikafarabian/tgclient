@@ -100,9 +100,7 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
 
     @Override
     protected void onItemClick(View view, int position, float x, float y) {
-        if (position == versionRow) {
-            Browser.openUrl(getParentActivity(), "https://github.com/dikafarabian/tgclient");
-        } else if (position == updatesRow) {
+        if (position == updatesRow) {
             showUpdatesDialog();
         } else if (position == toggleLogsRow) {
             boolean wasLogsEnabled = BuildVars.LOGS_ENABLED;
@@ -209,6 +207,11 @@ public class NekoAboutActivity extends BaseNekoSettingsActivity {
 
         public ListAdapter(Context context) {
             super(context);
+        }
+
+        @Override
+        public boolean isEnabled(RecyclerView.ViewHolder holder) {
+            return holder.getItemViewType() != TYPE_DETAIL_SETTINGS && super.isEnabled(holder);
         }
 
         @Override

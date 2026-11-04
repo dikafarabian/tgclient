@@ -8,12 +8,12 @@
     <string name="LumineStickerTimeSide">Time Beside Stickers</string>
     <string name="LumineLiquidGlassIntensity">Liquid Glass intensity</string>
     <string name="LumineLiquidGlassTint">Liquid Glass tint</string>
-    <string name="LumineLiquidGlassInfo">50% is the default look. Changes apply when a screen is redrawn, for example after reopening a chat.</string>
+    <string name="LumineLiquidGlassInfo">Defaults are 40% intensity and 20% tint. Changes apply when a screen is redrawn, for example after reopening a chat.</string>
     <string name="LumineChatTitleMarquee">Text marquee for long titles</string>
     <string name="LumineCompactPill">iOS pill header</string>
     <string name="LumineCompactPillInfo">Centered, floating chat header pill like iOS Telegram. Does not affect other screens.</string>
     <string name="LumineAvatarSlot">Move avatar to the menu button</string>
-    <string name="LumineAvatarSlotInfo">Put the avatar in the menu slot: tap for the profile, long-press for the chat menu. Works together with iOS pill header.</string>
+    <string name="LumineAvatarSlotInfo">Put the avatar in the menu slot: tap for the profile, long-press for the chat menu.</string>
     <string name="LumineAvatarRight">Show avatar on the right</string>
     <string name="LumineUnreadBadge">Show unread chats counter</string>
     <string name="LumineUnreadBadgeInfo">Show the number of unread chats on the back button in a chat.</string>

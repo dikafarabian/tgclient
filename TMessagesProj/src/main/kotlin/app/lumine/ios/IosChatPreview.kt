@@ -18,21 +18,54 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
 
     private var container: ChatActivityContainer? = null
     private var touchBlocked = false
-    private val rebuildRunnable = Runnable { rebuildNow() }
+    private var waitAttempts = 0
+    private var blankRetries = 0
+    private val rebuildRunnable = Runnable { tryBuild() }
+    private val blankCheckRunnable = Runnable { checkBlank() }
 
     init {
         clipChildren = true
         clipToPadding = true
+        background = IosCheckerDrawable()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (container == null) rebuildNow()
+        if (container == null) rebuild()
     }
 
     fun rebuild() {
+        waitAttempts = 0
+        blankRetries = 0
         AndroidUtilities.cancelRunOnUIThread(rebuildRunnable)
         AndroidUtilities.runOnUIThread(rebuildRunnable, REBUILD_DELAY_MS)
+    }
+
+    fun onOpened() {
+        if (container == null) rebuild()
+    }
+
+    private fun tryBuild() {
+        val animating = host.parentLayout?.isTransitionAnimationInProgress() == true
+        if (animating && waitAttempts < MAX_WAIT_ATTEMPTS) {
+            waitAttempts++
+            AndroidUtilities.runOnUIThread(rebuildRunnable, WAIT_STEP_MS)
+            return
+        }
+        waitAttempts = 0
+        rebuildNow()
+        AndroidUtilities.cancelRunOnUIThread(blankCheckRunnable)
+        AndroidUtilities.runOnUIThread(blankCheckRunnable, BLANK_CHECK_DELAY_MS)
+    }
+
+    private fun checkBlank() {
+        val current = container ?: return
+        val title = current.chatActivity.avatarContainer?.titleTextView?.text
+        if (title.isNullOrEmpty() && blankRetries < MAX_BLANK_RETRIES) {
+            blankRetries++
+            rebuildNow()
+            AndroidUtilities.runOnUIThread(blankCheckRunnable, BLANK_CHECK_DELAY_MS)
+        }
     }
 
     fun onResume() {
@@ -45,6 +78,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
 
     fun destroy() {
         AndroidUtilities.cancelRunOnUIThread(rebuildRunnable)
+        AndroidUtilities.cancelRunOnUIThread(blankCheckRunnable)
         release()
     }
 
@@ -80,6 +114,10 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
 
     private companion object {
         const val REBUILD_DELAY_MS = 150L
+        const val WAIT_STEP_MS = 80L
+        const val MAX_WAIT_ATTEMPTS = 10
+        const val BLANK_CHECK_DELAY_MS = 450L
+        const val MAX_BLANK_RETRIES = 2
         const val HEADER_ZONE_DP = 64
         const val INPUT_ZONE_DP = 72
     }

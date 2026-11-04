@@ -43,7 +43,7 @@ class IosPreviewRowsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private companion object {
-        const val ROW_COUNT = 40
+        const val ROW_COUNT = 5000
         const val ROW_HEIGHT_DP = 96
     }
 }

@@ -27,9 +27,11 @@ class IosStyleSettingsActivity : UniversalFragment() {
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineIosStyleSection)))
         items.add(check(TOGGLE_COMPACT_PILL, R.string.LumineCompactPill, IosStyleConfig.chatHeader.Bool(), R.string.LumineCompactPillInfo))
-        items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool(), R.string.LumineAvatarSlotInfo))
-        if (!IosStyleHelper.chatAvatarInMenuSlot()) {
-            items.add(check(TOGGLE_AVATAR_RIGHT, R.string.LumineAvatarRight, IosStyleConfig.centerTitleRightAvatar.Bool()))
+        if (IosStyleHelper.compactChatPill()) {
+            items.add(check(TOGGLE_AVATAR_SLOT, R.string.LumineAvatarSlot, IosStyleConfig.chatHeaderAvatarSlot.Bool(), R.string.LumineAvatarSlotInfo))
+            if (!IosStyleHelper.chatAvatarInMenuSlot()) {
+                items.add(check(TOGGLE_AVATAR_RIGHT, R.string.LumineAvatarRight, IosStyleConfig.centerTitleRightAvatar.Bool()))
+            }
         }
         items.add(check(TOGGLE_CHAT_TITLE_MARQUEE, R.string.LumineChatTitleMarquee, IosStyleConfig.chatTitleMarquee.Bool(), R.string.LumineChatTitleMarqueeInfo))
         items.add(check(TOGGLE_UNREAD_BADGE, R.string.LumineUnreadBadge, NekoConfig.unreadBadgeOnBackButton.Bool(), R.string.LumineUnreadBadgeInfo))
@@ -107,7 +109,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
 
     override fun onTransitionAnimationEnd(isOpen: Boolean, backward: Boolean) {
         super.onTransitionAnimationEnd(isOpen, backward)
-        if (isOpen) chatPreview?.rebuild()
+        if (isOpen) chatPreview?.onOpened()
     }
 
     override fun onFragmentDestroy() {
@@ -129,7 +131,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean = false
 
     private companion object {
-        const val PREVIEW_HEIGHT_DP = 228
+        const val PREVIEW_HEIGHT_DP = 156
         const val TOGGLE_CHAT_TITLE_MARQUEE = 1
         const val TOGGLE_COMPACT_PILL = 3
         const val TOGGLE_AVATAR_SLOT = 4

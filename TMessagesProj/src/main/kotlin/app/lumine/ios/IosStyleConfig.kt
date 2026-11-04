@@ -38,10 +38,10 @@ object IosStyleConfig {
         addConfig("LumineIosUnreadBadgeOnBackButtonIos", ConfigItem.configTypeBool, true)
 
     @JvmField
-    val liquidGlassIntensity = addConfig("LumineLiquidGlassIntensity", ConfigItem.configTypeInt, 50)
+    val liquidGlassIntensity = addConfig("LumineLiquidGlassIntensity", ConfigItem.configTypeInt, 40)
 
     @JvmField
-    val liquidGlassTint = addConfig("LumineLiquidGlassTint", ConfigItem.configTypeInt, 50)
+    val liquidGlassTint = addConfig("LumineLiquidGlassTint", ConfigItem.configTypeInt, 20)
 
     @JvmField
     val stickerTimeSide = addConfig("LumineStickerTimeSide", ConfigItem.configTypeBool, false)
