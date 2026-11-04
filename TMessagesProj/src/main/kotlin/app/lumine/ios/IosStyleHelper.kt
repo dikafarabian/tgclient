@@ -55,6 +55,32 @@ object IosStyleHelper {
         centerChatTitle() && !chatAvatarInMenuSlot() &&
             IosStyleConfig.centerTitleRightAvatar.Bool()
 
+    const val AVATAR_SENDER_SHOW = 0
+    const val AVATAR_SENDER_HIDE = 1
+    const val AVATAR_SENDER_HOLD = 2
+
+    @JvmStatic
+    fun avatarSenderMode(): Int {
+        IosStyleConfig.ensureLoaded()
+        return IosStyleConfig.avatarSender.Int()
+    }
+
+    @JvmStatic
+    fun sendAsLongPressEnabled(): Boolean = avatarSenderMode() == AVATAR_SENDER_HOLD
+
+    @JvmStatic
+    fun sendAsHidden(): Boolean = when (avatarSenderMode()) {
+        AVATAR_SENDER_HIDE -> true
+        AVATAR_SENDER_HOLD -> IosStyleConfig.avatarSenderHidden.Bool()
+        else -> false
+    }
+
+    @JvmStatic
+    fun toggleSendAsHidden() {
+        IosStyleConfig.ensureLoaded()
+        IosStyleConfig.avatarSenderHidden.setConfigBool(!IosStyleConfig.avatarSenderHidden.Bool())
+    }
+
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
         if (fragment == null) return centerScreenTitles()

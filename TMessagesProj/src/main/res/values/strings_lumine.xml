@@ -21,5 +21,10 @@
     <string name="LumineUnreadBadgeInfo">Show the number of unread chats on the back button in a chat.</string>
     <string name="LumineUnreadBadgeIos">iOS-styled counter</string>
     <string name="LumineChatTitleMarqueeInfo">Auto-scrolls long chat header titles and subtitles when they do not fit horizontally.</string>
+    <string name="LumineAvatarSender">Avatar sender</string>
+    <string name="LumineAvatarSenderShow">Always show</string>
+    <string name="LumineAvatarSenderHide">Always hide</string>
+    <string name="LumineAvatarSenderHold">Hold emoji to show or hide</string>
+    <string name="LumineAvatarSenderInfo">Controls the send-as avatar in the input bar. With the hold option, the last state is remembered for all chats.</string>
     <string name="LumineMd3ListItems">Material 3 list items</string>
 </resources>

@@ -513,6 +513,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     // Send as... stuff
     @Nullable
     public SenderSelectView senderSelectView;
+    private boolean sendAsAvailable;
     private SenderSelectPopup senderSelectPopupWindow;
     private Runnable onEmojiSearchClosed;
     private int popupX, popupY;
@@ -2869,6 +2870,17 @@ public class ChatActivityEnterView extends FrameLayout implements
                     openKeyboardInternal();
                 }
             }
+        });
+        emojiButton.setOnLongClickListener(v -> {
+            if (!app.lumine.ios.IosStyleHelper.sendAsLongPressEnabled() || !sendAsAvailable) {
+                return false;
+            }
+            app.lumine.ios.IosStyleHelper.toggleSendAsHidden();
+            updateSendAsButton(false, true);
+            if (!NekoConfig.disableVibration.Bool()) {
+                emojiButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            }
+            return true;
         });
         messageEditTextContainer.addView(emojiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, isIOSInputStyle() ? Gravity.BOTTOM | Gravity.RIGHT : Gravity.BOTTOM | Gravity.LEFT, isIOSInputStyle() ? 0 : 2, 0, isIOSInputStyle() ? 3 : 0, 0));
         setEmojiButtonImage(false, false);
@@ -12485,8 +12497,6 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             return;
         }
         createMessageEditText();
-        if (NekoConfig.hideSendAsChannel.Bool())
-            return;
         TLRPC.Chat chat;
         TLRPC.Peer defPeer;
         if (isLiveComment) {
@@ -12500,12 +12510,14 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         if (defPeer == null && delegate.getSendAsPeers() != null && !delegate.getSendAsPeers().peers.isEmpty()) {
             defPeer = delegate.getSendAsPeers().peers.get(0).peer;
         }
-        final boolean isVisible = !forceHide && defPeer != null
+        final boolean canShowSendAs = !forceHide && defPeer != null
             && (delegate.getSendAsPeers() == null || delegate.getSendAsPeers().peers.size() > 1)
             && !isEditingMessage() && !isRecordingAudioVideo()
             && (recordedAudioPanel == null || recordedAudioPanel.getVisibility() != View.VISIBLE)
             && (isLiveComment || (!ChatObject.isChannelAndNotMegaGroup(chat) || ChatObject.canSendAsPeers(chat)) && !ChatObject.isMonoForum(chat))
             && (parentFragment == null || parentFragment.getChatMode() != ChatActivity.MODE_WELCOME_MESSAGES);
+        sendAsAvailable = canShowSendAs;
+        final boolean isVisible = canShowSendAs && !app.lumine.ios.IosStyleHelper.sendAsHidden();
         if (isVisible) {
             createSenderSelectView();
         }
@@ -16438,7 +16450,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         if (chat == null) {
             return 0;
         }
-        if (!NekoConfig.hideSendAsChannel.Bool() && ChatObject.canSendAsPeers(chat)) {
+        if (!app.lumine.ios.IosStyleHelper.sendAsHidden() && ChatObject.canSendAsPeers(chat)) {
             return 10;
         }
         return 15;

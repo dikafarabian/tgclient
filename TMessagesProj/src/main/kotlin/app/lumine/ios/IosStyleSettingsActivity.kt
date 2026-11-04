@@ -44,6 +44,15 @@ class IosStyleSettingsActivity : UniversalFragment() {
         items.add(UItem.asShadow(null))
 
         adapter?.whiteSectionStart()
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineAvatarSender)))
+        val senderMode = IosStyleHelper.avatarSenderMode()
+        items.add(radio(RADIO_SENDER_SHOW, R.string.LumineAvatarSenderShow, senderMode == IosStyleHelper.AVATAR_SENDER_SHOW))
+        items.add(radio(RADIO_SENDER_HIDE, R.string.LumineAvatarSenderHide, senderMode == IosStyleHelper.AVATAR_SENDER_HIDE))
+        items.add(radio(RADIO_SENDER_HOLD, R.string.LumineAvatarSenderHold, senderMode == IosStyleHelper.AVATAR_SENDER_HOLD))
+        adapter?.whiteSectionEnd()
+        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineAvatarSenderInfo)))
+
+        adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassIntensity)))
         items.add(UItem.asIntSlideView(
             1, 0, IosStyleConfig.liquidGlassIntensity.Int(), 100,
@@ -71,6 +80,18 @@ class IosStyleSettingsActivity : UniversalFragment() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        val senderMode = when (item.id) {
+            RADIO_SENDER_SHOW -> IosStyleHelper.AVATAR_SENDER_SHOW
+            RADIO_SENDER_HIDE -> IosStyleHelper.AVATAR_SENDER_HIDE
+            RADIO_SENDER_HOLD -> IosStyleHelper.AVATAR_SENDER_HOLD
+            else -> -1
+        }
+        if (senderMode >= 0) {
+            IosStyleConfig.avatarSender.setConfigInt(senderMode)
+            chatPreview?.rebuild()
+            listView.adapter.update(true)
+            return
+        }
         val toggled = when (item.id) {
             TOGGLE_COMPACT_PILL -> IosStyleConfig.chatHeader
             TOGGLE_AVATAR_SLOT -> IosStyleConfig.chatHeaderAvatarSlot
@@ -130,6 +151,9 @@ class IosStyleSettingsActivity : UniversalFragment() {
         return item.setChecked(checked)
     }
 
+    private fun radio(id: Int, title: Int, checked: Boolean): UItem =
+        UItem.asRadio(id, LocaleController.getString(title)).setChecked(checked)
+
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean = false
 
     private companion object {
@@ -142,5 +166,8 @@ class IosStyleSettingsActivity : UniversalFragment() {
         const val TOGGLE_UNREAD_BADGE_IOS = 9
         const val TOGGLE_IOS_INPUT = 10
         const val TOGGLE_HIDE_FADE = 11
+        const val RADIO_SENDER_SHOW = 20
+        const val RADIO_SENDER_HIDE = 21
+        const val RADIO_SENDER_HOLD = 22
     }
 }

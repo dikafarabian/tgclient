@@ -49,6 +49,12 @@ object IosStyleConfig {
     @JvmField
     val hideFadeViews = addConfig("LumineHideFadeViews", ConfigItem.configTypeBool, false)
 
+    @JvmField
+    val avatarSender = addConfig("LumineAvatarSender", ConfigItem.configTypeInt, 0)
+
+    @JvmField
+    val avatarSenderHidden = addConfig("LumineAvatarSenderHidden", ConfigItem.configTypeBool, false)
+
     private fun addConfig(key: String, type: Int, defaultValue: Any?): ConfigItem {
         val item = ConfigItem(key, type, defaultValue)
         configs.add(item)
