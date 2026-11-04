@@ -9110,7 +9110,7 @@ public class Theme {
                 return animatingColors.valueAt(index);
             }
         }
-        if (NaConfig.INSTANCE.getHideDividers().Bool() && key_divider == key) {
+        if (key_divider == key && (NaConfig.INSTANCE.getHideDividers().Bool() || app.lumine.md3.Md3ListItems.enabled())) {
             return 0x00ffffff;
         }
         if (serviceBitmapShader != null && (key_chat_serviceText == key || key_chat_serviceLink == key || key_chat_serviceIcon == key

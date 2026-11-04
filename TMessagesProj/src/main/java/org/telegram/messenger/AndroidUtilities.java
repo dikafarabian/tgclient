@@ -2443,7 +2443,7 @@ public class AndroidUtilities {
     }
 
     public static int getShadowHeight() {
-        if (NaConfig.INSTANCE.getHideDividers().Bool()) {
+        if (NaConfig.INSTANCE.getHideDividers().Bool() || app.lumine.md3.Md3ListItems.enabled()) {
             return 0;
         }
         if (density >= 4.0f) {

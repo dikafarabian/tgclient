@@ -3417,6 +3417,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
 
                         if (first) outRect.top = enableTopPadding ? padding : dp(4);
                         if (last) outRect.bottom = padding;
+
+                        if (!first && this.parent.useSegmentedSections()
+                                && this.parent.isViewTypeSection != null
+                                && this.parent.isViewTypeSection.run(adapter.getItemViewType(position - 1))) {
+                            outRect.top += dp(2);
+                        }
                     }
                 }
             }
@@ -3436,6 +3442,80 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
             parent.drawSectionsBackgrounds(canvas);
             canvas.restore();
         }
+    }
+
+    private boolean useSegmentedSections() {
+        return sectionsItemDecoration != null && app.lumine.md3.Md3ListItems.enabled();
+    }
+
+    private float segmentInnerRadius() {
+        return Math.min(sectionRadius, dp(4));
+    }
+
+    private boolean hasSegmentedSectionNeighbor(View child, int delta) {
+        if (child == null || getAdapter() == null || isViewTypeSection == null) return false;
+        final int position = getChildAdapterPosition(child);
+        if (position == NO_POSITION) return false;
+        final int neighbor = position + delta;
+        if (neighbor < 0 || neighbor >= getAdapter().getItemCount()) return false;
+        return isViewTypeSection.run(getAdapter().getItemViewType(neighbor));
+    }
+
+    private boolean setSegmentedSectionRect(View child, RectF rect) {
+        if (child == null || sectionsItemDecoration == null) return false;
+        float bottomMargin = 0;
+        if (child instanceof JoinToSendSettingsView) {
+            bottomMargin = ((JoinToSendSettingsView) child).getBottomInfoMargin();
+        }
+        rect.set(
+            child.getX(),
+            Math.max(applyPaddingToSections ? getPaddingTop() : -sectionRadius, top(child)),
+            child.getX() + child.getWidth(),
+            Math.min(getHeight() - (applyPaddingToSections ? getPaddingBottom() : -sectionRadius), bottom(child) - bottomMargin)
+        );
+        return rect.bottom >= rect.top;
+    }
+
+    private float getSegmentedSectionTopRadius(View child) {
+        return hasSegmentedSectionNeighbor(child, -1) ? segmentInnerRadius() : sectionRadius;
+    }
+
+    private float getSegmentedSectionBottomRadius(View child) {
+        return hasSegmentedSectionNeighbor(child, 1) ? segmentInnerRadius() : sectionRadius;
+    }
+
+    private void drawSegmentedSectionBackground(Canvas canvas, View child) {
+        if (child == null || drawSectionBackground == null) return;
+        if (!setSegmentedSectionRect(child, AndroidUtilities.rectTmp)) return;
+        drawSectionBackground.run(canvas, AndroidUtilities.rectTmp,
+                getSegmentedSectionTopRadius(child),
+                getSegmentedSectionBottomRadius(child),
+                child.getAlpha());
+    }
+
+    private void drawSegmentedSectionsBackgrounds(Canvas canvas) {
+        if (sectionsItemDecoration == null) return;
+        for (int i = 0; i < getChildCount(); ++i) {
+            final View child = getChildAt(i);
+            if (
+                child == emptyView || child == draggingChild ||
+                child.getVisibility() != View.VISIBLE || child.getAlpha() <= 0 ||
+                !sectionsItemDecoration.isSectionItem.run(child) ||
+                isInsideForcedSection(getChildAdapterPosition(child))
+            ) continue;
+            drawSegmentedSectionBackground(canvas, child);
+        }
+    }
+
+    private void clipChildWithSegmentedSection(Canvas canvas, View child) {
+        if (!setSegmentedSectionRect(child, AndroidUtilities.rectTmp)) return;
+        final float topRadius = getSegmentedSectionTopRadius(child);
+        final float bottomRadius = getSegmentedSectionBottomRadius(child);
+        segmentRadii[0] = segmentRadii[1] = segmentRadii[2] = segmentRadii[3] = topRadius;
+        segmentRadii[4] = segmentRadii[5] = segmentRadii[6] = segmentRadii[7] = bottomRadius;
+        clipPath.rewind();
+        clipPath.addRoundRect(AndroidUtilities.rectTmp, segmentRadii, Path.Direction.CW);
+        canvas.clipPath(clipPath);
     }
 
     private void drawSectionBackground(
@@ -3538,8 +3618,10 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
             SectionsDrawer.draw(sections, sectionRadius, (from, to, topRoundRadius, bottomRoundRadius, alpha) -> {
                 AndroidUtilities.rectTmp.set(getPaddingLeft() + sectionsItemDecoration.padding, from, getWidth() - sectionsItemDecoration.padding - getPaddingRight(), to);
                 drawSectionBackground.run(canvas, AndroidUtilities.rectTmp, topRoundRadius, bottomRoundRadius, alpha);
-            });
+            }, useSegmentedSections());
             sections.clear();
+        } else if (useSegmentedSections()) {
+            drawSegmentedSectionsBackgrounds(canvas);
         } else {
             int startIndex = -1, prevIndex = -1;
             View start = null, prev = null;
@@ -3638,6 +3720,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
     }
 
     private final Path clipPath = new Path();
+    private final float[] segmentRadii = new float[8];
     /** Raised children may draw their own rounded surface outside the section outline. */
     protected boolean shouldClipChildToSection(View child) {
         return true;
@@ -3646,6 +3729,10 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
     private void clipChild(Canvas canvas, View child) {
         if (child == null || !shouldClipChildToSection(child) || !sectionsItemDecoration.isSectionItem.run(child))
             return;
+        if (useSegmentedSections()) {
+            clipChildWithSegmentedSection(canvas, child);
+            return;
+        }
 
         boolean prev, next;
         int position = getChildAdapterPosition(child);
@@ -3787,11 +3874,25 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
             float roundRadius,
             Utilities.Callback5<Float, Float, Float, Float, Float> drawRoundRect
         ) {
+            draw(sections, roundRadius, drawRoundRect, false);
+        }
+
+        public static void draw(
+            List<Section> sections,
+            float roundRadius,
+            Utilities.Callback5<Float, Float, Float, Float, Float> drawRoundRect,
+            boolean segmented
+        ) {
             if (sections == null || sections.isEmpty()) return;
 
             Collections.sort(sections, (a, b) -> Float.compare(a.from, b.from));
 
             groups.clear();
+
+            if (segmented) {
+                drawSegmentedSections(sections, roundRadius, drawRoundRect);
+                return;
+            }
 
             int groupStart = 0;
             while (groupStart < sections.size()) {
@@ -3838,6 +3939,24 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                 }
 
                 drawRoundRect.run(drawFrom, drawTo, topRadius, bottomRadius, alpha);
+            }
+        }
+
+        private static void drawSegmentedSections(
+            List<Section> sections,
+            float roundRadius,
+            Utilities.Callback5<Float, Float, Float, Float, Float> drawRoundRect
+        ) {
+            final float inner = Math.min(roundRadius, dp(4));
+            final float tolerance = dp(2) + CONNECT_TOLERANCE;
+            for (int i = 0; i < sections.size(); ++i) {
+                final Section section = sections.get(i);
+                if (section.alpha < 0.001f || section.to <= section.from) continue;
+
+                final boolean above = i > 0 && section.from <= sections.get(i - 1).to + tolerance;
+                final boolean below = i < sections.size() - 1 && sections.get(i + 1).from <= section.to + tolerance;
+
+                drawRoundRect.run(section.from, section.to, above ? inner : roundRadius, below ? inner : roundRadius, section.alpha);
             }
         }
 
