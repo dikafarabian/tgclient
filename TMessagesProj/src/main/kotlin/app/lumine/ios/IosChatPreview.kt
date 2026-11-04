@@ -91,7 +91,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
         val last = lastFrameNanos
         lastFrameNanos = now
         val current = container
-        val list = current?.chatActivity?.chatListView
+        val list = current?.chatActivity?.getChatListView()
         if (current !== scrolledContainer) {
             scrolledContainer = current
             scrollDir = 0
