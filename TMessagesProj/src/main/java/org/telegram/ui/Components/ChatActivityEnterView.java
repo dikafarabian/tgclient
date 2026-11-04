@@ -4738,7 +4738,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
         });
         senderSelectView.setVisibility(GONE);
-        messageEditTextContainer.addView(senderSelectView, LayoutHelper.createFrame(36, 36, Gravity.BOTTOM | Gravity.LEFT, isIOSInputStyle() ? 44.66f : 4.66f, 4, 4.66f, 4));
+        messageEditTextContainer.addView(senderSelectView, LayoutHelper.createFrame(36, 36, Gravity.BOTTOM | Gravity.LEFT, isIOSInputStyle() ? 40f : 4.66f, 4, 4.66f, 4));
     }
 
     private void createBotCommandsMenuButton() {
@@ -12546,17 +12546,12 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             }
         }
         boolean wasVisible = senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE;
-        int pad = dp(2);
         float startAlpha = isVisible ? 0 : 1;
         float endAlpha = isVisible ? 1 : 0;
-        final float startX, endX;
-        if (senderSelectView != null) {
-            MarginLayoutParams params = (MarginLayoutParams) senderSelectView.getLayoutParams();
-            startX = isVisible ? -senderSelectView.getLayoutParams().width - params.leftMargin - pad : 0;
-            endX = isVisible ? 0 : -senderSelectView.getLayoutParams().width - params.leftMargin - pad;
-        } else {
-            startX = endX = 0;
-        }
+        final int avatarWidth = senderSelectView != null ? senderSelectView.getLayoutParams().width : dp(36);
+        final int textShift = getSendAsTextMargin(avatarWidth) - dp(50);
+        final float startX = isVisible ? -textShift : 0;
+        final float endX = isVisible ? 0 : -textShift;
 
         if (wasVisible == isVisible) {
             return;
@@ -12570,7 +12565,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
 
         if ((isLiveComment || parentFragment != null && parentFragment.getOtherSameChatsDiff() == 0 && parentFragment.fragmentOpened) && animated) {
             final boolean moveEmoji = !isIOSInputStyle();
-            ValueAnimator anim = ValueAnimator.ofFloat(0, 1).setDuration(360);
+            ValueAnimator anim = ValueAnimator.ofFloat(0, 1).setDuration(650);
             if (senderSelectView != null) {
                 senderSelectView.setTranslationX(0);
             }
@@ -16164,6 +16159,10 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         return recordCircle;
     }
 
+    private int getSendAsTextMargin(int avatarWidth) {
+        return dp(isIOSInputStyle() ? 49.34f : 54) + avatarWidth;
+    }
+
     int botCommandLastPosition = -1;
     int botCommandLastTop;
 
@@ -16190,10 +16189,10 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(7) + width;
             }
             if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(54) + width;
+                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = getSendAsTextMargin(width);
             }
             if (richDraftPreview != null) {
-                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(54) + width;
+                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = getSendAsTextMargin(width);
             }
         } else {
             ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(3);
