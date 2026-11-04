@@ -2839,6 +2839,9 @@ public class ChatActivityEnterView extends FrameLayout implements
         emojiButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.SRC_IN));
         emojiButton.setBackground(Theme.createInsetRoundRectDrawable(getThemedColor(Theme.key_listSelector), dp(19), dp(1), dp(3)));
         emojiButton.setOnClickListener(v -> {
+            if (parentFragment != null && parentFragment.stylePreview) {
+                return;
+            }
             if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress()) {
                 return;
             }
@@ -12510,12 +12513,18 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         if (defPeer == null && delegate.getSendAsPeers() != null && !delegate.getSendAsPeers().peers.isEmpty()) {
             defPeer = delegate.getSendAsPeers().peers.get(0).peer;
         }
+        final boolean stylePreview = parentFragment != null && parentFragment.stylePreview;
+        if (stylePreview) {
+            final TLRPC.TL_peerUser selfPeer = new TLRPC.TL_peerUser();
+            selfPeer.user_id = UserConfig.getInstance(currentAccount).getClientUserId();
+            defPeer = selfPeer;
+        }
         final boolean canShowSendAs = !forceHide && defPeer != null
-            && (delegate.getSendAsPeers() == null || delegate.getSendAsPeers().peers.size() > 1)
+            && (stylePreview || (delegate.getSendAsPeers() == null || delegate.getSendAsPeers().peers.size() > 1)
             && !isEditingMessage() && !isRecordingAudioVideo()
             && (recordedAudioPanel == null || recordedAudioPanel.getVisibility() != View.VISIBLE)
             && (isLiveComment || (!ChatObject.isChannelAndNotMegaGroup(chat) || ChatObject.canSendAsPeers(chat)) && !ChatObject.isMonoForum(chat))
-            && (parentFragment == null || parentFragment.getChatMode() != ChatActivity.MODE_WELCOME_MESSAGES);
+            && (parentFragment == null || parentFragment.getChatMode() != ChatActivity.MODE_WELCOME_MESSAGES));
         sendAsAvailable = canShowSendAs;
         final boolean isVisible = canShowSendAs && !app.lumine.ios.IosStyleHelper.sendAsHidden();
         if (isVisible) {
@@ -16438,6 +16447,9 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
     private int getIOSInputContainerLeftInset() {
         if (parentFragment == null) {
             return 0;
+        }
+        if (parentFragment.stylePreview) {
+            return app.lumine.ios.IosStyleHelper.sendAsHidden() ? 15 : 10;
         }
         final TLRPC.User user = parentFragment.getCurrentUser();
         if (user != null && !user.bot || parentFragment.getChatMode() == ChatActivity.MODE_WELCOME_MESSAGES) {

@@ -239,6 +239,8 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
             IosStyleConfig.liquidGlassIntensity.Int(),
             IosStyleConfig.liquidGlassTint.Int(),
             IosStyleConfig.hideFadeViews.Bool(),
+            IosStyleHelper.avatarSenderMode(),
+            IosStyleConfig.avatarSenderHidden.Bool(),
         ).joinToString("|")
         return Integer.toHexString(key.hashCode())
     }
@@ -290,11 +292,26 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
         }
     }
 
+    private fun isOnEmojiButton(ev: MotionEvent): Boolean {
+        if (!IosStyleHelper.sendAsLongPressEnabled()) return false
+        val current = container ?: return false
+        if (current.alpha < 1f || pendingReveal) return false
+        val button = current.chatActivity.getChatActivityEnterView()?.getEmojiButton() ?: return false
+        if (!button.isShown) return false
+        val buttonLoc = IntArray(2)
+        val ownLoc = IntArray(2)
+        button.getLocationInWindow(buttonLoc)
+        getLocationInWindow(ownLoc)
+        val left = buttonLoc[0] - ownLoc[0]
+        val top = buttonLoc[1] - ownLoc[1]
+        return ev.x >= left && ev.x <= left + button.width && ev.y >= top && ev.y <= top + button.height
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
             val inChrome = ev.y < AndroidUtilities.dp(HEADER_ZONE_DP.toFloat()) ||
                 ev.y > height - AndroidUtilities.dp(INPUT_ZONE_DP.toFloat())
-            touchBlocked = inChrome
+            touchBlocked = inChrome && !isOnEmojiButton(ev)
         }
         if (touchBlocked) return true
         when (ev.actionMasked) {
