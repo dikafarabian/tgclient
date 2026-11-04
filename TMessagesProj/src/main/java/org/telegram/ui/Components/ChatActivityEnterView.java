@@ -4738,7 +4738,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
         });
         senderSelectView.setVisibility(GONE);
-        messageEditTextContainer.addView(senderSelectView, LayoutHelper.createFrame(36, 36, Gravity.BOTTOM | Gravity.LEFT, isIOSInputStyle() ? 40f : 4.66f, 4, 4.66f, 4));
+        messageEditTextContainer.addView(senderSelectView, LayoutHelper.createFrame(36, 36, Gravity.BOTTOM | Gravity.LEFT, isIOSInputStyle() ? 44.66f : 4.66f, 4, 4.66f, 4));
     }
 
     private void createBotCommandsMenuButton() {
@@ -12549,9 +12549,12 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         float startAlpha = isVisible ? 0 : 1;
         float endAlpha = isVisible ? 1 : 0;
         final int avatarWidth = senderSelectView != null ? senderSelectView.getLayoutParams().width : dp(36);
-        final int textShift = getSendAsTextMargin(avatarWidth) - dp(50);
+        final int marginDelta = getSendAsTextMargin(avatarWidth) - dp(50);
+        final int insetDelta = isIOSInputStyle() && messageEditTextContainer != null && messageEditTextContainer.getLayoutParams() instanceof MarginLayoutParams
+            ? dp(getIOSInputContainerLeftInset()) - ((MarginLayoutParams) messageEditTextContainer.getLayoutParams()).leftMargin : 0;
+        final int textShift = (isVisible ? marginDelta : -marginDelta) + insetDelta;
         final float startX = isVisible ? -textShift : 0;
-        final float endX = isVisible ? 0 : -textShift;
+        final float endX = isVisible ? 0 : textShift;
 
         if (wasVisible == isVisible) {
             return;
@@ -12596,6 +12599,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                     if (isVisible) {
                         createSenderSelectView();
                         senderSelectView.setVisibility(VISIBLE);
+                        applyIOSInputInset();
                     }
                     if (senderSelectView != null) {
                         final float scale = isVisible ? 0f : 1f;
@@ -12623,6 +12627,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                             senderSelectView.setScaleX(1f);
                             senderSelectView.setScaleY(1f);
                         }
+                        applyIOSInputInset();
                         if (moveEmoji) {
                             emojiButton.setTranslationX(0);
                         }
@@ -12634,6 +12639,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 @Override
                 public void onAnimationCancel(Animator animation) {
                     float tx = 0;
+                    applyIOSInputInset();
                     if (isVisible) {
                         createSenderSelectView();
                     }
@@ -12661,6 +12667,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             if (isVisible) {
                 createSenderSelectView();
             }
+            applyIOSInputInset();
             if (senderSelectView != null) {
                 senderSelectView.setVisibility(isVisible ? VISIBLE : GONE);
                 senderSelectView.setTranslationX(endX);
@@ -16160,7 +16167,19 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
     }
 
     private int getSendAsTextMargin(int avatarWidth) {
-        return dp(isIOSInputStyle() ? 49.34f : 54) + avatarWidth;
+        return dp(54) + avatarWidth;
+    }
+
+    private void applyIOSInputInset() {
+        if (!isIOSInputStyle() || messageEditTextContainer == null) {
+            return;
+        }
+        final ViewGroup.LayoutParams lp = messageEditTextContainer.getLayoutParams();
+        final int inset = dp(getIOSInputContainerLeftInset());
+        if (lp instanceof MarginLayoutParams && ((MarginLayoutParams) lp).leftMargin != inset) {
+            ((MarginLayoutParams) lp).leftMargin = inset;
+            messageEditTextContainer.setLayoutParams(lp);
+        }
     }
 
     int botCommandLastPosition = -1;
