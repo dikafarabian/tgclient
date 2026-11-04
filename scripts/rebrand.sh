@@ -18,6 +18,7 @@ git ls-files -z 'TMessagesProj/src/*/res/values*/*.xml' \
       s{>([^<]*)<}{
         my $t = $1;
         $t =~ s/(?<![\@\w\/.])(?:Nagram ?XF|Nagram ?X|Nagram)(?!\w)/luminegram/g;
+        $t =~ s/(?<![\@\w\/.])N-Settings/lumine-Settings/g;
         ">$t<"
       }ge'
 
