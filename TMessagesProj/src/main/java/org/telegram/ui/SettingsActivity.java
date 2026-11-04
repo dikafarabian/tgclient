@@ -45,6 +45,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
@@ -1278,12 +1279,24 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             titleView.setTranslationX(icon == 0 ? dp(2) : 0);
             subtitleView.setTranslationX(icon == 0 ? dp(2) : 0);
 
+            final boolean m3 = hasBackground && app.lumine.md3.Md3ListItems.enabled();
             iconBackground.setColor(iconColorTop, iconColorBottom);
+            iconBackground.setCircle(m3);
             iconView.setImageResource(icon);
-            if (isMonetSettingsStyle()) {
+            if (m3) {
+                iconBackground.setMonetColor(app.lumine.md3.Md3ListItems.tonalBackground(iconColorTop, iconColorBottom));
+                iconView.setColorFilter(new PorterDuffColorFilter(app.lumine.md3.Md3ListItems.tonalForeground(iconColorTop, iconColorBottom), PorterDuff.Mode.SRC_IN));
+            } else if (isMonetSettingsStyle()) {
                 iconView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhite), PorterDuff.Mode.SRC_IN));
             } else {
                 iconView.clearColorFilter();
+            }
+            final int iconSize = dp(m3 && !mini ? 36 : 28);
+            final ViewGroup.LayoutParams iconParams = iconLayout.getLayoutParams();
+            if (iconParams != null && iconParams.width != iconSize) {
+                iconParams.width = iconSize;
+                iconParams.height = iconSize;
+                iconLayout.setLayoutParams(iconParams);
             }
             titleView.setText(title);
             subtitleView.setVisibility((twoLines = !TextUtils.isEmpty(subtitle)) ? View.VISIBLE : View.GONE);
@@ -1301,7 +1314,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             super.onMeasure(
                 MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(dp(mini ? 44 : twoLines ? 60 : 50), MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(dp(mini ? 44 : twoLines ? (iconBackground.isCircle() ? 64 : 60) : (iconBackground.isCircle() ? 52 : 50)), MeasureSpec.EXACTLY)
             );
         }
 
@@ -1327,8 +1340,31 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 this.border = drawBorder;
             }
 
+            public void setMonetColor(int color) {
+                gradient = null;
+                paint.setShader(null);
+                paint.setColor(color);
+            }
+
+            private boolean circle;
+            public void setCircle(boolean circle) {
+                if (this.circle != circle) {
+                    this.circle = circle;
+                    invalidateSelf();
+                }
+            }
+
+            public boolean isCircle() {
+                return circle;
+            }
+
             @Override
             public void draw(@NonNull Canvas canvas) {
+                if (circle) {
+                    final Rect bounds = getBounds();
+                    canvas.drawCircle(bounds.exactCenterX(), bounds.exactCenterY(), Math.min(bounds.width(), bounds.height()) / 2f, paint);
+                    return;
+                }
                 final float r = dp(10);
                 AndroidUtilities.rectTmp.set(getBounds());
                 matrix.reset();
