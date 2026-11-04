@@ -31,7 +31,12 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (container == null) rebuild()
+        if (container == null) {
+            waitAttempts = 0
+            blankRetries = 0
+            AndroidUtilities.cancelRunOnUIThread(rebuildRunnable)
+            AndroidUtilities.runOnUIThread(rebuildRunnable)
+        }
     }
 
     fun rebuild() {
@@ -42,7 +47,10 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
     }
 
     fun onOpened() {
-        if (container == null) rebuild()
+        if (container == null) {
+            AndroidUtilities.cancelRunOnUIThread(rebuildRunnable)
+            AndroidUtilities.runOnUIThread(rebuildRunnable)
+        }
     }
 
     private fun tryBuild() {
@@ -83,6 +91,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
     }
 
     private fun rebuildNow() {
+        val fade = container == null
         release()
         val args = Bundle().apply {
             putLong("user_id", UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId())
@@ -90,7 +99,9 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
         val next = ChatActivityContainer(context, host.parentLayout, args)
         next.chatActivity.stylePreview = true
         container = next
+        if (fade) next.alpha = 0f
         addView(next, LayoutHelper.createFrameMatchParent())
+        if (fade) next.animate().alpha(1f).setDuration(FADE_MS).start()
     }
 
     private fun release() {
@@ -114,11 +125,12 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
 
     private companion object {
         const val REBUILD_DELAY_MS = 150L
-        const val WAIT_STEP_MS = 80L
-        const val MAX_WAIT_ATTEMPTS = 10
+        const val WAIT_STEP_MS = 30L
+        const val MAX_WAIT_ATTEMPTS = 30
         const val BLANK_CHECK_DELAY_MS = 450L
+        const val FADE_MS = 140L
         const val MAX_BLANK_RETRIES = 2
-        const val HEADER_ZONE_DP = 64
-        const val INPUT_ZONE_DP = 72
+        const val HEADER_ZONE_DP = 56
+        const val INPUT_ZONE_DP = 56
     }
 }

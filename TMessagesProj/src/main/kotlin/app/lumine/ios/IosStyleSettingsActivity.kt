@@ -131,7 +131,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean = false
 
     private companion object {
-        const val PREVIEW_HEIGHT_DP = 156
+        const val PREVIEW_HEIGHT_DP = 132
         const val TOGGLE_CHAT_TITLE_MARQUEE = 1
         const val TOGGLE_COMPACT_PILL = 3
         const val TOGGLE_AVATAR_SLOT = 4
