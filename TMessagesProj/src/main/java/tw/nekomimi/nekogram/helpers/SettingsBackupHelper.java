@@ -16,6 +16,7 @@ import com.google.gson.JsonPrimitive;
 import com.radolyn.ayugram.messages.AyuSavePreferences;
 import com.radolyn.ayugram.utils.AyuGhostPreferences;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.telegram.messenger.AndroidUtilities;
@@ -152,6 +153,14 @@ public final class SettingsBackupHelper {
             if (filter != null && !filter.apply(key)) {
                 continue;
             }
+            if (entry.getValue() instanceof Set) {
+                JSONArray array = new JSONArray();
+                for (Object item : (Set<?>) entry.getValue()) {
+                    array.put(String.valueOf(item));
+                }
+                jsonConfig.put(key, array);
+                continue;
+            }
             if (entry.getValue() instanceof Long) {
                 key = key + "_long";
             } else if (entry.getValue() instanceof Float) {
@@ -160,6 +169,18 @@ public final class SettingsBackupHelper {
             jsonConfig.put(key, entry.getValue());
         }
         object.put(sp, jsonConfig);
+    }
+
+    static Set<String> parseLegacySet(String text) {
+        Set<String> values = new HashSet<>();
+        String inner = text.substring(1, text.length() - 1).trim();
+        if (inner.isEmpty()) {
+            return values;
+        }
+        for (String part : inner.split(", ")) {
+            values.add(part);
+        }
+        return values;
     }
 
     public static void importSettings(Context context, File settingsFile) {
@@ -215,7 +236,8 @@ public final class SettingsBackupHelper {
             SharedPreferences.Editor editor = preferences.edit();
             for (Map.Entry<String, JsonElement> config : ((JsonObject) element.getValue()).entrySet()) {
                 String key = config.getKey();
-                JsonPrimitive value = (JsonPrimitive) config.getValue();
+                JsonElement rawValue = config.getValue();
+                JsonPrimitive value = rawValue.isJsonPrimitive() ? rawValue.getAsJsonPrimitive() : null;
                 if ("nkmrcfg".equals(spName)) {
                     boolean shouldSkip = true;
                     for (String prefix : preservePrefixes) {
@@ -237,6 +259,19 @@ public final class SettingsBackupHelper {
                         continue;
                     }
                 }
+                if (rawValue.isJsonArray()) {
+                    Set<String> values = new HashSet<>();
+                    for (JsonElement item : rawValue.getAsJsonArray()) {
+                        if (item.isJsonPrimitive()) {
+                            values.add(item.getAsString());
+                        }
+                    }
+                    editor.putStringSet(key, values);
+                    continue;
+                }
+                if (value == null) {
+                    continue;
+                }
                 if (value.isBoolean()) {
                     editor.putBoolean(key, value.getAsBoolean());
                 } else if (value.isNumber()) {
@@ -257,7 +292,12 @@ public final class SettingsBackupHelper {
                         editor.putInt(key, value.getAsInt());
                     }
                 } else {
-                    editor.putString(key, value.getAsString());
+                    String text = value.getAsString();
+                    if (text.startsWith("[") && text.endsWith("]") && preferences.getAll().get(key) instanceof Set) {
+                        editor.putStringSet(key, parseLegacySet(text));
+                    } else {
+                        editor.putString(key, text);
+                    }
                 }
             }
             editor.commit();
