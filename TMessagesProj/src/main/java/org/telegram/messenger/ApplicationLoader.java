@@ -302,6 +302,7 @@ public class ApplicationLoader extends Application {
         NekoConfig.init();
         NaConfig.init();
         app.lumine.ios.IosStyleConfig.init();
+        app.lumine.md3.Md3Config.init();
         LastSeenHelper.preload();
         ExteraConfig.init();
         installPluginCrashHandler();
