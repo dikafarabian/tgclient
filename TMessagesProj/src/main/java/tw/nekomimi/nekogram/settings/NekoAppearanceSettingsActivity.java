@@ -297,7 +297,7 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
                 }
                 reloadUI(0);
 
-            } else if (key.equals(NaConfig.INSTANCE.getSwitchStyle().getKey()) || key.equals(NaConfig.INSTANCE.getSliderStyle().getKey())) {
+            } else if (key.equals(NaConfig.INSTANCE.getSwitchStyle().getKey()) || key.equals(NaConfig.INSTANCE.getSliderStyle().getKey()) || key.equals(app.lumine.md3.Md3Config.listItems.getKey())) {
                 if (listView.getLayoutManager() != null) {
                     recyclerViewState = listView.getLayoutManager().onSaveInstanceState();
                     parentLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
