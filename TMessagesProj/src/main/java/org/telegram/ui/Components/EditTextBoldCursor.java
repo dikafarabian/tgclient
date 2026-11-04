@@ -42,6 +42,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import android.text.Editable;
 import android.text.Layout;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -633,6 +634,28 @@ public class EditTextBoldCursor extends EditTextEffects {
         setHintText(text, animated, getPaint());
     }
 
+    private static CharSequence ellipsizeHint(CharSequence text, TextPaint paint, int width) {
+        if (TextUtils.indexOf(text, '\n') < 0) {
+            return TextUtils.ellipsize(text, paint, width, TextUtils.TruncateAt.END);
+        }
+        final SpannableStringBuilder result = new SpannableStringBuilder();
+        int start = 0;
+        while (true) {
+            int end = TextUtils.indexOf(text, '\n', start);
+            final boolean last = end < 0;
+            if (last) {
+                end = text.length();
+            }
+            result.append(TextUtils.ellipsize(text.subSequence(start, end), paint, width, TextUtils.TruncateAt.END));
+            if (last) {
+                break;
+            }
+            result.append(text, end, end + 1);
+            start = end + 1;
+        }
+        return result;
+    }
+
     public void setHintText(CharSequence text, boolean animated, TextPaint paint) {
         if (hintAnimatedDrawable != null) {
             hintAnimatedDrawable.setText(text, !LocaleController.isRTL);
@@ -655,7 +678,7 @@ public class EditTextBoldCursor extends EditTextEffects {
             }
             hint = text;
             if (getMeasuredWidth() != 0) {
-                text = TextUtils.ellipsize(text, paint, getMeasuredWidth(), TextUtils.TruncateAt.END);
+                text = ellipsizeHint(text, paint, getMeasuredWidth());
                 if (hintLayout != null && TextUtils.equals(hintLayout.getText(), text)) {
                     return;
                 }
