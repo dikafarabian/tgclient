@@ -392,11 +392,6 @@ public class IconPacksEditorActivity extends BaseNekoSettingsActivity {
             return holder.getItemViewType() == TYPE_ICON || super.isEnabled(holder);
         }
 
-        @Override
-        protected boolean isSectionContent(int viewType) {
-            return viewType == TYPE_ICON || super.isSectionContent(viewType);
-        }
-
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
