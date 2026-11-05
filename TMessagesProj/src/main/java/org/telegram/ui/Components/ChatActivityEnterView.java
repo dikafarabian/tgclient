@@ -514,6 +514,12 @@ public class ChatActivityEnterView extends FrameLayout implements
     @Nullable
     public SenderSelectView senderSelectView;
     private boolean sendAsAvailable;
+    private static final int SEND_AS_AVATAR_SIZE = 36;
+    private boolean sendAsShown;
+    private boolean sendAsLayoutApplied;
+    private float sendAsT;
+    private float sendAsTextOffset;
+    private ValueAnimator sendAsAnimator;
     private SenderSelectPopup senderSelectPopupWindow;
     private Runnable onEmojiSearchClosed;
     private int popupX, popupY;
@@ -4738,7 +4744,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
         });
         senderSelectView.setVisibility(GONE);
-        messageEditTextContainer.addView(senderSelectView, LayoutHelper.createFrame(36, 36, Gravity.BOTTOM | Gravity.LEFT, isIOSInputStyle() ? 44.66f : 4.66f, 4, 4.66f, 4));
+        messageEditTextContainer.addView(senderSelectView, LayoutHelper.createFrame(SEND_AS_AVATAR_SIZE, SEND_AS_AVATAR_SIZE, Gravity.BOTTOM | Gravity.LEFT, isIOSInputStyle() ? 44.66f : 4.66f, 4, 4.66f, 4));
     }
 
     private void createBotCommandsMenuButton() {
@@ -12545,145 +12551,72 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 }
             }
         }
-        boolean wasVisible = senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE;
-        float startAlpha = isVisible ? 0 : 1;
-        float endAlpha = isVisible ? 1 : 0;
-        final int avatarWidth = senderSelectView != null ? senderSelectView.getLayoutParams().width : dp(36);
-        final int marginDelta = getSendAsTextMargin(avatarWidth) - dp(50);
-        final int insetDelta = isIOSInputStyle() && messageEditTextContainer != null && messageEditTextContainer.getLayoutParams() instanceof MarginLayoutParams
-            ? dp(getIOSInputContainerLeftInset()) - ((MarginLayoutParams) messageEditTextContainer.getLayoutParams()).leftMargin : 0;
-        final int textShift = (isVisible ? marginDelta : -marginDelta) + insetDelta;
-        final float startX = isVisible ? -textShift : 0;
-        final float endX = isVisible ? 0 : textShift;
-
-        if (wasVisible == isVisible) {
+        if (sendAsShown == isVisible) {
             return;
         }
+        final boolean animate = (isLiveComment || parentFragment != null && parentFragment.getOtherSameChatsDiff() == 0 && parentFragment.fragmentOpened) && animated;
+        setSendAsShown(isVisible, animate);
+    }
 
-        ValueAnimator animator = senderSelectView == null ? null : (ValueAnimator) senderSelectView.getTag();
-        if (animator != null) {
-            animator.cancel();
-            senderSelectView.setTag(null);
+    private void setSendAsShown(boolean shown, boolean animate) {
+        sendAsShown = shown;
+        final ValueAnimator previous = sendAsAnimator;
+        sendAsAnimator = null;
+        if (previous != null) {
+            previous.cancel();
         }
+        final float target = shown ? 1f : 0f;
+        if (!animate || sendAsT == target) {
+            sendAsT = target;
+            applySendAsProgress();
+            return;
+        }
+        if (botCommandsMenuButton != null && botCommandsMenuButton.getTag() == null) {
+            animationParamsX.clear();
+        }
+        final ValueAnimator anim = ValueAnimator.ofFloat(sendAsT, target);
+        anim.setDuration(Math.max(1L, Math.round(650 * Math.abs(target - sendAsT))));
+        anim.addUpdateListener(animation -> {
+            sendAsT = (float) animation.getAnimatedValue();
+            applySendAsProgress();
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (sendAsAnimator != anim) {
+                    return;
+                }
+                sendAsAnimator = null;
+                sendAsT = target;
+                applySendAsProgress();
+            }
+        });
+        sendAsAnimator = anim;
+        applySendAsProgress();
+        anim.start();
+    }
 
-        if ((isLiveComment || parentFragment != null && parentFragment.getOtherSameChatsDiff() == 0 && parentFragment.fragmentOpened) && animated) {
-            final boolean moveEmoji = !isIOSInputStyle();
-            ValueAnimator anim = ValueAnimator.ofFloat(0, 1).setDuration(650);
-            if (senderSelectView != null) {
-                senderSelectView.setTranslationX(0);
-            }
-            messageTextTranslationX = startX;
-            updateMessageTextParams();
-            anim.addUpdateListener(animation -> {
-                final float val = (float) animation.getAnimatedValue();
-                final float textP = isVisible ? val / 0.5f : (val - 0.5f) / 0.5f;
-                final float avatarP = isVisible ? (val - 0.4f) / 0.6f : val / 0.6f;
-                final float textEased = CubicBezierInterpolator.EASE_BOTH.getInterpolation(Math.max(0f, Math.min(1f, textP)));
-                final float avatarEased = CubicBezierInterpolator.EASE_BOTH.getInterpolation(Math.max(0f, Math.min(1f, avatarP)));
-                final float tx = startX + (endX - startX) * textEased;
-                final float avatarScale = isVisible ? avatarEased : 1f - avatarEased;
-                if (senderSelectView != null) {
-                    senderSelectView.setScaleX(avatarScale);
-                    senderSelectView.setScaleY(avatarScale);
-                    senderSelectView.setAlpha(avatarScale);
-                }
-                if (moveEmoji) {
-                    emojiButton.setTranslationX(tx);
-                }
-                messageTextTranslationX = tx;
-                updateMessageTextParams();
-            });
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    if (isVisible) {
-                        createSenderSelectView();
-                        senderSelectView.setVisibility(VISIBLE);
-                        applyIOSInputInset();
-                    }
-                    if (senderSelectView != null) {
-                        final float scale = isVisible ? 0f : 1f;
-                        senderSelectView.setScaleX(scale);
-                        senderSelectView.setScaleY(scale);
-                        senderSelectView.setAlpha(startAlpha);
-                        senderSelectView.setTranslationX(0);
-                    }
-                    if (moveEmoji) {
-                        emojiButton.setTranslationX(startX);
-                    }
-                    messageTextTranslationX = startX;
-                    updateMessageTextParams();
-
-                    if (botCommandsMenuButton != null && botCommandsMenuButton.getTag() == null) {
-                        animationParamsX.clear();
-                    }
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (!isVisible) {
-                        if (senderSelectView != null) {
-                            senderSelectView.setVisibility(GONE);
-                            senderSelectView.setScaleX(1f);
-                            senderSelectView.setScaleY(1f);
-                        }
-                        applyIOSInputInset();
-                        if (moveEmoji) {
-                            emojiButton.setTranslationX(0);
-                        }
-                        messageTextTranslationX = 0;
-                        updateMessageTextParams();
-                    }
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    float tx = 0;
-                    applyIOSInputInset();
-                    if (isVisible) {
-                        createSenderSelectView();
-                    }
-                    if (senderSelectView != null) {
-                        senderSelectView.setVisibility(isVisible ? VISIBLE : GONE);
-                        senderSelectView.setAlpha(endAlpha);
-                        senderSelectView.setScaleX(1f);
-                        senderSelectView.setScaleY(1f);
-                        senderSelectView.setTranslationX(0);
-                        tx = endX;
-                    }
-                    if (moveEmoji) {
-                        emojiButton.setTranslationX(tx);
-                    }
-                    messageTextTranslationX = tx;
-                    updateMessageTextParams();
-                    requestLayout();
-                }
-            });
-            anim.start();
-            if (senderSelectView != null) {
-                senderSelectView.setTag(anim);
-            }
-        } else {
-            if (isVisible) {
-                createSenderSelectView();
-            }
-            applyIOSInputInset();
-            if (senderSelectView != null) {
-                senderSelectView.setVisibility(isVisible ? VISIBLE : GONE);
-                senderSelectView.setTranslationX(endX);
-                senderSelectView.setScaleX(1f);
-                senderSelectView.setScaleY(1f);
-            }
-            float translationX = isVisible ? endX : 0;
-            if (!isIOSInputStyle()) {
-                emojiButton.setTranslationX(translationX);
-            }
-            messageTextTranslationX = translationX;
-            updateMessageTextParams();
-            if (senderSelectView != null) {
-                senderSelectView.setAlpha(endAlpha);
-                senderSelectView.setTag(null);
-            }
+    private void applySendAsProgress() {
+        final float slot = CubicBezierInterpolator.EASE_BOTH.getInterpolation(Math.max(0f, Math.min(1f, sendAsT / 0.5f)));
+        final float avatar = CubicBezierInterpolator.EASE_BOTH.getInterpolation(Math.max(0f, Math.min(1f, (sendAsT - 0.4f) / 0.6f)));
+        final boolean layoutShown = isSendAsLayoutShown();
+        if (layoutShown) {
+            createSenderSelectView();
+        }
+        if (senderSelectView != null) {
+            senderSelectView.setVisibility(layoutShown ? VISIBLE : GONE);
+            senderSelectView.setScaleX(avatar);
+            senderSelectView.setScaleY(avatar);
+            senderSelectView.setAlpha(avatar);
+        }
+        sendAsTextOffset = layoutShown ? -(getSendAsTextMargin(true) - getSendAsTextMargin(false)) * (1f - slot) : 0f;
+        if (!isIOSInputStyle() && emojiButton != null) {
+            emojiButton.setTranslationX(sendAsTextOffset);
+        }
+        updateMessageTextParams();
+        if (layoutShown != sendAsLayoutApplied) {
+            sendAsLayoutApplied = layoutShown;
+            requestLayout();
         }
     }
 
@@ -16166,20 +16099,29 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         return recordCircle;
     }
 
-    private int getSendAsTextMargin(int avatarWidth) {
-        return dp(54) + avatarWidth;
+    private boolean isSendAsSlotChat() {
+        if (parentFragment == null) {
+            return false;
+        }
+        if (parentFragment.stylePreview) {
+            return true;
+        }
+        if (parentFragment.getChatMode() == ChatActivity.MODE_WELCOME_MESSAGES || parentFragment.getCurrentUser() != null) {
+            return false;
+        }
+        final TLRPC.Chat chat = parentFragment.getCurrentChat();
+        return chat != null && ChatObject.canSendAsPeers(chat);
     }
 
-    private void applyIOSInputInset() {
-        if (!isIOSInputStyle() || messageEditTextContainer == null) {
-            return;
+    private int getSendAsTextMargin(boolean shown) {
+        if (shown) {
+            return dp(54) + dp(SEND_AS_AVATAR_SIZE);
         }
-        final ViewGroup.LayoutParams lp = messageEditTextContainer.getLayoutParams();
-        final int inset = dp(getIOSInputContainerLeftInset());
-        if (lp instanceof MarginLayoutParams && ((MarginLayoutParams) lp).leftMargin != inset) {
-            ((MarginLayoutParams) lp).leftMargin = inset;
-            messageEditTextContainer.setLayoutParams(lp);
-        }
+        return dp(50) + (isIOSInputStyle() && isSendAsSlotChat() ? dp(5) : 0);
+    }
+
+    private boolean isSendAsLayoutShown() {
+        return sendAsShown || sendAsT > 0f;
     }
 
     int botCommandLastPosition = -1;
@@ -16200,29 +16142,18 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             if (richDraftPreview != null) {
                 ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(57) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
             }
-        } else if (senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE) {
-            int width = senderSelectView.getLayoutParams().width, height = senderSelectView.getLayoutParams().height;
-            senderSelectView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(isIOSInputStyle() ? 5 : 7) + width;
-            if (deleteRichDraftButton != null) {
-                ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(7) + width;
-            }
-            if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = getSendAsTextMargin(width);
-            }
-            if (richDraftPreview != null) {
-                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = getSendAsTextMargin(width);
-            }
         } else {
-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(3);
+            final boolean shown = isSendAsLayoutShown();
+            final int width = dp(SEND_AS_AVATAR_SIZE);
+            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = shown ? dp(isIOSInputStyle() ? 5 : 7) + width : dp(3);
             if (deleteRichDraftButton != null) {
-                ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(3);
+                ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = shown ? dp(7) + width : dp(3);
             }
             if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(50);
+                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = getSendAsTextMargin(shown);
             }
             if (richDraftPreview != null) {
-                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(50);
+                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = getSendAsTextMargin(shown);
             }
         }
         updateBotCommandsMenuContainerTopPadding();
@@ -16448,7 +16379,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
 
     private void updateMessageTextParams() {
         if (messageEditText != null) {
-            messageEditText.setTranslationX(messageTextPaddingTranslationX + messageTextTranslationX);
+            messageEditText.setTranslationX(messageTextPaddingTranslationX + messageTextTranslationX + sendAsTextOffset);
         }
     }
 
@@ -16490,8 +16421,8 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         if (parentFragment == null) {
             return 0;
         }
-        if (parentFragment.stylePreview) {
-            return app.lumine.ios.IosStyleHelper.sendAsHidden() ? 15 : 10;
+        if (isSendAsSlotChat()) {
+            return 10;
         }
         final TLRPC.User user = parentFragment.getCurrentUser();
         if (user != null && !user.bot || parentFragment.getChatMode() == ChatActivity.MODE_WELCOME_MESSAGES) {
@@ -16500,12 +16431,8 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         if (user != null && user.bot) {
             return 8;
         }
-        final TLRPC.Chat chat = parentFragment.getCurrentChat();
-        if (chat == null) {
+        if (parentFragment.getCurrentChat() == null) {
             return 0;
-        }
-        if (!app.lumine.ios.IosStyleHelper.sendAsHidden() && ChatObject.canSendAsPeers(chat)) {
-            return 10;
         }
         return 15;
     }
