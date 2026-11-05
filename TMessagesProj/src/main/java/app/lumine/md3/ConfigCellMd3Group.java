@@ -23,7 +23,7 @@ public class ConfigCellMd3Group extends AbstractConfigCell implements WithOnClic
     private final Runnable onApplied;
     private final Runnable onRowsChanged;
     private final List<ConfigCellMd3Option> options;
-    private boolean expanded = true;
+    private boolean expanded = false;
 
     public ConfigCellMd3Group(String title, Runnable onApplied, Runnable onRowsChanged, ConfigCellMd3Option... options) {
         this.title = title;
