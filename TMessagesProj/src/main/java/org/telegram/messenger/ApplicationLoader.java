@@ -303,6 +303,7 @@ public class ApplicationLoader extends Application {
         NaConfig.init();
         app.lumine.ios.IosStyleConfig.init();
         app.lumine.md3.Md3Config.init();
+        app.lumine.icons.IconPacksConfig.init();
         LastSeenHelper.preload();
         ExteraConfig.init();
         installPluginCrashHandler();

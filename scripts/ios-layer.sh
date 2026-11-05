@@ -9,7 +9,7 @@ cd "$(git rev-parse --show-toplevel)"
 J=TMessagesProj/src/main/java
 K=TMessagesProj/src/main/kotlin
 
-OWN_FILES="$K/app/lumine/ios/IosStyleConfig.kt $K/app/lumine/ios/IosStyleHelper.kt $K/app/lumine/ios/UnreadBackBadgeHelper.kt $J/app/lumine/ios/ChatHeaderMetrics.java $K/app/lumine/ios/IosStyleSettingsActivity.kt $K/app/lumine/ios/IosChatPreview.kt $K/app/lumine/ios/IosPreviewRowsAdapter.kt $K/app/lumine/ios/IosCheckerDrawable.kt"
+OWN_FILES="$K/app/lumine/ios/IosStyleConfig.kt $K/app/lumine/ios/IosStyleHelper.kt $K/app/lumine/ios/UnreadBackBadgeHelper.kt $J/app/lumine/ios/ChatHeaderMetrics.java $K/app/lumine/ios/IosStyleSettingsActivity.kt $K/app/lumine/ios/IosChatPreview.kt $K/app/lumine/ios/IosPreviewRowsAdapter.kt $K/app/lumine/ios/IosCheckerDrawable.kt $J/app/lumine/icons/IconPackManager.java $K/app/lumine/icons/IconPacksConfig.kt"
 
 PATCHED_FILES="$J/org/telegram/ui/ActionBar/ActionBar.java $J/org/telegram/ui/ActionBar/BackDrawable.java $J/org/telegram/ui/ActionBar/SimpleTextView.java $J/org/telegram/ui/Components/ChatAvatarContainer.java $J/org/telegram/ui/Components/CounterView.java $J/org/telegram/ui/ChatActivity.java $J/org/telegram/ui/ComposeDrawable.java $J/tw/nekomimi/nekogram/settings/NekoAppearanceSettingsActivity.java TMessagesProj/src/main/res/values/strings_lumine.xml $J/org/telegram/messenger/ApplicationLoader.java $J/tw/nekomimi/nekogram/NekoConfig.java"
 
@@ -32,6 +32,10 @@ MARKERS=(
 "$J/tw/nekomimi/nekogram/settings/NekoAppearanceSettingsActivity.java|IosStyleSettingsActivity"
 "TMessagesProj/src/main/res/values/strings_lumine.xml|LumineIosStyle"
 "$J/org/telegram/messenger/ApplicationLoader.java|app.lumine.ios.IosStyleConfig.init"
+"$J/org/telegram/messenger/ApplicationLoader.java|app.lumine.icons.IconPacksConfig.init"
+"$J/tw/nekomimi/nekogram/ui/icons/IconsResources.java|IconPackManager.getInstance().getDrawable"
+"TMessagesProj/src/main/AndroidManifest.xml|app.lumine.icons.IconPackProvider"
+"TMessagesProj/build.gradle|androidsvg-aar"
 "$J/tw/nekomimi/nekogram/NekoConfig.java|\"unreadBadgeOnBackButton\", configTypeBool, true"
 )
 

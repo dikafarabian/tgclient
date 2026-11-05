@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 
 import androidx.annotation.Nullable;
 
+import app.lumine.icons.IconPackManager;
 import xyz.nextalone.nagram.NaConfig;
 
 @SuppressLint("UseCompatLoadingForDrawables")
@@ -21,6 +22,10 @@ public class IconsResources extends Resources {
 
     @Override
     public Drawable getDrawable(int id) throws NotFoundException {
+        Drawable fromPack = IconPackManager.getInstance().getDrawable(this, id, 0, null);
+        if (fromPack != null) {
+            return fromPack;
+        }
         try {
             return super.getDrawable(getConversion(id), null);
         } catch (NotFoundException e) {
@@ -30,6 +35,10 @@ public class IconsResources extends Resources {
 
     @Override
     public Drawable getDrawable(int id, @Nullable Theme theme) throws NotFoundException {
+        Drawable fromPack = IconPackManager.getInstance().getDrawable(this, id, 0, theme);
+        if (fromPack != null) {
+            return fromPack;
+        }
         try {
             return super.getDrawable(getConversion(id), theme);
         } catch (NotFoundException e) {
@@ -40,6 +49,15 @@ public class IconsResources extends Resources {
     @Nullable
     @Override
     public Drawable getDrawableForDensity(int id, int density, @Nullable Theme theme) {
+        Drawable fromPack = IconPackManager.getInstance().getDrawable(this, id, density, theme);
+        if (fromPack != null) {
+            return fromPack;
+        }
+        return getOriginalDrawableForDensity(id, density, theme);
+    }
+
+    @Nullable
+    public Drawable getOriginalDrawableForDensity(int id, int density, @Nullable Theme theme) {
         try {
             return super.getDrawableForDensity(getConversion(id), density, theme);
         } catch (NotFoundException e) {
@@ -50,11 +68,7 @@ public class IconsResources extends Resources {
     @Nullable
     @Override
     public Drawable getDrawableForDensity(int id, int density) throws NotFoundException {
-        try {
-            return super.getDrawableForDensity(getConversion(id), density, null);
-        } catch (NotFoundException e) {
-            return super.getDrawableForDensity(id, density, null);
-        }
+        return getDrawableForDensity(id, density, null);
     }
 
     private int getConversion(int icon) {

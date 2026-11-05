@@ -667,6 +667,12 @@
         </provider>
 
         <provider
+            android:authorities="${applicationId}.icon_pack_provider"
+            android:name="app.lumine.icons.IconPackProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"/>
+
+        <provider
             android:authorities="${applicationId}.notification_image_provider"
             android:name=".NotificationImageProvider"
             android:exported="false"
