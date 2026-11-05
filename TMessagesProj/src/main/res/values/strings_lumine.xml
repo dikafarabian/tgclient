@@ -4,6 +4,7 @@
     <string name="AppIconLumine">luminegram</string>
     <string name="LumineIosStyle">Chat interface</string>
     <string name="LumineIosStyleInfo">iOS style and Liquid Glass</string>
+    <string name="LumineIconPacksInfo">Install and manage icon packs</string>
     <string name="LumineHideFade">Hide fade views</string>
     <string name="LumineHideFadeInfo">Removes the gradient fade behind the header, input bar, bottom tabs and sheets.</string>
     <string name="LumineIosStyleSection">iOS style</string>

@@ -36,6 +36,7 @@ MARKERS=(
 "$J/tw/nekomimi/nekogram/ui/icons/IconsResources.java|IconPackManager.getInstance().getDrawable"
 "TMessagesProj/src/main/AndroidManifest.xml|app.lumine.icons.IconPackProvider"
 "TMessagesProj/build.gradle|androidsvg-aar"
+"$J/tw/nekomimi/nekogram/settings/NekoAppearanceSettingsActivity.java|app.lumine.icons.IconPacksActivity"
 "$J/tw/nekomimi/nekogram/NekoConfig.java|\"unreadBadgeOnBackButton\", configTypeBool, true"
 )
 

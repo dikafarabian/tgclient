@@ -73,6 +73,7 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
 
     private final AbstractConfigCell headerInterface = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.LumineInterface)));
     private final AbstractConfigCell iosStyleRow = cellGroup.appendCell(new ConfigCellTextDetailIcon("LumineIosStyle", getString(R.string.LumineIosStyle), getString(R.string.LumineIosStyleInfo), R.drawable.msg_discussion, true, () -> presentFragment(new app.lumine.ios.IosStyleSettingsActivity())));
+    private final AbstractConfigCell iconPacksRow = cellGroup.appendCell(new ConfigCellTextDetailIcon("LumineIconPacks", getString(R.string.IconPacks), getString(R.string.LumineIconPacksInfo), R.drawable.msg_customize, true, () -> presentFragment(new app.lumine.icons.IconPacksActivity())));
     private final ConfigCellMd3Group md3GroupRow = (ConfigCellMd3Group) cellGroup.appendCell(new ConfigCellMd3Group(
             getString(R.string.LumineMaterialDesign3),
             this::applyMd3Change,
@@ -221,11 +222,13 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
         cellGroup.rows.add(5, typefaceRow);
         cellGroup.rows.remove(headerInterface);
         cellGroup.rows.remove(iosStyleRow);
+        cellGroup.rows.remove(iconPacksRow);
         cellGroup.rows.remove(md3GroupRow);
         cellGroup.rows.remove(dividerIosStyle);
         int interfaceIdx = 0;
         cellGroup.rows.add(interfaceIdx++, headerInterface);
         cellGroup.rows.add(interfaceIdx++, iosStyleRow);
+        cellGroup.rows.add(interfaceIdx++, iconPacksRow);
         cellGroup.rows.add(interfaceIdx++, md3GroupRow);
         for (AbstractConfigCell option : md3GroupRow.visibleOptions()) {
             cellGroup.rows.add(interfaceIdx++, option);
