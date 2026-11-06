@@ -88,6 +88,9 @@ public class SettingsHelper {
                 case "emoji":
                     fragment = neko_fragment = new NekoEmojiSettingsActivity();
                     break;
+                case "iconpacks":
+                    fragment = neko_fragment = new app.lumine.icons.IconPacksActivity();
+                    break;
                 case "general":
                 case "g":
                     fragment = nekox_fragment = new NekoGeneralSettingsActivity();
