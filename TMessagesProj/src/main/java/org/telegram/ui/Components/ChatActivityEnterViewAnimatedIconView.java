@@ -1,6 +1,7 @@
 package org.telegram.ui.Components;
 
 import android.content.Context;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
@@ -11,12 +12,15 @@ import org.telegram.messenger.R;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.lumine.icons.BasePackSelection;
+import app.lumine.icons.IconPackManager;
 import tw.nekomimi.nekogram.NekoConfig;
 
 public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
     private State currentState;
     private TransitState animatingState;
     private final int sizeDp;
+    private final ImageView.ScaleType defaultScaleType;
 
     private static boolean iosInput() {
         return NekoConfig.iOSMessageInputField.Bool();
@@ -52,6 +56,36 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
     public ChatActivityEnterViewAnimatedIconView(Context context, int sizeDp) {
         super(context);
         this.sizeDp = sizeDp;
+        this.defaultScaleType = getScaleType();
+    }
+
+    private static boolean staticIcons() {
+        try {
+            IconPackManager manager = IconPackManager.getInstance();
+            manager.ensureInitialized();
+            return BasePackSelection.getSelected() != BasePackSelection.BASE_DEFAULT || manager.hasReplacements();
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private static int staticResource(State state) {
+        switch (state) {
+            case VOICE:
+                return R.drawable.input_mic_pressed;
+            case VIDEO:
+                return R.drawable.input_video_pressed;
+            case STICKER:
+                return R.drawable.msg_sticker;
+            case KEYBOARD:
+                return R.drawable.input_keyboard;
+            case GIF:
+                return R.drawable.msg_gif;
+            case MENU:
+                return R.drawable.ic_ab_other;
+            default:
+                return R.drawable.input_smile;
+        }
     }
 
     public void setState(State state, boolean animate) {
@@ -60,7 +94,16 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
         }
         State fromState = currentState;
         currentState = state;
-        if (!animate || fromState == null || getState(fromState, currentState) == null) {
+        boolean staticMode = staticIcons();
+        if (!staticMode && getScaleType() != defaultScaleType) {
+            setScaleType(defaultScaleType);
+        }
+        if (staticMode) {
+            animatingState = null;
+            stopAnimation();
+            setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            setImageResource(staticResource(currentState));
+        } else if (!animate || fromState == null || getState(fromState, currentState) == null) {
             if (currentState == State.MENU) {
                 stopAnimation();
                 setImageResource(R.drawable.ic_ab_other);
