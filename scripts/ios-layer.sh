@@ -72,6 +72,8 @@ MARKERS=(
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|botButton.getVisibility() == VISIBLE ? dp(20) : 0"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|final boolean attachMore"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|private void onAttachMoreClick"
+"$J/org/telegram/ui/Components/blur3/DownscaleScrollableNoiseSuppressor.java|app.lumine.ios.IosStyleHelper.blurRadius"
+"$J/tw/nekomimi/nekogram/settings/NekoAppearanceSettingsActivity.java|cellGroup.rows.add(interfaceIdx++, pillStackRow)"
 )
 
 check() {

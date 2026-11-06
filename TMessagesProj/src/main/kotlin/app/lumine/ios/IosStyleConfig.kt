@@ -44,6 +44,9 @@ object IosStyleConfig {
     val liquidGlassTint = addConfig("LumineLiquidGlassTint", ConfigItem.configTypeInt, 20)
 
     @JvmField
+    val blurIntensity = addConfig("LumineBlurIntensity", ConfigItem.configTypeInt, 50)
+
+    @JvmField
     val stickerTimeSide = addConfig("LumineStickerTimeSide", ConfigItem.configTypeBool, false)
 
     @JvmField

@@ -21,6 +21,8 @@ import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.UniversalFragment
 import tw.nekomimi.nekogram.NekoConfig
+import tw.nekomimi.nekogram.config.ConfigItem
+import xyz.nextalone.nagram.NaConfig
 import app.lumine.chats.ActionButtonStyle
 
 class IosStyleSettingsActivity : UniversalFragment() {
@@ -68,28 +70,15 @@ class IosStyleSettingsActivity : UniversalFragment() {
         items.add(UItem.asShadow(null))
 
         adapter?.whiteSectionStart()
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineBlurGlassSection)))
+        items.add(check(TOGGLE_GLARE, R.string.StrokeOnViews, NaConfig.strokeOnViews.Bool()))
+        items.add(check(TOGGLE_AVATAR_BLUR, R.string.DisableAvatarBlur, NaConfig.disableAvatarBlur.Bool()))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineBlurIntensity)))
+        items.add(percentSlider(IosStyleConfig.blurIntensity))
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassIntensity)))
-        items.add(UItem.asIntSlideView(
-            1, 0, IosStyleConfig.liquidGlassIntensity.Int(), 100,
-            { value: Int -> "$value%" },
-            { value: Int ->
-                IosStyleConfig.liquidGlassIntensity.setConfigInt(value)
-                chatPreview?.rebuild()
-            }
-        ))
-        adapter?.whiteSectionEnd()
-        items.add(UItem.asShadow(null))
-
-        adapter?.whiteSectionStart()
+        items.add(percentSlider(IosStyleConfig.liquidGlassIntensity))
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassTint)))
-        items.add(UItem.asIntSlideView(
-            1, 0, IosStyleConfig.liquidGlassTint.Int(), 100,
-            { value: Int -> "$value%" },
-            { value: Int ->
-                IosStyleConfig.liquidGlassTint.setConfigInt(value)
-                chatPreview?.rebuild()
-            }
-        ))
+        items.add(percentSlider(IosStyleConfig.liquidGlassTint))
         adapter?.whiteSectionEnd()
         items.add(UItem.asShadow(LocaleController.getString(R.string.LumineLiquidGlassInfo)))
     }
@@ -121,6 +110,8 @@ class IosStyleSettingsActivity : UniversalFragment() {
             TOGGLE_IOS_INPUT -> NekoConfig.iOSMessageInputField
             TOGGLE_HIDE_FADE -> IosStyleConfig.hideFadeViews
             TOGGLE_INPUT_ANIMATION -> IosStyleConfig.inputTextAnimations
+            TOGGLE_GLARE -> NaConfig.strokeOnViews
+            TOGGLE_AVATAR_BLUR -> NaConfig.disableAvatarBlur
             else -> return
         }
         toggled.setConfigBool(!toggled.Bool())
@@ -171,6 +162,15 @@ class IosStyleSettingsActivity : UniversalFragment() {
         return item.setChecked(checked)
     }
 
+    private fun percentSlider(config: ConfigItem): UItem = UItem.asIntSlideView(
+        1, 0, config.Int().coerceIn(0, 100), 100,
+        { value: Int -> "$value%" },
+        { value: Int ->
+            config.setConfigInt(value)
+            chatPreview?.rebuild()
+        }
+    )
+
     private fun showAvatarSenderDialog() {
         val context = parentActivity ?: return
         val provider = resourceProvider
@@ -214,6 +214,8 @@ class IosStyleSettingsActivity : UniversalFragment() {
         const val TOGGLE_IOS_INPUT = 10
         const val TOGGLE_HIDE_FADE = 11
         const val TOGGLE_INPUT_ANIMATION = 12
+        const val TOGGLE_GLARE = 13
+        const val TOGGLE_AVATAR_BLUR = 14
         const val BUTTON_ACTION_STYLE = 30
         val ACTION_STYLE_LABELS = intArrayOf(
             R.string.LumineActionButtonStyleAccent,

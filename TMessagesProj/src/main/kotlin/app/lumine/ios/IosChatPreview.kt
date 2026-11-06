@@ -238,6 +238,7 @@ class IosChatPreview(context: Context, private val host: BaseFragment) : FrameLa
             NekoConfig.iOSMessageInputField.Bool(),
             IosStyleConfig.liquidGlassIntensity.Int(),
             IosStyleConfig.liquidGlassTint.Int(),
+            IosStyleConfig.blurIntensity.Int(),
             IosStyleConfig.hideFadeViews.Bool(),
             IosStyleHelper.avatarSenderMode(),
             IosStyleConfig.avatarSenderHidden.Bool(),

@@ -16,6 +16,12 @@ object IosStyleHelper {
     }
 
     @JvmStatic
+    fun blurRadius(base: Float): Float {
+        IosStyleConfig.ensureLoaded()
+        return (base * IosStyleConfig.blurIntensity.Int() / 50f).coerceAtLeast(1f)
+    }
+
+    @JvmStatic
     fun shouldHideFadeView(): Boolean {
         IosStyleConfig.ensureLoaded()
         return IosStyleConfig.hideFadeViews.Bool()

@@ -179,11 +179,6 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
     private final AbstractConfigCell ignoreUnreadCountRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getIgnoreUnreadCount()));
     private final AbstractConfigCell dividerNavigationTop = cellGroup.appendCell(new ConfigCellDivider());
 
-    // Blur
-    private final AbstractConfigCell headerBlur = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.LiteOptionsBlur2)));
-    private final AbstractConfigCell strokeOnViewsRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getStrokeOnViews()));
-    private final AbstractConfigCell disableAvatarBlurRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getDisableAvatarBlur()));
-    private final AbstractConfigCell dividerBlur = cellGroup.appendCell(new ConfigCellDivider());
 
     @Override
     protected RecyclerListView.SelectionAdapter getListAdapter() {
