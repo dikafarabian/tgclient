@@ -7913,6 +7913,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         if (botButton != null) {
             if (use) {
                 botButton.setVisibility(View.GONE);
+                updateIOSEmojiButtonLayout();
             } else if (checkBotButton()) {
                 updateBotButton(true);
             }
@@ -16552,7 +16553,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             emojiButton.setLayoutParams(emojiLp);
         }
         emojiButton.setTranslationX(-extra);
-        final int editRight = dp(49) + extra + (botButtonDrawable != null ? dp(20) : 0);
+        final int editRight = dp(49) + extra + (botButton != null && botButton.getVisibility() == VISIBLE ? dp(20) : 0);
         if (layoutParams.rightMargin != editRight) {
             layoutParams.rightMargin = editRight;
             messageEditText.setLayoutParams(layoutParams);
