@@ -2,12 +2,12 @@
 <resources>
     <string name="LumineAboutDesc">Personal fork of Telegram for Android.</string>
     <string name="AppIconLumine">luminegram</string>
-    <string name="LumineIosStyle">Chat interface</string>
-    <string name="LumineIosStyleInfo">iOS style and Liquid Glass</string>
+    <string name="LumineIosStyle">Chat Interface</string>
+    <string name="LumineIosStyleInfo">Chat header, input field, blur and Liquid Glass</string>
     <string name="LumineIconPacksInfo">Install and manage icon packs</string>
     <string name="LumineHideFade">Hide fade views</string>
     <string name="LumineHideFadeInfo">Removes the gradient fade behind the header, input bar, bottom tabs and sheets.</string>
-    <string name="LumineIosStyleSection">iOS style</string>
+    <string name="LumineIosStyleSection">Chat Header &amp; Input Message</string>
     <string name="LumineStickerTimeSide">Time Beside Stickers</string>
     <string name="LumineLiquidGlassIntensity">Liquid Glass intensity</string>
     <string name="LumineLiquidGlassTint">Liquid Glass tint</string>
