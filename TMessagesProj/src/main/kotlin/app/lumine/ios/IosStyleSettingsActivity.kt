@@ -11,11 +11,13 @@ import android.widget.FrameLayout
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.UniversalFragment
 import tw.nekomimi.nekogram.NekoConfig
+import app.lumine.chats.ActionButtonStyle
 
 class IosStyleSettingsActivity : UniversalFragment() {
 
@@ -40,8 +42,26 @@ class IosStyleSettingsActivity : UniversalFragment() {
         }
         items.add(check(TOGGLE_IOS_INPUT, R.string.iOSMessageInputField, NekoConfig.iOSMessageInputField.Bool(), R.string.iOSMessageInputFieldNotice))
         items.add(check(TOGGLE_HIDE_FADE, R.string.LumineHideFade, IosStyleConfig.hideFadeViews.Bool(), R.string.LumineHideFadeInfo))
+        items.add(check(TOGGLE_INPUT_ANIMATION, R.string.LumineInputTextAnimations, IosStyleConfig.inputTextAnimations.Bool()))
+        items.add(UItem.asButton(
+            BUTTON_ACTION_STYLE,
+            LocaleController.getString(R.string.LumineActionButtonStyle),
+            LocaleController.getString(ACTION_STYLE_LABELS[ActionButtonStyle.getCurrentStyle()])
+        ))
         adapter?.whiteSectionEnd()
         items.add(UItem.asShadow(null))
+
+        if (IosStyleConfig.inputTextAnimations.Bool()) {
+            adapter?.whiteSectionStart()
+            items.add(UItem.asHeader(LocaleController.getString(R.string.LumineInputAnimationStrength)))
+            items.add(UItem.asIntSlideView(
+                1, 0, IosStyleConfig.inputAnimationStrength.Int().coerceIn(0, 4), 4,
+                { value: Int -> LocaleController.getString(STRENGTH_LABELS[value.coerceIn(0, 4)]) },
+                { value: Int -> IosStyleConfig.inputAnimationStrength.setConfigInt(value) }
+            ))
+            adapter?.whiteSectionEnd()
+            items.add(UItem.asShadow(null))
+        }
 
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineAvatarSender)))
@@ -80,6 +100,18 @@ class IosStyleSettingsActivity : UniversalFragment() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (item.id == BUTTON_ACTION_STYLE) {
+            val options = ItemOptions.makeOptions(this, view).setDimAlpha(40)
+            for (style in ACTION_STYLE_LABELS.indices) {
+                options.add(LocaleController.getString(ACTION_STYLE_LABELS[style])) {
+                    IosStyleConfig.actionButtonStyle.setConfigInt(style)
+                    chatPreview?.rebuild()
+                    listView.adapter.update(true)
+                }
+            }
+            options.show()
+            return
+        }
         val senderMode = when (item.id) {
             RADIO_SENDER_SHOW -> IosStyleHelper.AVATAR_SENDER_SHOW
             RADIO_SENDER_HIDE -> IosStyleHelper.AVATAR_SENDER_HIDE
@@ -101,6 +133,7 @@ class IosStyleSettingsActivity : UniversalFragment() {
             TOGGLE_UNREAD_BADGE_IOS -> IosStyleConfig.unreadBadgeOnBackButtonIos
             TOGGLE_IOS_INPUT -> NekoConfig.iOSMessageInputField
             TOGGLE_HIDE_FADE -> IosStyleConfig.hideFadeViews
+            TOGGLE_INPUT_ANIMATION -> IosStyleConfig.inputTextAnimations
             else -> return
         }
         toggled.setConfigBool(!toggled.Bool())
@@ -166,6 +199,20 @@ class IosStyleSettingsActivity : UniversalFragment() {
         const val TOGGLE_UNREAD_BADGE_IOS = 9
         const val TOGGLE_IOS_INPUT = 10
         const val TOGGLE_HIDE_FADE = 11
+        const val TOGGLE_INPUT_ANIMATION = 12
+        const val BUTTON_ACTION_STYLE = 30
+        val ACTION_STYLE_LABELS = intArrayOf(
+            R.string.LumineActionButtonStyleAccent,
+            R.string.LumineActionButtonStyleNeutral,
+            R.string.LumineActionButtonStyleWhite
+        )
+        val STRENGTH_LABELS = intArrayOf(
+            R.string.LumineInputAnimationWeakest,
+            R.string.LumineInputAnimationWeak,
+            R.string.LumineInputAnimationModerate,
+            R.string.LumineInputAnimationStrong,
+            R.string.LumineInputAnimationStrongest
+        )
         const val RADIO_SENDER_SHOW = 20
         const val RADIO_SENDER_HIDE = 21
         const val RADIO_SENDER_HOLD = 22

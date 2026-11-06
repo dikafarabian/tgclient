@@ -61,6 +61,9 @@ object IosStyleConfig {
     @JvmField
     val inputAnimationStrength = addConfig("LumineInputAnimationStrength", ConfigItem.configTypeInt, 2)
 
+    @JvmField
+    val actionButtonStyle = addConfig("LumineActionButtonStyle", ConfigItem.configTypeInt, 0)
+
     private fun addConfig(key: String, type: Int, defaultValue: Any?): ConfigItem {
         val item = ConfigItem(key, type, defaultValue)
         configs.add(item)

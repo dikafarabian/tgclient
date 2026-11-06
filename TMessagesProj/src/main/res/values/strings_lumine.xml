@@ -79,4 +79,8 @@
     <string name="LumineInputAnimationModerate">Moderate</string>
     <string name="LumineInputAnimationStrong">Strong</string>
     <string name="LumineInputAnimationStrongest">Strongest</string>
+    <string name="LumineActionButtonStyle">Action Button Style</string>
+    <string name="LumineActionButtonStyleAccent">Accent</string>
+    <string name="LumineActionButtonStyleNeutral">Neutral</string>
+    <string name="LumineActionButtonStyleWhite">White</string>
 </resources>

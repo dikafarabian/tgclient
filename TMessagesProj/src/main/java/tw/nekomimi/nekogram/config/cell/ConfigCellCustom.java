@@ -28,7 +28,6 @@ public class ConfigCellCustom extends AbstractConfigCell implements WithKey {
     public static final int CUSTOM_ITEM_StickerShapePreview = 981;
     public static final int CUSTOM_ITEM_AyuSaveModeAll = 980;
     public static final int CUSTOM_ITEM_AyuSaveModeSelected = 979;
-    public static final int CUSTOM_ITEM_InputAnimationStrength = 978;
 
     public final int type;
     public boolean enabled;

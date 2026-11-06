@@ -9,7 +9,7 @@ cd "$(git rev-parse --show-toplevel)"
 J=TMessagesProj/src/main/java
 K=TMessagesProj/src/main/kotlin
 
-OWN_FILES="$K/app/lumine/ios/IosStyleConfig.kt $K/app/lumine/ios/IosStyleHelper.kt $K/app/lumine/ios/UnreadBackBadgeHelper.kt $J/app/lumine/ios/ChatHeaderMetrics.java $K/app/lumine/ios/IosStyleSettingsActivity.kt $K/app/lumine/ios/IosChatPreview.kt $K/app/lumine/ios/IosPreviewRowsAdapter.kt $K/app/lumine/ios/IosCheckerDrawable.kt $J/app/lumine/icons/IconPackManager.java $K/app/lumine/icons/IconPacksConfig.kt $K/app/lumine/md3/Md3Config.kt $K/app/lumine/md3/Md3ListItems.kt $J/app/lumine/md3/ConfigCellMd3Group.java $J/app/lumine/md3/ConfigCellMd3Option.java $J/app/lumine/chats/InputTextAnimation.java $J/app/lumine/chats/InputAnimationStrengthSeekBar.java"
+OWN_FILES="$K/app/lumine/ios/IosStyleConfig.kt $K/app/lumine/ios/IosStyleHelper.kt $K/app/lumine/ios/UnreadBackBadgeHelper.kt $J/app/lumine/ios/ChatHeaderMetrics.java $K/app/lumine/ios/IosStyleSettingsActivity.kt $K/app/lumine/ios/IosChatPreview.kt $K/app/lumine/ios/IosPreviewRowsAdapter.kt $K/app/lumine/ios/IosCheckerDrawable.kt $J/app/lumine/icons/IconPackManager.java $K/app/lumine/icons/IconPacksConfig.kt $K/app/lumine/md3/Md3Config.kt $K/app/lumine/md3/Md3ListItems.kt $J/app/lumine/md3/ConfigCellMd3Group.java $J/app/lumine/md3/ConfigCellMd3Option.java $J/app/lumine/chats/InputTextAnimation.java $J/app/lumine/chats/ActionButtonStyle.java"
 
 PATCHED_FILES="$J/org/telegram/ui/ActionBar/ActionBar.java $J/org/telegram/ui/ActionBar/BackDrawable.java $J/org/telegram/ui/ActionBar/SimpleTextView.java $J/org/telegram/ui/Components/ChatAvatarContainer.java $J/org/telegram/ui/Components/CounterView.java $J/org/telegram/ui/ChatActivity.java $J/org/telegram/ui/ComposeDrawable.java $J/tw/nekomimi/nekogram/settings/NekoAppearanceSettingsActivity.java TMessagesProj/src/main/res/values/strings_lumine.xml $J/org/telegram/messenger/ApplicationLoader.java $J/tw/nekomimi/nekogram/NekoConfig.java $J/org/telegram/ui/Components/ChatActivityEnterView.java $J/org/telegram/ui/Components/EditTextBoldCursor.java"
 
@@ -66,7 +66,8 @@ MARKERS=(
 "$J/org/telegram/ui/Components/EditTextEffects.java|inputTextAnimation.beforeDraw"
 "$J/org/telegram/ui/Components/EditTextBoldCursor.java|private void drawWithCursor"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|messageEditText.setTextWithoutInputAnimation"
-"$J/tw/nekomimi/nekogram/settings/NekoChatSettingsActivity.java|inputAnimationStrengthRow"
+"$J/org/telegram/ui/Components/ChatActivityEnterView.java|app.lumine.chats.ActionButtonStyle.resolveIconColor"
+"$K/app/lumine/ios/IosStyleSettingsActivity.kt|BUTTON_ACTION_STYLE"
 )
 
 check() {

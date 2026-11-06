@@ -3453,7 +3453,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     }
 
                     final float r = dpf2(19);
-                    paint.setColor(isIOSInputStyle() ? 0 : getThemedColor(Theme.key_chat_messagePanelSend));
+                    paint.setColor(isIOSInputStyle() ? 0 : app.lumine.chats.ActionButtonStyle.resolveBackgroundColor(resourcesProvider));
                     final float margin = dpf2(3);
                     final float height = dpf2(38);
                     final float width = dpf2(38);
@@ -11708,7 +11708,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 ? getThemedColor(Theme.key_glass_defaultIcon)
                 : isIOSInputStyle()
                 ? getThemedColor(Theme.key_actionBarActionModeDefaultIcon)
-                : Color.WHITE;
+                : app.lumine.chats.ActionButtonStyle.resolveIconColor(resourcesProvider);
         audioVideoSendButton.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
         audioVideoSendButton.invalidateStateCache();
         audioVideoSendButton.invalidate();
@@ -17269,7 +17269,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         private int drawableColor;
 
         public void updateColors() {
-            int color = isNewDesignSendButton ? Color.WHITE : Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider);
+            int color = isNewDesignSendButton ? app.lumine.chats.ActionButtonStyle.resolveIconColor(resourcesProvider) : Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider);
             if (color != drawableColor) {
                 drawableColor = color;
                 drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
@@ -17278,7 +17278,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 drawableInverse.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider), PorterDuff.Mode.SRC_IN));
             }
             if (isNewDesignSendButton) {
-                backgroundPaint.setColor(Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider));
+                backgroundPaint.setColor(app.lumine.chats.ActionButtonStyle.resolveBackgroundColor(resourcesProvider));
             } else if (shouldDrawBackground()) {
                 backgroundPaint.setColor(getFillColor());
             } else {
