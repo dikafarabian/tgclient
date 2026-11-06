@@ -7964,9 +7964,9 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 attachButton.setVisibility(GONE);
             } else {
                 if (duration == 0) {
-                    attachButton.setImageResource(R.drawable.ic_ab_other);
+                    attachButton.setImageResource(R.drawable.msg_add_solar);
                 } else {
-                    setImageDrawableWithAnimation(attachButton, R.drawable.msg_input_attach2_solar, R.drawable.ic_ab_other, duration);
+                    setImageDrawableWithAnimation(attachButton, R.drawable.msg_input_attach2_solar, R.drawable.msg_add_solar, duration);
                 }
                 attachButton.setOnClickListener(this::onAttachMoreClick);
                 attachButton.setContentDescription(LocaleController.getString(R.string.AccDescrChatAttachEnterMenu));
@@ -7981,7 +7981,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             attachButton.setScaleX(1.0f);
             attachButton.setScaleY(1.0f);
 
-            int fromRes = R.drawable.ic_ab_other;
+            int fromRes = isIOSInputStyle() ? R.drawable.msg_add_solar : R.drawable.ic_ab_other;
             int targetRes = isIOSInputStyle() ? R.drawable.msg_input_attach2_solar : R.drawable.input_attach;
 
             if (duration == 0) {
