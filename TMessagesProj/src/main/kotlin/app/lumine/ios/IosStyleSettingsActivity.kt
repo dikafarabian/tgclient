@@ -8,9 +8,13 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.RadioColorCell
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
@@ -42,6 +46,11 @@ class IosStyleSettingsActivity : UniversalFragment() {
         }
         items.add(check(TOGGLE_IOS_INPUT, R.string.iOSMessageInputField, NekoConfig.iOSMessageInputField.Bool(), R.string.iOSMessageInputFieldNotice))
         items.add(check(TOGGLE_HIDE_FADE, R.string.LumineHideFade, IosStyleConfig.hideFadeViews.Bool(), R.string.LumineHideFadeInfo))
+        items.add(UItem.asButton(
+            BUTTON_AVATAR_SENDER,
+            LocaleController.getString(R.string.LumineAvatarSender),
+            LocaleController.getString(SENDER_LABELS[IosStyleHelper.avatarSenderMode().coerceIn(0, 2)])
+        ))
         items.add(check(TOGGLE_INPUT_ANIMATION, R.string.LumineInputTextAnimations, IosStyleConfig.inputTextAnimations.Bool()))
         if (IosStyleConfig.inputTextAnimations.Bool()) {
             items.add(UItem.asIntSlideView(
@@ -57,15 +66,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
         ))
         adapter?.whiteSectionEnd()
         items.add(UItem.asShadow(null))
-
-        adapter?.whiteSectionStart()
-        items.add(UItem.asHeader(LocaleController.getString(R.string.LumineAvatarSender)))
-        val senderMode = IosStyleHelper.avatarSenderMode()
-        items.add(radio(RADIO_SENDER_SHOW, R.string.LumineAvatarSenderShow, senderMode == IosStyleHelper.AVATAR_SENDER_SHOW))
-        items.add(radio(RADIO_SENDER_HIDE, R.string.LumineAvatarSenderHide, senderMode == IosStyleHelper.AVATAR_SENDER_HIDE))
-        items.add(radio(RADIO_SENDER_HOLD, R.string.LumineAvatarSenderHold, senderMode == IosStyleHelper.AVATAR_SENDER_HOLD))
-        adapter?.whiteSectionEnd()
-        items.add(UItem.asShadow(LocaleController.getString(R.string.LumineAvatarSenderInfo)))
 
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineLiquidGlassIntensity)))
@@ -95,6 +95,10 @@ class IosStyleSettingsActivity : UniversalFragment() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (item.id == BUTTON_AVATAR_SENDER) {
+            showAvatarSenderDialog()
+            return
+        }
         if (item.id == BUTTON_ACTION_STYLE) {
             val options = ItemOptions.makeOptions(this, view).setDimAlpha(40)
             for (style in ACTION_STYLE_LABELS.indices) {
@@ -105,18 +109,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
                 }
             }
             options.show()
-            return
-        }
-        val senderMode = when (item.id) {
-            RADIO_SENDER_SHOW -> IosStyleHelper.AVATAR_SENDER_SHOW
-            RADIO_SENDER_HIDE -> IosStyleHelper.AVATAR_SENDER_HIDE
-            RADIO_SENDER_HOLD -> IosStyleHelper.AVATAR_SENDER_HOLD
-            else -> -1
-        }
-        if (senderMode >= 0) {
-            IosStyleConfig.avatarSender.setConfigInt(senderMode)
-            chatPreview?.rebuild()
-            listView.adapter.update(true)
             return
         }
         val toggled = when (item.id) {
@@ -179,8 +171,35 @@ class IosStyleSettingsActivity : UniversalFragment() {
         return item.setChecked(checked)
     }
 
-    private fun radio(id: Int, title: Int, checked: Boolean): UItem =
-        UItem.asRadio(id, LocaleController.getString(title)).setChecked(checked)
+    private fun showAvatarSenderDialog() {
+        val context = parentActivity ?: return
+        val provider = resourceProvider
+        val current = IosStyleHelper.avatarSenderMode()
+        val builder = AlertDialog.Builder(context, provider)
+        builder.setTitle(LocaleController.getString(R.string.LumineAvatarSender))
+        val layout = LinearLayout(context)
+        layout.orientation = LinearLayout.VERTICAL
+        builder.setView(layout)
+        for (mode in SENDER_LABELS.indices) {
+            val cell = RadioColorCell(context, provider)
+            cell.setPadding(AndroidUtilities.dp(4f), 0, AndroidUtilities.dp(4f), 0)
+            cell.setCheckColor(
+                Theme.getColor(Theme.key_radioBackground, provider),
+                Theme.getColor(Theme.key_dialogRadioBackgroundChecked, provider)
+            )
+            cell.setTextAndValue(LocaleController.getString(SENDER_LABELS[mode]), mode == current)
+            cell.background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector, provider), 2)
+            layout.addView(cell)
+            cell.setOnClickListener {
+                IosStyleConfig.avatarSender.setConfigInt(mode)
+                chatPreview?.rebuild()
+                listView.adapter.update(true)
+                builder.dismissRunnable.run()
+            }
+        }
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+        showDialog(builder.create())
+    }
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean = false
 
@@ -208,8 +227,11 @@ class IosStyleSettingsActivity : UniversalFragment() {
             R.string.LumineInputAnimationStrong,
             R.string.LumineInputAnimationStrongest
         )
-        const val RADIO_SENDER_SHOW = 20
-        const val RADIO_SENDER_HIDE = 21
-        const val RADIO_SENDER_HOLD = 22
+        const val BUTTON_AVATAR_SENDER = 31
+        val SENDER_LABELS = intArrayOf(
+            R.string.LumineAvatarSenderShow,
+            R.string.LumineAvatarSenderHide,
+            R.string.LumineAvatarSenderHold
+        )
     }
 }
