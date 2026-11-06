@@ -70,6 +70,8 @@ MARKERS=(
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|app.lumine.chats.ActionButtonStyle.resolveIconColor"
 "$K/app/lumine/ios/IosStyleSettingsActivity.kt|BUTTON_ACTION_STYLE"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|botButton.getVisibility() == VISIBLE ? dp(20) : 0"
+"$J/org/telegram/ui/Components/ChatActivityEnterView.java|final boolean attachMore"
+"$J/org/telegram/ui/Components/ChatActivityEnterView.java|private void onAttachMoreClick"
 )
 
 check() {

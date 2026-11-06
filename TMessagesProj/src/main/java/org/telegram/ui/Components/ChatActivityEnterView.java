@@ -5101,6 +5101,19 @@ public class ChatActivityEnterView extends FrameLayout implements
         return true;
     }
 
+    private void onAttachMoreClick(View view) {
+        if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress()) {
+            return;
+        }
+        if (parentFragment == null || slowModeTimer > 0 || delegate == null) {
+            if (delegate != null) {
+                delegate.didPressAttachButton();
+            }
+            return;
+        }
+        onMenuClick(view);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private void onMenuClick(View view) {
         if (parentFragment == null || slowModeTimer > 0 || delegate == null) {
@@ -5129,10 +5142,29 @@ public class ChatActivityEnterView extends FrameLayout implements
 
         int a = 0;
 
+        final boolean attachMore = isInInput && isIOSInputStyle() && view == attachButton;
         ActionBarMenuSubItem cell = new ActionBarMenuSubItem(getContext(), true, false);
         int disableLinkPreviewStatus = delegate.getDisableLinkPreviewStatus();
 
-        if (!isInInput) {
+        if (attachMore) {
+            cell.setTextAndIcon(getString(R.string.AttachMenu), R.drawable.input_attach);
+            cell.setOnClickListener(v -> {
+                if (menuPopupWindow != null && menuPopupWindow.isShowing()) {
+                    menuPopupWindow.dismiss();
+                }
+                if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress()) {
+                    return;
+                }
+                if (delegate != null) {
+                    delegate.didPressAttachButton();
+                }
+            });
+            cell.setMinimumWidth(AndroidUtilities.dp(196));
+            menuPopupLayout.addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 48 * a++, 0, 0));
+            cell = new ActionBarMenuSubItem(getContext(), false, !SharedConfig.inappCamera);
+        }
+
+        if (!isInInput || attachMore) {
             cell.setTextAndIcon(getString(R.string.ChatAttachEnterMenuRecordAudio), R.drawable.input_mic);
             cell.setOnClickListener(v -> {
                 if (menuPopupWindow != null && menuPopupWindow.isShowing()) {
@@ -5230,6 +5262,9 @@ public class ChatActivityEnterView extends FrameLayout implements
         }
         y += AndroidUtilities.dp(48);
         int x = location[0] + view.getMeasuredWidth() - menuPopupLayout.getMeasuredWidth() + AndroidUtilities.dp(8);
+        if (attachMore) {
+            x = location[0];
+        }
         menuPopupWindow.showAtLocation(view, Gravity.LEFT | Gravity.TOP, x, y);
         menuPopupWindow.dimBehind();
 
@@ -7927,6 +7962,14 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             attachButton.setTag(1);
             if (!isIOSInputStyle()) {
                 attachButton.setVisibility(GONE);
+            } else {
+                if (duration == 0) {
+                    attachButton.setImageResource(R.drawable.ic_ab_other);
+                } else {
+                    setImageDrawableWithAnimation(attachButton, R.drawable.msg_input_attach2_solar, R.drawable.ic_ab_other, duration);
+                }
+                attachButton.setOnClickListener(this::onAttachMoreClick);
+                attachButton.setContentDescription(LocaleController.getString(R.string.AccDescrChatAttachEnterMenu));
             }
             if (delegate != null)
                 delegate.onAttachButtonHidden();
@@ -7941,7 +7984,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             int fromRes = R.drawable.ic_ab_other;
             int targetRes = isIOSInputStyle() ? R.drawable.msg_input_attach2_solar : R.drawable.input_attach;
 
-            if (duration == 0 || isIOSInputStyle()) {
+            if (duration == 0) {
                 attachButton.setImageResource(targetRes);
             } else {
                 setImageDrawableWithAnimation(attachButton, fromRes, targetRes, duration);
