@@ -66,6 +66,7 @@ MARKERS=(
 "$J/org/telegram/ui/Components/EditTextEffects.java|inputTextAnimation.beforeDraw"
 "$J/org/telegram/ui/Components/EditTextBoldCursor.java|private void drawWithCursor"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|messageEditText.setTextWithoutInputAnimation"
+"$J/org/telegram/ui/ChatActivity.java|private boolean isHeaderAttachSuppressed"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|app.lumine.chats.ActionButtonStyle.resolveIconColor"
 "$K/app/lumine/ios/IosStyleSettingsActivity.kt|BUTTON_ACTION_STYLE"
 )

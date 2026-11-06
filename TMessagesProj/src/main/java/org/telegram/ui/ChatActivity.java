@@ -1592,7 +1592,7 @@ public class ChatActivity extends BaseFragment implements
 
     public void showHeaderItem(boolean show) {
         if (show) {
-            if (chatActivityEnterView.hasText() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer())) {
+            if (chatActivityEnterView.hasText() && !isHeaderAttachSuppressed() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer())) {
                 if (attachItem != null) {
                     attachItem.setVisibility(isTitleCentered() ? View.GONE : View.VISIBLE);
                 }
@@ -2565,7 +2565,7 @@ public class ChatActivity extends BaseFragment implements
                         if (chatMode == MODE_SAVED && getSavedDialogId() == getUserConfig().getClientUserId() || chatMode == 0 && (threadMessageId == 0 || isTopic) && !UserObject.isReplyUser(currentUser) && !isReport()) {
                             editTextItem.setVisibility(View.GONE);
 
-                            if (chatActivityEnterView.hasText() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer())) {
+                            if (chatActivityEnterView.hasText() && !isHeaderAttachSuppressed() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer())) {
                                 if (headerItem != null) {
                                     headerItem.setVisibility(View.GONE);
                                 }
@@ -2674,7 +2674,7 @@ public class ChatActivity extends BaseFragment implements
             if (editTextItem != null && !isEditTextItemVisibilitySuppressed) {
                 editTextItem.setVisibility(View.GONE);
             }
-            if (TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer())) {
+            if (!isHeaderAttachSuppressed() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer())) {
                 if (headerItem != null) {
                     headerItem.setVisibility(View.GONE);
                 }
@@ -41734,7 +41734,7 @@ public class ChatActivity extends BaseFragment implements
                 if (topicCreateItem != null) {
                     topicCreateItem.setVisibility(View.GONE);
                 }
-            } else if (chatActivityEnterView.hasText() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer()) && (currentChat == null || ChatObject.canSendPlain(currentChat))) {
+            } else if (chatActivityEnterView.hasText() && !isHeaderAttachSuppressed() && TextUtils.isEmpty(chatActivityEnterView.getSlowModeTimer()) && (currentChat == null || ChatObject.canSendPlain(currentChat))) {
                 if (headerItem != null) {
                     headerItem.setVisibility(View.GONE);
                 }
@@ -51614,6 +51614,10 @@ public class ChatActivity extends BaseFragment implements
 
     private boolean isTitleCentered() {
         return false;
+    }
+
+    private boolean isHeaderAttachSuppressed() {
+        return chatActivityEnterView != null && chatActivityEnterView.isIOSInputStyle();
     }
 
     private boolean canShowCenteredTitle(ChatActivity parentFragment) {
