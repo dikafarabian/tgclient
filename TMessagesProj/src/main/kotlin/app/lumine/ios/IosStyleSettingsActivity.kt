@@ -43,6 +43,13 @@ class IosStyleSettingsActivity : UniversalFragment() {
         items.add(check(TOGGLE_IOS_INPUT, R.string.iOSMessageInputField, NekoConfig.iOSMessageInputField.Bool(), R.string.iOSMessageInputFieldNotice))
         items.add(check(TOGGLE_HIDE_FADE, R.string.LumineHideFade, IosStyleConfig.hideFadeViews.Bool(), R.string.LumineHideFadeInfo))
         items.add(check(TOGGLE_INPUT_ANIMATION, R.string.LumineInputTextAnimations, IosStyleConfig.inputTextAnimations.Bool()))
+        if (IosStyleConfig.inputTextAnimations.Bool()) {
+            items.add(UItem.asIntSlideView(
+                1, 0, IosStyleConfig.inputAnimationStrength.Int().coerceIn(0, 4), 4,
+                { value: Int -> LocaleController.getString(STRENGTH_LABELS[value.coerceIn(0, 4)]) },
+                { value: Int -> IosStyleConfig.inputAnimationStrength.setConfigInt(value) }
+            ))
+        }
         items.add(UItem.asButton(
             BUTTON_ACTION_STYLE,
             LocaleController.getString(R.string.LumineActionButtonStyle),
@@ -50,18 +57,6 @@ class IosStyleSettingsActivity : UniversalFragment() {
         ))
         adapter?.whiteSectionEnd()
         items.add(UItem.asShadow(null))
-
-        if (IosStyleConfig.inputTextAnimations.Bool()) {
-            adapter?.whiteSectionStart()
-            items.add(UItem.asHeader(LocaleController.getString(R.string.LumineInputAnimationStrength)))
-            items.add(UItem.asIntSlideView(
-                1, 0, IosStyleConfig.inputAnimationStrength.Int().coerceIn(0, 4), 4,
-                { value: Int -> LocaleController.getString(STRENGTH_LABELS[value.coerceIn(0, 4)]) },
-                { value: Int -> IosStyleConfig.inputAnimationStrength.setConfigInt(value) }
-            ))
-            adapter?.whiteSectionEnd()
-            items.add(UItem.asShadow(null))
-        }
 
         adapter?.whiteSectionStart()
         items.add(UItem.asHeader(LocaleController.getString(R.string.LumineAvatarSender)))
