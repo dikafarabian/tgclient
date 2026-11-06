@@ -202,6 +202,8 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
             getString(R.string.Official),
             "Nekogram",
     }, null));
+    private final AbstractConfigCell inputTextAnimationsRow = cellGroup.appendCell(new ConfigCellTextCheck(app.lumine.ios.IosStyleConfig.inputTextAnimations));
+    private final AbstractConfigCell inputAnimationStrengthRow = cellGroup.appendCell(new ConfigCellCustom("LumineInputAnimationStrength", ConfigCellCustom.CUSTOM_ITEM_InputAnimationStrength, true));
     private final AbstractConfigCell dividerChats = cellGroup.appendCell(new ConfigCellDivider());
 
     // Double Tap
@@ -1170,6 +1172,9 @@ public class NekoChatSettingsActivity extends BaseNekoXSettingsActivity implemen
                     break;
                 case ConfigCellCustom.CUSTOM_ITEM_DoubleTapPreview:
                     view = doubleTapPreviewCell = new DoubleTapPreviewCell(mContext);
+                    break;
+                case ConfigCellCustom.CUSTOM_ITEM_InputAnimationStrength:
+                    view = new app.lumine.chats.InputAnimationStrengthSeekBar(mContext);
                     break;
             }
             return view;

@@ -55,6 +55,12 @@ object IosStyleConfig {
     @JvmField
     val avatarSenderHidden = addConfig("LumineAvatarSenderHidden", ConfigItem.configTypeBool, false)
 
+    @JvmField
+    val inputTextAnimations = addConfig("LumineInputTextAnimations", ConfigItem.configTypeBool, false)
+
+    @JvmField
+    val inputAnimationStrength = addConfig("LumineInputAnimationStrength", ConfigItem.configTypeInt, 2)
+
     private fun addConfig(key: String, type: Int, defaultValue: Any?): ConfigItem {
         val item = ConfigItem(key, type, defaultValue)
         configs.add(item)

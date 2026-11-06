@@ -30,7 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import app.lumine.chats.InputTextAnimation;
+
 public class EditTextEffects extends EditText {
+    private InputTextAnimation inputTextAnimation;
+    private boolean inputAnimationSuppressed;
     private final static int SPOILER_TIMEOUT = 10000;
 
     private List<SpoilerEffect> spoilers = new ArrayList<>();
@@ -70,6 +74,8 @@ public class EditTextEffects extends EditText {
 
     public EditTextEffects(Context context) {
         super(context, null, 0, R.style.EditTextNoBackgroundStyle);
+        inputTextAnimation = new InputTextAnimation(this);
+        super.addTextChangedListener(inputTextAnimation);
 
         if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
             clickDetector = new SpoilersClickDetector(this, spoilers, this::onSpoilerClicked);
@@ -140,6 +146,7 @@ public class EditTextEffects extends EditText {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        inputTextAnimation.clear();
 
         removeCallbacks(spoilerTimeout);
         AnimatedEmojiSpan.release(this, animatedEmojiDrawables);
@@ -205,6 +212,21 @@ public class EditTextEffects extends EditText {
                 spoilersPool.clear();
         }
         super.setText(text, type);
+    }
+
+    public final void setTextWithoutInputAnimation(CharSequence text) {
+        boolean wasSuppressed = inputAnimationSuppressed;
+        inputAnimationSuppressed = true;
+        inputTextAnimation.clear();
+        try {
+            setText(text);
+        } finally {
+            inputAnimationSuppressed = wasSuppressed;
+        }
+    }
+
+    public final boolean isInputAnimationSuppressed() {
+        return inputAnimationSuppressed;
     }
 
     private int lastTextColor;
@@ -310,6 +332,25 @@ public class EditTextEffects extends EditText {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        boolean wrap = !(this instanceof EditTextBoldCursor);
+        if (wrap) beginInputAnimation(canvas);
+        drawInputContent(canvas);
+        if (wrap) endInputAnimation(canvas);
+    }
+
+    public final void beginInputAnimation(Canvas canvas) {
+        inputTextAnimation.beforeDraw(canvas);
+    }
+
+    public boolean animateInputWithoutFocus() {
+        return false;
+    }
+
+    public final void endInputAnimation(Canvas canvas) {
+        inputTextAnimation.afterDraw(canvas);
+    }
+
+    private void drawInputContent(Canvas canvas) {
         canvas.save();
         if (clipToPadding && getScrollY() != 0) {
             canvas.clipRect(-AndroidUtilities.dp(3), getScrollY() - super.getExtendedPaddingTop() - offsetY, getMeasuredWidth(), getMeasuredHeight() + getScrollY() + super.getExtendedPaddingBottom() - offsetY);

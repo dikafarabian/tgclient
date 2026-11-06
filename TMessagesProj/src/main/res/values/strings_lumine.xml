@@ -72,4 +72,11 @@
     <string name="IconPackNameCannotBeEmpty">Pack name can\'t be empty.</string>
     <string name="IconPackRename">Rename</string>
     <string name="IconPackIconsCount">%1$d icons</string>
+    <string name="LumineInputTextAnimations">Typing Animation &amp; Deletion Particles</string>
+    <string name="LumineInputAnimationStrength">Animation Strength</string>
+    <string name="LumineInputAnimationWeakest">Weakest</string>
+    <string name="LumineInputAnimationWeak">Weak</string>
+    <string name="LumineInputAnimationModerate">Moderate</string>
+    <string name="LumineInputAnimationStrong">Strong</string>
+    <string name="LumineInputAnimationStrongest">Strongest</string>
 </resources>

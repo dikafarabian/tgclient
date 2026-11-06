@@ -2909,7 +2909,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 .setPositiveButton(getString(R.string.Delete), (di, w) -> {
                     clearRichDraft();
                     if (messageEditText != null) {
-                        messageEditText.setText("");
+                        messageEditText.setTextWithoutInputAnimation("");
                     }
                 })
                 .makeRed(AlertDialog.BUTTON_POSITIVE)
@@ -7675,7 +7675,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(" d " + getString("PlainTextRestrictedHint", R.string.PlainTextRestrictedHint));
             spannableStringBuilder.setSpan(new ColoredImageSpan(R.drawable.msg_mini_lock3), 1, 2, 0);
             messageEditText.setHintText(spannableStringBuilder, animated);
-            messageEditText.setText(null);
+            messageEditText.setTextWithoutInputAnimation(null);
             messageEditText.setEnabled(false);
             messageEditText.setInputType(EditorInfo.IME_ACTION_NONE);
             return;
@@ -8438,7 +8438,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 if (processSendingText(message, notify, scheduleDate, scheduleRepeatPeriod, payStars, internalParams)) {
                     if (delegate.hasForwardingMessages() || (scheduleDate != 0 && !isInScheduleMode()) || isInScheduleMode()) {
                         if (messageEditText != null) {
-                            messageEditText.setText("");
+                            messageEditText.setTextWithoutInputAnimation("");
                         }
                         if (delegate != null) {
                             delegate.onMessageSend(message, notify, scheduleDate, scheduleRepeatPeriod, payStars);
@@ -8449,7 +8449,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                             moveToSendStateRunnable = null;
                             hideTopView(true);
                             if (messageEditText != null) {
-                                messageEditText.setText("");
+                                messageEditText.setTextWithoutInputAnimation("");
                             }
                             if (delegate != null) {
                                 delegate.onMessageSend(message, notify, scheduleDate, scheduleRepeatPeriod, payStars);
@@ -11750,7 +11750,11 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             return;
         }
         ignoreTextChange = ignoreChange;
-        messageEditText.setText(text);
+        if (TextUtils.isEmpty(text)) {
+            messageEditText.setTextWithoutInputAnimation(text);
+        } else {
+            messageEditText.setText(text);
+        }
         messageEditText.invalidateQuotes(true);
         messageEditText.setSelection(messageEditText.getText().length());
         ignoreTextChange = false;
@@ -11944,7 +11948,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             }
             editor.setOnCleared(() -> {
                 if (messageEditText != null) {
-                    messageEditText.setText("");
+                    messageEditText.setTextWithoutInputAnimation("");
                 }
             });
         }
@@ -11953,7 +11957,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         editor.animateFrom(parentFragment);
         editor.setOnSent(() -> {
             if (messageEditText != null) {
-                messageEditText.setText("");
+                messageEditText.setTextWithoutInputAnimation("");
             }
             checkSendButton(true);
         });
@@ -11969,12 +11973,12 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         editor.animateFrom(parentFragment);
         editor.setOnCleared(() -> {
             if (messageEditText != null) {
-                messageEditText.setText("");
+                messageEditText.setTextWithoutInputAnimation("");
             }
         });
         editor.setOnSent(() -> {
             if (messageEditText != null) {
-                messageEditText.setText("");
+                messageEditText.setTextWithoutInputAnimation("");
             }
             checkSendButton(true);
         });
@@ -12151,12 +12155,12 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         editor.animateFrom(parentFragment);
         editor.setOnCleared(() -> {
             if (messageEditText != null) {
-                messageEditText.setText("");
+                messageEditText.setTextWithoutInputAnimation("");
             }
         });
         editor.setOnSent(() -> {
             if (messageEditText != null) {
-                messageEditText.setText("");
+                messageEditText.setTextWithoutInputAnimation("");
             }
             checkSendButton(true);
         });
@@ -12187,7 +12191,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             payStars
         );
         sendButton.setEffect(effectId = 0);
-        messageEditText.setText("");
+        messageEditText.setTextWithoutInputAnimation("");
         clearRichDraft();
         if (delegate != null) {
             delegate.onMessageSend(null, notify, scheduleDate, scheduleRepeatPeriod, payStars);
