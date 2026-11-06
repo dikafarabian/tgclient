@@ -74,6 +74,18 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
     private final AbstractConfigCell headerInterface = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.LumineInterface)));
     private final AbstractConfigCell iosStyleRow = cellGroup.appendCell(new ConfigCellTextDetailIcon("LumineIosStyle", getString(R.string.LumineIosStyle), getString(R.string.LumineIosStyleInfo), R.drawable.msg_discussion, true, () -> presentFragment(new app.lumine.ios.IosStyleSettingsActivity())));
     private final AbstractConfigCell iconPacksRow = cellGroup.appendCell(new ConfigCellTextDetailIcon("LumineIconPacks", getString(R.string.IconPacks), getString(R.string.LumineIconPacksInfo), R.drawable.msg_customize, true, () -> presentFragment(new app.lumine.icons.IconPacksActivity())));
+    private final AbstractConfigCell drawerElementsRow = cellGroup.appendCell(
+            new ConfigCellTextCheckIcon(null, "DrawerElements", getString(R.string.DrawerElements), R.drawable.menu_newfilter, false, () ->
+                    presentFragment(new SidebarMenuActivity()))
+    );
+    private final AbstractConfigCell mainTabsCustomizeRow = cellGroup.appendCell(
+            new ConfigCellTextCheckIcon(null, "MainTabsCustomize", getString(R.string.MainTabsCustomize), R.drawable.tabs_reorder, false, () ->
+                    presentFragment(new MainTabsCustomizeActivity()))
+    );
+    private final AbstractConfigCell pillStackRow = cellGroup.appendCell(
+            new ConfigCellTextCheckIcon(null, "PillStack", getString(R.string.PillStackPills), R.drawable.ic_ab_search, false, () ->
+                    presentFragment(new com.exteragram.messenger.pillstack.ui.PillStackPreferencesActivity()))
+    );
     private final ConfigCellMd3Group md3GroupRow = (ConfigCellMd3Group) cellGroup.appendCell(new ConfigCellMd3Group(
             getString(R.string.LumineMaterialDesign3),
             this::applyMd3Change,
@@ -166,20 +178,6 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
     private final AbstractConfigCell tabStyleStrokeRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.tabStyleStroke));
     private final AbstractConfigCell ignoreUnreadCountRow = cellGroup.appendCell(new ConfigCellTextCheck(NaConfig.INSTANCE.getIgnoreUnreadCount()));
     private final AbstractConfigCell dividerNavigationTop = cellGroup.appendCell(new ConfigCellDivider());
-    private final AbstractConfigCell headerNavigation = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.AppNavigation)));
-    private final AbstractConfigCell drawerElementsRow = cellGroup.appendCell(
-            new ConfigCellTextCheckIcon(null, "DrawerElements", getString(R.string.DrawerElements), R.drawable.menu_newfilter, false, () ->
-                    presentFragment(new SidebarMenuActivity()))
-    );
-    private final AbstractConfigCell mainTabsCustomizeRow = cellGroup.appendCell(
-            new ConfigCellTextCheckIcon(null, "MainTabsCustomize", getString(R.string.MainTabsCustomize), R.drawable.tabs_reorder, false, () ->
-                    presentFragment(new MainTabsCustomizeActivity()))
-    );
-    private final AbstractConfigCell pillStackRow = cellGroup.appendCell(
-            new ConfigCellTextCheckIcon(null, "PillStack", getString(R.string.PillStackPills), R.drawable.ic_ab_search, false, () ->
-                    presentFragment(new com.exteragram.messenger.pillstack.ui.PillStackPreferencesActivity()))
-    );
-    private final AbstractConfigCell dividerFolder = cellGroup.appendCell(new ConfigCellDivider());
 
     // Blur
     private final AbstractConfigCell headerBlur = cellGroup.appendCell(new ConfigCellHeader(getString(R.string.LiteOptionsBlur2)));
@@ -223,12 +221,18 @@ public class NekoAppearanceSettingsActivity extends BaseNekoXSettingsActivity {
         cellGroup.rows.remove(headerInterface);
         cellGroup.rows.remove(iosStyleRow);
         cellGroup.rows.remove(iconPacksRow);
+        cellGroup.rows.remove(drawerElementsRow);
+        cellGroup.rows.remove(mainTabsCustomizeRow);
+        cellGroup.rows.remove(pillStackRow);
         cellGroup.rows.remove(md3GroupRow);
         cellGroup.rows.remove(dividerIosStyle);
         int interfaceIdx = 0;
         cellGroup.rows.add(interfaceIdx++, headerInterface);
         cellGroup.rows.add(interfaceIdx++, iosStyleRow);
         cellGroup.rows.add(interfaceIdx++, iconPacksRow);
+        cellGroup.rows.add(interfaceIdx++, drawerElementsRow);
+        cellGroup.rows.add(interfaceIdx++, mainTabsCustomizeRow);
+        cellGroup.rows.add(interfaceIdx++, pillStackRow);
         cellGroup.rows.add(interfaceIdx++, md3GroupRow);
         for (AbstractConfigCell option : md3GroupRow.visibleOptions()) {
             cellGroup.rows.add(interfaceIdx++, option);
