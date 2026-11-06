@@ -227,7 +227,8 @@ public final class SettingsBackupHelper {
                 DialogConfig.customForumTabPrefix,
                 LocalPeerColorHelper.KEY_PREFIX,
                 LocalPremiumStatusHelper.KEY_PREFIX,
-                BookmarksHelper.KEY_PREFIX
+                BookmarksHelper.KEY_PREFIX,
+                "LumineIconPacks"
         };
 
         for (Map.Entry<String, JsonElement> element : configJson.entrySet()) {

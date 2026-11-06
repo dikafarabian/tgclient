@@ -41,6 +41,8 @@ MARKERS=(
 "TMessagesProj/src/main/AndroidManifest.xml|app.lumine.icons.IconPackProvider"
 "TMessagesProj/build.gradle|androidsvg-aar"
 "$J/tw/nekomimi/nekogram/settings/NekoAppearanceSettingsActivity.java|app.lumine.icons.IconPacksActivity"
+"$J/tw/nekomimi/nekogram/helpers/SettingsBackupHelper.java|LumineIconPacks"
+"$J/tw/nekomimi/nekogram/helpers/SettingsHelper.java|app.lumine.icons.IconPacksActivity"
 "$J/tw/nekomimi/nekogram/NekoConfig.java|\"unreadBadgeOnBackButton\", configTypeBool, true"
 "$J/org/telegram/ui/Cells/TextCell.java|app.lumine.md3.Md3ListItems.rowHeight"
 "$J/org/telegram/ui/Cells/TextCheckCell.java|app.lumine.md3.Md3ListItems.detailRowHeight"
