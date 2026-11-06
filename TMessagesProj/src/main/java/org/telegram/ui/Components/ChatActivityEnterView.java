@@ -7935,6 +7935,21 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         imageView.post(() -> transitionDrawable.startTransition(duration));
     }
 
+    private app.lumine.chats.AttachSwapDrawable attachSwap;
+
+    private app.lumine.chats.AttachSwapDrawable attachSwapDrawable() {
+        if (attachSwap == null) {
+            attachSwap = new app.lumine.chats.AttachSwapDrawable(
+                    getContext().getResources().getDrawable(R.drawable.msg_input_attach2_solar),
+                    getContext().getResources().getDrawable(R.drawable.msg_add_solar)
+            );
+        }
+        if (attachButton.getDrawable() != attachSwap) {
+            attachButton.setImageDrawable(attachSwap);
+        }
+        return attachSwap;
+    }
+
     private void checkAttachButton(boolean use, int duration) {
         Object oldStatus = attachButton.getTag();
         if (oldStatus != null) {
@@ -7963,11 +7978,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             if (!isIOSInputStyle()) {
                 attachButton.setVisibility(GONE);
             } else {
-                if (duration == 0) {
-                    attachButton.setImageResource(R.drawable.msg_add_solar);
-                } else {
-                    setImageDrawableWithAnimation(attachButton, R.drawable.msg_input_attach2_solar, R.drawable.msg_add_solar, duration);
-                }
+                attachSwapDrawable().setMore(true, duration != 0);
                 attachButton.setOnClickListener(this::onAttachMoreClick);
                 attachButton.setContentDescription(LocaleController.getString(R.string.AccDescrChatAttachEnterMenu));
             }
@@ -7981,13 +7992,12 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             attachButton.setScaleX(1.0f);
             attachButton.setScaleY(1.0f);
 
-            int fromRes = isIOSInputStyle() ? R.drawable.msg_add_solar : R.drawable.ic_ab_other;
-            int targetRes = isIOSInputStyle() ? R.drawable.msg_input_attach2_solar : R.drawable.input_attach;
-
-            if (duration == 0) {
-                attachButton.setImageResource(targetRes);
+            if (isIOSInputStyle()) {
+                attachSwapDrawable().setMore(false, duration != 0);
+            } else if (duration == 0) {
+                attachButton.setImageResource(R.drawable.input_attach);
             } else {
-                setImageDrawableWithAnimation(attachButton, fromRes, targetRes, duration);
+                setImageDrawableWithAnimation(attachButton, R.drawable.ic_ab_other, R.drawable.input_attach, duration);
             }
 
             attachButton.setOnClickListener(v -> {
