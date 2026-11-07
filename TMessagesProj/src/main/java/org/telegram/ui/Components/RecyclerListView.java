@@ -3434,6 +3434,13 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
         return sectionsItemDecoration != null && app.lumine.md3.LumineListItems.enabled();
     }
 
+    private boolean isSegmentedHeader(View child) {
+        if (child == null || getAdapter() == null || isViewTypeSection == null) return false;
+        final int position = getChildAdapterPosition(child);
+        if (position == NO_POSITION) return false;
+        return !isViewTypeSection.run(getAdapter().getItemViewType(position));
+    }
+
     private float segmentInnerRadius() {
         return Math.min(sectionRadius, dp(4));
     }
@@ -3486,7 +3493,8 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
             if (
                 child == emptyView ||
                 child.getVisibility() != View.VISIBLE || child.getAlpha() <= 0 ||
-                !sectionsItemDecoration.isSectionItem.run(child)
+                !sectionsItemDecoration.isSectionItem.run(child) ||
+                isSegmentedHeader(child)
             ) continue;
             drawSegmentedSectionBackground(canvas, child);
         }
@@ -3564,7 +3572,8 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                 if (
                     child == emptyView ||
                     child.getVisibility() != View.VISIBLE || child.getAlpha() <= 0 ||
-                    !sectionsItemDecoration.isSectionItem.run(child)
+                    !sectionsItemDecoration.isSectionItem.run(child) ||
+                    (useSegmentedSections() && isSegmentedHeader(child))
                 ) continue;
 
                 float from = top(child);
@@ -3709,7 +3718,9 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
         if (child == null || !shouldClipChildToSection(child) || !sectionsItemDecoration.isSectionItem.run(child))
             return;
         if (useSegmentedSections()) {
-            clipChildWithSegmentedSection(canvas, child);
+            if (!isSegmentedHeader(child)) {
+                clipChildWithSegmentedSection(canvas, child);
+            }
             return;
         }
 

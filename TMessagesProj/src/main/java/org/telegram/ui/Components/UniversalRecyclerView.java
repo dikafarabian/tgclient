@@ -440,7 +440,9 @@ public class UniversalRecyclerView extends RecyclerListView {
                 final ViewHolder viewHolder = getChildViewHolder(view);
                 return !UniversalAdapter.isShadow(viewHolder.getItemViewType());
             },
-            viewType -> app.lumine.md3.LumineListItems.enabled() != UniversalAdapter.isShadow(viewType),
+            viewType -> app.lumine.md3.LumineListItems.enabled()
+                ? !UniversalAdapter.isShadow(viewType) && viewType != UniversalAdapter.VIEW_TYPE_HEADER
+                : UniversalAdapter.isShadow(viewType),
             padding, roundRadius,
             super::drawBackgroundRect,
             topPadding
