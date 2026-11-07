@@ -127,3 +127,24 @@ Branding left over from upstream (order is my suggestion; item 1 was checked and
 - The wordmark vectors are generated: `fontTools` reads `assets/fonts/rmediumitalic.ttf`, positions the glyphs of `luminegram`, flips Y and fits them into the original viewport (249x57 and 269x61), keeping the aspect ratio. Regenerating is cheap; the font file is part of the upstream tree.
 - The launcher icon art is generated too: sparkle path `M12 3Q12.8 11.2 21 12Q12.8 12.8 12 21Q11.2 12.8 3 12Q11.2 11.2 12 3Z` plus the small one `M18 3Q18.3 5.7 21 6Q18.3 6.3 18 9Q17.7 6.3 15 6Q17.7 5.7 18 3Z`, scaled 58/24 and shifted 25 on a 108 viewport (adaptive), 60% of the circle width in the PNGs.
 - The intro page is OpenGL: textures `intro_tg_plane` (plane) and a sphere bitmap drawn in `IntroActivity`, composed by native code. A texture replacement keeps the same canvas size on purpose.
+
+
+## 8. Planned: Material 3 Home redesign (not started)
+
+Decided with the owner on 2026-11-08. Nothing below exists in the tree yet.
+
+- Reference: `midori01/KernelSU` (manager, commit `803775f` of 2026-10-30, root `LICENSE` is GPL-3.0). It is Jetpack Compose with Material3 1.5.0-alpha (Expressive) and `materialKolor`, 326 Kotlin files. This base is Java with plain Views, no Compose, no Kotlin and no Material library in `TMessagesProj`, so nothing can be taken as code. Only the design is adopted (colors, shapes, sizes, motion) and written again with our own Views. No branding, text or icons from the reference.
+- What the reference does (read from `HomeMaterial.kt`, `TonalCard.kt`, `BottomBarMaterial.kt`): Home is a "bento": a smart pill banner that shows only when something is wrong (error container for crash and root warnings, secondary and tertiary containers for updates); a hero card (radius 28dp, 48dp circle icon, container color by state, chips for mode and commit); a tile grid (radius 22dp, min height 106dp, 14dp padding, 38dp circle icon, `surfaceBright` fill, 12dp gaps); a device specs card with a copy report button. Cards use a press bounce (scale to 0.96 while pressed, at least 100 ms). The floating bar is a 64dp capsule with a 1dp `outlineVariant` border at 35% alpha; the selected tab has a `primaryContainer` fill, shows its label (the others show only an icon) and uses filled instead of outlined icons; transitions are 250 ms (`FastOutSlowIn`).
+- Scope: Material 3 only for the luminegram screens (`app/lumine/**`), zero hooks in upstream files. A global Material 3 (the exteraless approach, about 10 hooked upstream files in `base-nagramxf`) is deferred because it conflicts on every upstream sync; `base-exteraless` was deleted, so its source must be read from the upstream repository.
+- Colors: seed color is the brand pink `#FA456C` (owner's choice), light and dark variants chosen by the active theme darkness. Open technical point: roles are derived in our own Java code (HSL tone mapping from the seed, like `Md3ListItems` in `base-nagramxf`); the real HCT algorithm would need the `material-color-utilities` dependency, which is a build change and is not planned unless the HSL result looks wrong on the device.
+- Build label: the UI shows `Release` and `Canary` (same words as the workflow input, `BUILD_TYPE_NAME`, file names and the Telegram card). The word `Stable` is not used.
+
+Phases, one commit each, every phase reported as "not built" until CI shows otherwise:
+1. Foundation `LumineMd3` (role colors for light and dark, shapes, spacing) plus a tonal card view with press bounce. No visible change.
+2. Hero card on Home: luminegram icon, name, version `13.1.1 (7237)`, chips for build type and commit hash (monospace); normal state tonal, problem state error container.
+3. Tile grid: Notification (bell, active push service, State; tap opens the Notification page) and Account. Stealth and Appearance tiles only when those features exist.
+4. Floating bar in the new style (label only on the selected tab, tonal capsule, 250 ms). `LumineTabBar` is our own view.
+5. Smart pill (push error, notifications blocked by the system, connection waiting) and a specs list with a Copy Report button (build, device, push state, connection).
+6. General and Notification pages restyled with the same cards.
+
+Verification per phase: repo layer (syntax check, string and layer checks) from the sandbox; build, artifact and the look on the device from CI and owner screenshots. Hero state colors and the dark theme are the parts most likely to need tuning.
