@@ -49,6 +49,8 @@ ABSENT=(
 "TMessagesProj/build.gradle|com.google.gms.google-services"
 "$J/org/telegram/messenger/BuildVars.java|014b35b6184100b085b0d0572f9b5103"
 "$J/org/telegram/messenger/BuildVars.java|APP_ID = 4;"
+"TMessagesProj_App/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java|isStandalone"
+"TMessagesProj_App/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java|isBeta"
 )
 
 FORBIDDEN_TRACKED='google-services\.json$|\.keystore$|\.jks$'
