@@ -103,6 +103,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
         }
+
+        canary {
+            initWith release
+            matchingFallbacks = ['release']
+        }
     }
 
     sourceSets.debug {
@@ -114,6 +119,10 @@ android {
     }
 
     sourceSets.release {
+        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest.xml'
+    }
+
+    sourceSets.canary {
         manifest.srcFile '../TMessagesProj/config/release/AndroidManifest.xml'
     }
 
@@ -137,6 +146,9 @@ android {
                 manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
             }
             sourceSets.release {
+                manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
+            }
+            sourceSets.canary {
                 manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
             }
             sourceSets.standalone {
