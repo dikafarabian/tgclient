@@ -19,6 +19,9 @@ public class GcmPushListenerService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
+        if (!app.lumine.push.PushConfig.usesGoogle()) {
+            return;
+        }
         String from = message.getFrom();
         Map<String, String> data = message.getData();
         long time = message.getSentTime();
@@ -32,6 +35,9 @@ public class GcmPushListenerService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String token) {
+        if (!app.lumine.push.PushConfig.usesGoogle()) {
+            return;
+        }
         AndroidUtilities.runOnUIThread(() -> {
             if (BuildVars.LOGS_ENABLED) {
                 FileLog.d("Refreshed FCM token: " + token);

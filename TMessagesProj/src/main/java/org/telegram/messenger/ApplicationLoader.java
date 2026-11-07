@@ -114,7 +114,7 @@ public class ApplicationLoader extends Application {
     }
 
     protected PushListenerController.IPushListenerServiceProvider onCreatePushProvider() {
-        return PushListenerController.GooglePushListenerServiceProvider.INSTANCE;
+        return app.lumine.push.PushConfig.createProvider();
     }
 
     public static String getApplicationId() {
