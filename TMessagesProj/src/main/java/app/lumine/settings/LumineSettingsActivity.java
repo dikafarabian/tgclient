@@ -19,6 +19,7 @@ public class LumineSettingsActivity extends BaseFragment {
 
     private static final int TAB_HOME = 0;
     private static final int TAB_GENERAL = 1;
+    private static final int TAB_APPEARANCE = 2;
     private static final int TAB_COUNT = 5;
 
     private FrameLayout content;
@@ -91,6 +92,9 @@ public class LumineSettingsActivity extends BaseFragment {
         if (index == TAB_GENERAL) {
             generalPage = new LumineGeneralPage(context, this);
             return generalPage;
+        }
+        if (index == TAB_APPEARANCE) {
+            return new LumineAppearancePage(context);
         }
         return new LumineComingSoonPage(context);
     }

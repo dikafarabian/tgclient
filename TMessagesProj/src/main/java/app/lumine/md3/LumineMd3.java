@@ -130,7 +130,7 @@ public final class LumineMd3 {
     public static boolean switchEnabled() {
         int state = switchState;
         if (state < 0) {
-            state = LumineConfig.getBoolean(KEY_SWITCH, true) ? 1 : 0;
+            state = LumineConfig.getBoolean(KEY_SWITCH, false) ? 1 : 0;
             switchState = state;
         }
         return state == 1;
@@ -144,7 +144,7 @@ public final class LumineMd3 {
     public static boolean sliderEnabled() {
         int state = sliderState;
         if (state < 0) {
-            state = LumineConfig.getBoolean(KEY_SLIDER, true) ? 1 : 0;
+            state = LumineConfig.getBoolean(KEY_SLIDER, false) ? 1 : 0;
             sliderState = state;
         }
         return state == 1;
