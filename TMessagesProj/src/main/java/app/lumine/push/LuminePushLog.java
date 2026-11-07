@@ -122,11 +122,23 @@ public final class LuminePushLog {
         out.append("last push: ").append(last <= 0 ? "never" : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date(last))).append('\n');
         out.append("play services: ").append(PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()).append('\n');
         out.append("gms version: ").append(gmsVersion(context)).append('\n');
+        out.append("firebase config: ").append(firebaseConfig(context)).append('\n');
         out.append("push connection: ").append(ConnectionsManager.getInstance(UserConfig.selectedAccount).isPushConnectionEnabled()).append('\n');
         out.append("os notifications: ").append(NotificationManagerCompat.from(context).areNotificationsEnabled()).append('\n');
         out.append("battery unrestricted: ").append(batteryUnrestricted(context)).append("\n\n");
         out.append(emptyAs(LumineConfig.getString(KEY_LOG, ""), "no events"));
         return out.toString();
+    }
+
+    private static String firebaseConfig(Context context) {
+        try {
+            final int id = context.getResources().getIdentifier("google_app_id", "string", context.getPackageName());
+            final boolean options = com.google.firebase.FirebaseOptions.fromResource(context) != null;
+            final int apps = com.google.firebase.FirebaseApp.getApps(context).size();
+            return "google_app_id res " + (id != 0) + ", options " + options + ", apps " + apps;
+        } catch (Throwable e) {
+            return e.getClass().getSimpleName();
+        }
     }
 
     private static String emptyAs(String value, String fallback) {
