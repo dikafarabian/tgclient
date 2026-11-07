@@ -88,6 +88,7 @@ MARKERS=(
 "$J/org/telegram/ui/Components/RecyclerListView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/UniversalRecyclerView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/RecyclerListView.java|isSegmentedHeader"
+"$J/org/telegram/ui/SettingsActivity.java|app.lumine.md3.LumineListItems.tonalBackground"
 "$J/org/telegram/messenger/AndroidUtilities.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/ActionBar/Theme.java|app.lumine.md3.LumineListItems"
 "$R/values/strings.xml|<string name=\"AppName\">luminegram</string>"

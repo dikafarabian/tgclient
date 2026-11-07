@@ -6,6 +6,8 @@
  */
 package app.lumine.md3;
 
+import androidx.core.graphics.ColorUtils;
+
 public final class LumineListItems {
 
     private LumineListItems() {
@@ -21,6 +23,22 @@ public final class LumineListItems {
 
     public static int detailRowHeight(int stockDp) {
         return stockDp == 64 && enabled() ? 72 : stockDp;
+    }
+
+    public static int tonalBackground(int top, int bottom) {
+        return tone(top, bottom, 0.82f);
+    }
+
+    public static int tonalForeground(int top, int bottom) {
+        return tone(top, bottom, 0.32f);
+    }
+
+    private static int tone(int top, int bottom, float lightness) {
+        final float[] hsl = new float[3];
+        ColorUtils.colorToHSL(ColorUtils.blendARGB(top, bottom, 0.5f), hsl);
+        hsl[1] = Math.max(0.55f, Math.min(1f, hsl[1]));
+        hsl[2] = lightness;
+        return ColorUtils.HSLToColor(hsl);
     }
 
     public static int shadowHeight(boolean nextIsHeader, int stockDp) {
