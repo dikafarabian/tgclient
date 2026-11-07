@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import app.lumine.md3.LumineListItems;
 import app.lumine.push.PushStatus;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
@@ -28,14 +29,69 @@ final class LumineCards {
         }
     }
 
+    private static final Object SEGMENT = new Object();
+    private static final int OUTER_RADIUS_DP = 16;
+    private static final int INNER_RADIUS_DP = 4;
+    private static final int SEGMENT_GAP_DP = 2;
+    private static final int SEGMENT_HEIGHT_DP = 56;
+
     private LumineCards() {
     }
 
+    static boolean segmented() {
+        return LumineListItems.enabled();
+    }
+
+    static void add(LinearLayout card, View view) {
+        if (!segmented()) {
+            card.addView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            return;
+        }
+        int count = 0;
+        for (int i = 0; i < card.getChildCount(); i++) {
+            if (card.getChildAt(i).getTag() == SEGMENT) {
+                count++;
+            }
+        }
+        view.setTag(SEGMENT);
+        view.setMinimumHeight(dp(SEGMENT_HEIGHT_DP));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.topMargin = count == 0 ? 0 : dp(SEGMENT_GAP_DP);
+        card.addView(view, params);
+        restyle(card);
+    }
+
+    private static void restyle(LinearLayout card) {
+        int total = 0;
+        for (int i = 0; i < card.getChildCount(); i++) {
+            if (card.getChildAt(i).getTag() == SEGMENT) {
+                total++;
+            }
+        }
+        int index = 0;
+        for (int i = 0; i < card.getChildCount(); i++) {
+            final View view = card.getChildAt(i);
+            if (view.getTag() != SEGMENT) {
+                continue;
+            }
+            final int topDp = index == 0 ? OUTER_RADIUS_DP : INNER_RADIUS_DP;
+            final int bottomDp = index == total - 1 ? OUTER_RADIUS_DP : INNER_RADIUS_DP;
+            view.setBackground(Theme.createRoundRectDrawable(dp(topDp), dp(topDp), dp(bottomDp), dp(bottomDp), Theme.getColor(Theme.key_windowBackgroundWhite)));
+            if (view.hasOnClickListeners()) {
+                view.setForeground(Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector), topDp, topDp, bottomDp, bottomDp));
+            }
+            index++;
+        }
+    }
+
     static LinearLayout card(Context context, LinearLayout parent, String title) {
+        final boolean segmented = segmented();
         LinearLayout card = new LinearLayout(context);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackground(Theme.createRoundRectDrawable(dp(12), Theme.getColor(Theme.key_windowBackgroundWhite)));
-        card.setPadding(dp(16), title == null ? dp(4) : dp(14), dp(16), title == null ? dp(4) : dp(10));
+        if (!segmented) {
+            card.setBackground(Theme.createRoundRectDrawable(dp(12), Theme.getColor(Theme.key_windowBackgroundWhite)));
+            card.setPadding(dp(16), title == null ? dp(4) : dp(14), dp(16), title == null ? dp(4) : dp(10));
+        }
 
         if (title != null) {
             TextView header = new TextView(context);
@@ -43,6 +99,9 @@ final class LumineCards {
             header.setTypeface(AndroidUtilities.bold());
             header.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
             header.setText(title);
+            if (segmented) {
+                header.setPadding(dp(16), dp(4), dp(16), dp(8));
+            }
             card.addView(header, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
 
@@ -56,11 +115,12 @@ final class LumineCards {
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(0, dp(10), 0, dp(10));
+        final boolean segmented = segmented();
+        row.setPadding(segmented ? dp(16) : 0, dp(10), segmented ? dp(16) : 0, dp(10));
 
         TextView name = new TextView(context);
-        name.setTextSize(14);
-        name.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        name.setTextSize(segmented ? 16 : 14);
+        name.setTextColor(Theme.getColor(segmented ? Theme.key_windowBackgroundWhiteBlackText : Theme.key_windowBackgroundWhiteGrayText));
         name.setText(label);
         row.addView(name, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
@@ -75,15 +135,17 @@ final class LumineCards {
         row.addView(value, valueParams);
 
         if (onClick != null) {
-            row.setBackground(Theme.getSelectorDrawable(false));
+            if (!segmented) {
+                row.setBackground(Theme.getSelectorDrawable(false));
+            }
             row.setOnClickListener(onClick);
         }
-        card.addView(row, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        add(card, row);
         return new Row(row, value);
     }
 
     static void setValue(TextView view, CharSequence text, int level) {
-        int key = Theme.key_windowBackgroundWhiteBlackText;
+        int key = segmented() ? Theme.key_windowBackgroundWhiteGrayText : Theme.key_windowBackgroundWhiteBlackText;
         if (level == PushStatus.Health.GOOD) {
             key = Theme.key_windowBackgroundWhiteGreenText2;
         } else if (level == PushStatus.Health.BAD) {

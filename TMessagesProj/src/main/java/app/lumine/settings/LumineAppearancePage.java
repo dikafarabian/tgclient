@@ -11,6 +11,7 @@ import static org.telegram.messenger.AndroidUtilities.dp;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -60,10 +61,17 @@ public class LumineAppearancePage extends ScrollView {
         sliderPreview.setDelegate((stop, progress) -> {
         });
         sliderPreview.setProgress(0.6f);
-        LinearLayout.LayoutParams previewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(30));
-        previewParams.topMargin = dp(4);
-        previewParams.bottomMargin = dp(8);
-        card.addView(sliderPreview, previewParams);
+        if (LumineCards.segmented()) {
+            FrameLayout wrap = new FrameLayout(context);
+            wrap.setPadding(dp(16), dp(12), dp(16), dp(12));
+            wrap.addView(sliderPreview, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dp(30)));
+            LumineCards.add(card, wrap);
+        } else {
+            LinearLayout.LayoutParams previewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(30));
+            previewParams.topMargin = dp(4);
+            previewParams.bottomMargin = dp(8);
+            card.addView(sliderPreview, previewParams);
+        }
 
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineMd3Info));
     }
@@ -76,8 +84,11 @@ public class LumineAppearancePage extends ScrollView {
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(0, dp(12), 0, dp(12));
-        row.setBackground(Theme.getSelectorDrawable(false));
+        final boolean segmented = LumineCards.segmented();
+        row.setPadding(segmented ? dp(16) : 0, dp(12), segmented ? dp(16) : 0, dp(12));
+        if (!segmented) {
+            row.setBackground(Theme.getSelectorDrawable(false));
+        }
 
         TextView name = new TextView(context);
         name.setTextSize(16);
@@ -97,7 +108,7 @@ public class LumineAppearancePage extends ScrollView {
             toggle.setChecked(enabled, true);
             onToggle.onToggle(enabled);
         });
-        card.addView(row, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LumineCards.add(card, row);
         return toggle;
     }
 
