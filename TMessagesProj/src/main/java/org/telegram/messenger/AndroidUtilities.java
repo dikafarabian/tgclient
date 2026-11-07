@@ -6663,7 +6663,7 @@ public class AndroidUtilities {
                     if (ApplicationLoader.isStandaloneBuild()) {
                         abi = "direct " + Build.CPU_ABI + " " + Build.CPU_ABI2;
                     } else {
-                        abi = "universal " + Build.CPU_ABI + " " + Build.CPU_ABI2;
+                        abi = BuildVars.BUILD_COMMIT + " " + Build.CPU_ABI + " " + Build.CPU_ABI2;
                     }
                     break;
             }
