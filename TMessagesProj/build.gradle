@@ -138,6 +138,10 @@ android {
         minSdkVersion 23
         targetSdkVersion 36
 
+        ndk {
+            abiFilters.addAll((findProperty('ABI_FILTERS') ?: 'armeabi-v7a,arm64-v8a,x86,x86_64').split(',')*.trim())
+        }
+
         buildConfigField "int", "APP_ID", Integer.parseInt(getSecret("TELEGRAM_APP_ID")).toString()
         buildConfigField "String", "APP_HASH", "\"" + getSecret("TELEGRAM_APP_HASH") + "\""
 
