@@ -34,6 +34,8 @@ OWN_FILES=(
 "$APP/src/main/res/raw/lumine_keep.xml"
 "$R/values/lumine_strings.xml"
 "$R/drawable/lumine_settings_sparkle.xml"
+"$R/drawable/lumine_ic_notification.xml"
+"$R/drawable/lumine_ic_account.xml"
 "$R/drawable/lumine_tab_home.xml"
 "$R/drawable/lumine_tab_general.xml"
 "$R/drawable/lumine_tab_appearance.xml"

@@ -1,6 +1,8 @@
 /*
  * luminegram - Home tab of the luminegram settings.
- * Status cards: app build, push notifications, account.
+ * Bento layout in Material 3: a hero card with the app identity (name,
+ * version, build type, commit, ABI) and a tile row with Notification and
+ * Account. The hero turns to the error container when push is in trouble.
  */
 package app.lumine.settings;
 
@@ -8,14 +10,23 @@ import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.graphics.Typeface;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.core.graphics.ColorUtils;
+
 import app.lumine.LumineStrings;
+import app.lumine.md3.LumineMd3;
+import app.lumine.md3.LumineTonalCard;
 import app.lumine.push.PushConfig;
 import app.lumine.push.PushStatus;
 import org.telegram.messenger.AndroidUtilities;
@@ -39,14 +50,29 @@ public class LumineHomePage extends ScrollView {
     private final Runnable refreshRunnable = this::tick;
     private boolean running;
 
-    private TextView versionValue;
-    private TextView buildTypeValue;
-    private TextView abiValue;
-    private TextView serviceValue;
-    private TextView statusValue;
-    private TextView nameValue;
-    private TextView idValue;
-    private TextView connectionValue;
+    private LumineTonalCard hero;
+    private GradientDrawable heroIconBackground;
+    private ImageView heroIcon;
+    private TextView heroName;
+    private TextView heroVersion;
+    private LinearLayout heroChips;
+    private TextView chipBuild;
+    private TextView chipCommit;
+    private TextView chipAbi;
+
+    private LumineTonalCard notificationTile;
+    private GradientDrawable notificationIconBackground;
+    private ImageView notificationIcon;
+    private TextView notificationTitle;
+    private TextView notificationService;
+    private TextView notificationState;
+
+    private LumineTonalCard accountTile;
+    private GradientDrawable accountIconBackground;
+    private ImageView accountIcon;
+    private TextView accountTitle;
+    private TextView accountName;
+    private TextView accountConnection;
 
     public LumineHomePage(Context context, int account, Runnable onNotification) {
         super(context);
@@ -56,26 +82,158 @@ public class LumineHomePage extends ScrollView {
 
         LinearLayout list = new LinearLayout(context);
         list.setOrientation(LinearLayout.VERTICAL);
-        list.setPadding(dp(12), dp(12), dp(12), dp(12));
+        list.setPadding(dp(16), dp(12), dp(16), dp(16));
         addView(list, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-        LinearLayout appCard = addCard(list, R.string.LumineCardApp);
-        versionValue = addRow(appCard, R.string.LumineVersion);
-        buildTypeValue = addRow(appCard, R.string.LumineBuildType);
-        abiValue = addRow(appCard, R.string.LumineAbi);
+        buildHero(context, list);
 
-        LinearLayout pushCard = addCard(list, R.string.LumineNotification);
-        serviceValue = addRow(pushCard, R.string.LuminePushService);
-        statusValue = addRow(pushCard, R.string.LumineState);
-        pushCard.setForeground(Theme.getSelectorDrawable(false));
-        pushCard.setOnClickListener(v -> onNotification.run());
+        LinearLayout tiles = new LinearLayout(context);
+        tiles.setOrientation(LinearLayout.HORIZONTAL);
+        tiles.setBaselineAligned(false);
+        list.addView(tiles, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        LinearLayout accountCard = addCard(list, R.string.LumineCardAccount);
-        nameValue = addRow(accountCard, R.string.LumineAccountName);
-        idValue = addRow(accountCard, R.string.LumineAccountId);
-        connectionValue = addRow(accountCard, R.string.LumineConnection);
+        notificationTile = new LumineTonalCard(context, LumineMd3.TILE_RADIUS_DP, 0);
+        notificationTile.setMinimumHeight(dp(LumineMd3.TILE_MIN_HEIGHT_DP));
+        notificationTile.setClickable(true);
+        notificationTile.setOnClickListener(v -> onNotification.run());
+        LinearLayout notificationContent = tileContent(context);
+        FrameLayout notificationIconFrame = iconFrame(context, LumineMd3.TILE_ICON_DP, 20, R.drawable.lumine_ic_notification);
+        notificationIconBackground = (GradientDrawable) notificationIconFrame.getBackground();
+        notificationIcon = (ImageView) notificationIconFrame.getChildAt(0);
+        notificationContent.addView(notificationIconFrame, new LinearLayout.LayoutParams(dp(LumineMd3.TILE_ICON_DP), dp(LumineMd3.TILE_ICON_DP)));
+        notificationTitle = tileText(context, 15, true);
+        notificationTitle.setText(LumineStrings.get(R.string.LumineNotification));
+        notificationContent.addView(notificationTitle, tileTextParams(10));
+        notificationService = tileText(context, 13, false);
+        notificationContent.addView(notificationService, tileTextParams(2));
+        notificationState = tileText(context, 13, false);
+        notificationContent.addView(notificationState, tileTextParams(0));
+        notificationTile.addView(notificationContent, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+        notificationParams.rightMargin = dp(LumineMd3.GAP_DP) / 2;
+        tiles.addView(notificationTile, notificationParams);
+
+        accountTile = new LumineTonalCard(context, LumineMd3.TILE_RADIUS_DP, 0);
+        accountTile.setMinimumHeight(dp(LumineMd3.TILE_MIN_HEIGHT_DP));
+        LinearLayout accountContent = tileContent(context);
+        FrameLayout accountIconFrame = iconFrame(context, LumineMd3.TILE_ICON_DP, 20, R.drawable.lumine_ic_account);
+        accountIconBackground = (GradientDrawable) accountIconFrame.getBackground();
+        accountIcon = (ImageView) accountIconFrame.getChildAt(0);
+        accountContent.addView(accountIconFrame, new LinearLayout.LayoutParams(dp(LumineMd3.TILE_ICON_DP), dp(LumineMd3.TILE_ICON_DP)));
+        accountTitle = tileText(context, 15, true);
+        accountTitle.setText(LumineStrings.get(R.string.LumineCardAccount));
+        accountContent.addView(accountTitle, tileTextParams(10));
+        accountName = tileText(context, 13, false);
+        accountContent.addView(accountName, tileTextParams(2));
+        accountConnection = tileText(context, 13, false);
+        accountContent.addView(accountConnection, tileTextParams(0));
+        accountTile.addView(accountContent, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams accountParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+        accountParams.leftMargin = dp(LumineMd3.GAP_DP) / 2;
+        tiles.addView(accountTile, accountParams);
 
         refresh();
+    }
+
+    private void buildHero(Context context, LinearLayout list) {
+        hero = new LumineTonalCard(context, LumineMd3.HERO_RADIUS_DP, 0);
+
+        LinearLayout content = new LinearLayout(context);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(dp(20), dp(20), dp(20), dp(20));
+        hero.addView(content, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+
+        LinearLayout top = new LinearLayout(context);
+        top.setOrientation(LinearLayout.HORIZONTAL);
+        top.setGravity(Gravity.CENTER_VERTICAL);
+        content.addView(top, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        FrameLayout iconFrame = iconFrame(context, LumineMd3.HERO_ICON_DP, 26, R.drawable.lumine_settings_sparkle);
+        heroIconBackground = (GradientDrawable) iconFrame.getBackground();
+        heroIcon = (ImageView) iconFrame.getChildAt(0);
+        top.addView(iconFrame, new LinearLayout.LayoutParams(dp(LumineMd3.HERO_ICON_DP), dp(LumineMd3.HERO_ICON_DP)));
+
+        LinearLayout texts = new LinearLayout(context);
+        texts.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams textsParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        textsParams.leftMargin = dp(16);
+        top.addView(texts, textsParams);
+
+        heroName = new TextView(context);
+        heroName.setTextSize(22);
+        heroName.setTypeface(AndroidUtilities.bold());
+        heroName.setSingleLine(true);
+        heroName.setEllipsize(TextUtils.TruncateAt.END);
+        heroName.setText(LumineStrings.get(R.string.AppName));
+        texts.addView(heroName, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        heroVersion = new TextView(context);
+        heroVersion.setTextSize(14);
+        heroVersion.setSingleLine(true);
+        texts.addView(heroVersion, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        heroChips = new LinearLayout(context);
+        heroChips.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams chipsParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        chipsParams.topMargin = dp(16);
+        content.addView(heroChips, chipsParams);
+        chipBuild = chip(context, false);
+        chipCommit = chip(context, true);
+        chipAbi = chip(context, false);
+
+        LinearLayout.LayoutParams heroParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        heroParams.bottomMargin = dp(LumineMd3.GAP_DP);
+        list.addView(hero, heroParams);
+    }
+
+    private TextView chip(Context context, boolean monospace) {
+        TextView chip = new TextView(context);
+        chip.setTextSize(12);
+        chip.setSingleLine(true);
+        chip.setGravity(Gravity.CENTER);
+        chip.setPadding(dp(12), 0, dp(12), 0);
+        chip.setTypeface(monospace ? Typeface.MONOSPACE : AndroidUtilities.bold());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(28));
+        if (heroChips.getChildCount() > 0) {
+            params.leftMargin = dp(8);
+        }
+        heroChips.addView(chip, params);
+        return chip;
+    }
+
+    private FrameLayout iconFrame(Context context, int sizeDp, int iconDp, int iconRes) {
+        FrameLayout frame = new FrameLayout(context);
+        GradientDrawable background = new GradientDrawable();
+        background.setShape(GradientDrawable.OVAL);
+        frame.setBackground(background);
+        ImageView icon = new ImageView(context);
+        icon.setImageResource(iconRes);
+        frame.addView(icon, new FrameLayout.LayoutParams(dp(iconDp), dp(iconDp), Gravity.CENTER));
+        return frame;
+    }
+
+    private LinearLayout tileContent(Context context) {
+        LinearLayout content = new LinearLayout(context);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(dp(LumineMd3.TILE_PADDING_DP), dp(LumineMd3.TILE_PADDING_DP), dp(LumineMd3.TILE_PADDING_DP), dp(LumineMd3.TILE_PADDING_DP));
+        return content;
+    }
+
+    private TextView tileText(Context context, int sizeSp, boolean bold) {
+        TextView text = new TextView(context);
+        text.setTextSize(sizeSp);
+        text.setSingleLine(true);
+        text.setEllipsize(TextUtils.TruncateAt.END);
+        if (bold) {
+            text.setTypeface(AndroidUtilities.bold());
+        }
+        return text;
+    }
+
+    private LinearLayout.LayoutParams tileTextParams(int topDp) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.topMargin = dp(topDp);
+        return params;
     }
 
     public void start() {
@@ -100,76 +258,45 @@ public class LumineHomePage extends ScrollView {
         AndroidUtilities.runOnUIThread(refreshRunnable, REFRESH_MS);
     }
 
-    private LinearLayout addCard(LinearLayout parent, int titleRes) {
-        final Context context = getContext();
-        LinearLayout card = new LinearLayout(context);
-        card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackground(Theme.createRoundRectDrawable(dp(12), Theme.getColor(Theme.key_windowBackgroundWhite)));
-        card.setPadding(dp(16), dp(14), dp(16), dp(10));
-
-        TextView title = new TextView(context);
-        title.setTextSize(14);
-        title.setTypeface(AndroidUtilities.bold());
-        title.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
-        title.setText(LumineStrings.get(titleRes));
-        card.addView(title, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.bottomMargin = dp(12);
-        parent.addView(card, params);
-        return card;
-    }
-
-    private TextView addRow(LinearLayout card, int labelRes) {
-        final Context context = getContext();
-        LinearLayout row = new LinearLayout(context);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-
-        TextView label = new TextView(context);
-        label.setTextSize(14);
-        label.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        label.setText(LumineStrings.get(labelRes));
-        row.addView(label, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        TextView value = new TextView(context);
-        value.setTextSize(14);
-        value.setGravity(Gravity.END);
-        value.setSingleLine(true);
-        value.setEllipsize(TextUtils.TruncateAt.END);
-        value.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        LinearLayout.LayoutParams valueParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-        valueParams.leftMargin = dp(16);
-        row.addView(value, valueParams);
-
-        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        rowParams.topMargin = dp(10);
-        card.addView(row, rowParams);
-        return value;
-    }
-
-    private void set(TextView view, CharSequence text, int state) {
-        view.setText(text);
-        int key = Theme.key_windowBackgroundWhiteBlackText;
-        if (state == GOOD) {
-            key = Theme.key_windowBackgroundWhiteGreenText2;
-        } else if (state == BAD) {
-            key = Theme.key_text_RedRegular;
-        }
-        view.setTextColor(Theme.getColor(key));
-    }
-
     private static String str(int res) {
         return LumineStrings.get(res);
     }
 
-    public void refresh() {
-        refreshApp();
-        refreshPush();
-        refreshAccount();
+    private static int stateColor(int state, int neutral) {
+        if (state == GOOD) {
+            return Theme.getColor(Theme.key_windowBackgroundWhiteGreenText2);
+        } else if (state == BAD) {
+            return Theme.getColor(Theme.key_text_RedRegular);
+        }
+        return neutral;
     }
 
-    private void refreshApp() {
+    private void setChip(TextView chip, CharSequence text, int background, int foreground) {
+        chip.setText(text);
+        chip.setTextColor(foreground);
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(dp(14));
+        shape.setColor(ColorUtils.setAlphaComponent(background, 0x2E));
+        chip.setBackground(shape);
+    }
+
+    public void refresh() {
+        final LumineMd3.Roles roles = LumineMd3.roles();
+        final PushStatus.Health health = PushStatus.health(account);
+        refreshHero(roles, health.level == BAD);
+        refreshNotification(roles, health);
+        refreshAccount(roles);
+    }
+
+    private void refreshHero(LumineMd3.Roles roles, boolean problem) {
+        final int container = problem ? roles.errorContainer : roles.primaryContainer;
+        final int onContainer = problem ? roles.onErrorContainer : roles.onPrimaryContainer;
+        hero.setCardColor(container);
+        heroIconBackground.setColor(problem ? roles.error : roles.primary);
+        heroIcon.setColorFilter(problem ? roles.errorContainer : roles.onPrimary, PorterDuff.Mode.SRC_IN);
+        heroName.setTextColor(onContainer);
+        heroVersion.setTextColor(onContainer);
+
         String version = "";
         try {
             final Context context = ApplicationLoader.applicationContext;
@@ -181,26 +308,36 @@ public class LumineHomePage extends ScrollView {
         if (!TextUtils.isEmpty(type)) {
             type = Character.toUpperCase(type.charAt(0)) + type.substring(1);
         }
-        set(versionValue, version, NEUTRAL);
-        set(buildTypeValue, type + " (" + BuildVars.BUILD_COMMIT + ")", NEUTRAL);
-        set(abiValue, Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : Build.CPU_ABI, NEUTRAL);
+        heroVersion.setText(version);
+        setChip(chipBuild, type, onContainer, onContainer);
+        setChip(chipCommit, BuildVars.BUILD_COMMIT, onContainer, onContainer);
+        setChip(chipAbi, Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : Build.CPU_ABI, onContainer, onContainer);
     }
 
-    private void refreshPush() {
-        set(serviceValue, PushStatus.typeName(PushConfig.type()), NEUTRAL);
-        final PushStatus.Health health = PushStatus.health(account);
-        set(statusValue, health.text, health.level);
+    private void refreshNotification(LumineMd3.Roles roles, PushStatus.Health health) {
+        notificationTile.setCardColor(roles.surfaceContainer);
+        notificationIconBackground.setColor(roles.primaryContainer);
+        notificationIcon.setColorFilter(roles.onPrimaryContainer, PorterDuff.Mode.SRC_IN);
+        notificationTitle.setTextColor(roles.onSurface);
+        notificationService.setTextColor(roles.onSurfaceVariant);
+        notificationService.setText(PushStatus.typeName(PushConfig.type()));
+        notificationState.setText(health.text);
+        notificationState.setTextColor(stateColor(health.level, roles.onSurfaceVariant));
     }
 
-    private void refreshAccount() {
+    private void refreshAccount(LumineMd3.Roles roles) {
+        accountTile.setCardColor(roles.surfaceContainer);
+        accountIconBackground.setColor(roles.primaryContainer);
+        accountIcon.setColorFilter(roles.onPrimaryContainer, PorterDuff.Mode.SRC_IN);
+        accountTitle.setTextColor(roles.onSurface);
+        accountName.setTextColor(roles.onSurfaceVariant);
+
         final UserConfig config = UserConfig.getInstance(account);
         final TLRPC.User user = config.getCurrentUser();
         if (!config.isClientActivated() || user == null) {
-            set(nameValue, str(R.string.LumineNotLoggedIn), NEUTRAL);
-            set(idValue, "-", NEUTRAL);
+            accountName.setText(str(R.string.LumineNotLoggedIn));
         } else {
-            set(nameValue, UserObject.getUserName(user), NEUTRAL);
-            set(idValue, String.valueOf(user.id), NEUTRAL);
+            accountName.setText(UserObject.getUserName(user));
         }
 
         int res;
@@ -224,6 +361,7 @@ public class LumineHomePage extends ScrollView {
                 res = R.string.LumineConnecting;
                 break;
         }
-        set(connectionValue, str(res), state);
+        accountConnection.setText(str(res));
+        accountConnection.setTextColor(stateColor(state, roles.onSurfaceVariant));
     }
 }

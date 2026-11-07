@@ -1,7 +1,8 @@
 /*
  * luminegram - Material 3 foundation for the luminegram screens.
- * Role colors for light and dark, derived from the brand seed with an HSL
- * tone mapping, plus shape and spacing constants. Own code, no upstream hooks.
+ * Role colors derived from the active theme (accent plus theme surface and
+ * text colors, HSL tone mapping for the tonal roles), plus shape and spacing
+ * constants. Own code, no upstream hooks.
  */
 package app.lumine.md3;
 
@@ -11,8 +12,6 @@ import app.lumine.LumineConfig;
 import org.telegram.ui.ActionBar.Theme;
 
 public final class LumineMd3 {
-
-    public static final int SEED = 0xFFFA456C;
 
     public static final String KEY_SWITCH = "LumineMd3Switch";
     public static final String KEY_SLIDER = "LumineMd3Slider";
@@ -49,12 +48,33 @@ public final class LumineMd3 {
         public final int outline;
         public final int outlineVariant;
 
-        private Roles(boolean dark) {
+        private final int cacheAccent;
+        private final boolean cacheDark;
+        private final int cacheBackground;
+        private final int cacheContainer;
+        private final int cacheText;
+
+        private Roles(boolean dark, int accent, int background, int container, int text, int textVariant, int divider) {
+            cacheAccent = accent;
+            cacheDark = dark;
+            cacheBackground = background;
+            cacheContainer = container;
+            cacheText = text;
+
             final float[] hsl = new float[3];
-            ColorUtils.colorToHSL(SEED, hsl);
+            ColorUtils.colorToHSL(accent, hsl);
             final float hue = hsl[0];
             final float primarySat = Math.min(hsl[1], 0.85f);
             final float tertiaryHue = (hue + 60f) % 360f;
+
+            surface = background;
+            surfaceContainer = container;
+            surfaceContainerHigh = ColorUtils.blendARGB(container, text, 0.04f);
+            surfaceBright = container;
+            onSurface = text;
+            onSurfaceVariant = textVariant;
+            outline = ColorUtils.blendARGB(textVariant, container, 0.3f);
+            outlineVariant = divider;
 
             if (dark) {
                 primary = tone(hue, primarySat, 80);
@@ -68,14 +88,6 @@ public final class LumineMd3 {
                 error = 0xFFF2B8B5;
                 errorContainer = 0xFF8C1D18;
                 onErrorContainer = 0xFFF9DEDC;
-                surface = tone(hue, 0.05f, 6);
-                surfaceContainer = tone(hue, 0.05f, 12);
-                surfaceContainerHigh = tone(hue, 0.05f, 17);
-                surfaceBright = tone(hue, 0.05f, 24);
-                onSurface = tone(hue, 0.05f, 90);
-                onSurfaceVariant = tone(hue, 0.10f, 80);
-                outline = tone(hue, 0.10f, 60);
-                outlineVariant = tone(hue, 0.10f, 30);
             } else {
                 primary = tone(hue, primarySat, 40);
                 onPrimary = 0xFFFFFFFF;
@@ -88,26 +100,31 @@ public final class LumineMd3 {
                 error = 0xFFB3261E;
                 errorContainer = 0xFFF9DEDC;
                 onErrorContainer = 0xFF410E0B;
-                surface = tone(hue, 0.05f, 98);
-                surfaceContainer = tone(hue, 0.05f, 94);
-                surfaceContainerHigh = tone(hue, 0.05f, 92);
-                surfaceBright = tone(hue, 0.05f, 98);
-                onSurface = tone(hue, 0.05f, 10);
-                onSurfaceVariant = tone(hue, 0.10f, 30);
-                outline = tone(hue, 0.10f, 50);
-                outlineVariant = tone(hue, 0.10f, 80);
             }
+        }
+
+        private boolean matches(boolean dark, int accent, int background, int container, int text) {
+            return cacheDark == dark && cacheAccent == accent && cacheBackground == background && cacheContainer == container && cacheText == text;
         }
     }
 
-    private static final Roles LIGHT = new Roles(false);
-    private static final Roles DARK = new Roles(true);
+    private static Roles cached;
 
     private LumineMd3() {
     }
 
     public static Roles roles() {
-        return Theme.isCurrentThemeDark() ? DARK : LIGHT;
+        final boolean dark = Theme.isCurrentThemeDark();
+        final int accent = Theme.getColor(Theme.key_chats_actionBackground) | 0xFF000000;
+        final int background = Theme.getColor(Theme.key_windowBackgroundGray);
+        final int container = Theme.getColor(Theme.key_windowBackgroundWhite);
+        final int text = Theme.getColor(Theme.key_windowBackgroundWhiteBlackText);
+        Roles roles = cached;
+        if (roles == null || !roles.matches(dark, accent, background, container, text)) {
+            roles = new Roles(dark, accent, background, container, text, Theme.getColor(Theme.key_windowBackgroundWhiteGrayText), Theme.getColor(Theme.key_divider));
+            cached = roles;
+        }
+        return roles;
     }
 
     public static boolean switchEnabled() {
