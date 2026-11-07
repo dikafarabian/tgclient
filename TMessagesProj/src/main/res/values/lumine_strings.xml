@@ -18,6 +18,11 @@
     <string name="LumineGooglePlayServices">Google Play Services</string>
     <string name="LumineFcmToken">FCM token</string>
     <string name="LumineServerRegistration">Telegram registration</string>
+    <string name="LumineLastPush">Last push</string>
+    <string name="LumineLastError">Last error</string>
+    <string name="LumineNever">Never</string>
+    <string name="LumineNone">None</string>
+    <string name="LuminePushReportCopied">Push report copied</string>
     <string name="LumineAvailable">Available</string>
     <string name="LumineMissing">Missing</string>
     <string name="LumineTokenReady">Received</string>

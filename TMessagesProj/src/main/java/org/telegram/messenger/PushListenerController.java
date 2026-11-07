@@ -95,6 +95,7 @@ public class PushListenerController {
 
     public static void processRemoteMessage(@PushType int pushType, String data, long time) {
         String tag = pushType == PUSH_TYPE_FIREBASE ? "FCM" : "HCM";
+        app.lumine.push.LuminePushLog.pushReceived();
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d(tag + " PRE START PROCESSING");
         }
@@ -1813,12 +1814,14 @@ public class PushListenerController {
             }
             Utilities.globalQueue.postRunnable(() -> {
                 try {
+                    app.lumine.push.LuminePushLog.tokenRequested();
                     SharedConfig.pushStringGetTimeStart = SystemClock.elapsedRealtime();
                     FirebaseApp.initializeApp(ApplicationLoader.applicationContext);
                     FirebaseMessaging.getInstance().getToken()
                             .addOnCompleteListener(task -> {
                                 SharedConfig.pushStringGetTimeEnd = SystemClock.elapsedRealtime();
                                 if (!task.isSuccessful()) {
+                                    app.lumine.push.LuminePushLog.tokenFailed(task.getException());
                                     if (BuildVars.LOGS_ENABLED) {
                                         FileLog.d("Failed to get regid");
                                     }
@@ -1828,10 +1831,12 @@ public class PushListenerController {
                                 }
                                 String token = task.getResult();
                                 if (!TextUtils.isEmpty(token)) {
+                                    app.lumine.push.LuminePushLog.tokenReceived(token);
                                     PushListenerController.sendRegistrationToServer(getPushType(), token);
                                 }
                             });
                 } catch (Throwable e) {
+                    app.lumine.push.LuminePushLog.tokenFailed(e);
                     FileLog.e(e);
                 }
             });

@@ -14,14 +14,17 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import app.lumine.LumineStrings;
+import app.lumine.push.LuminePushLog;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
@@ -47,6 +50,8 @@ public class LumineHomePage extends ScrollView {
     private TextView servicesValue;
     private TextView tokenValue;
     private TextView registrationValue;
+    private TextView lastPushValue;
+    private TextView lastErrorValue;
     private TextView nameValue;
     private TextView idValue;
     private TextView connectionValue;
@@ -71,6 +76,12 @@ public class LumineHomePage extends ScrollView {
         servicesValue = addRow(pushCard, R.string.LumineGooglePlayServices);
         tokenValue = addRow(pushCard, R.string.LumineFcmToken);
         registrationValue = addRow(pushCard, R.string.LumineServerRegistration);
+        lastPushValue = addRow(pushCard, R.string.LumineLastPush);
+        lastErrorValue = addRow(pushCard, R.string.LumineLastError);
+        pushCard.setOnClickListener(v -> {
+            AndroidUtilities.addToClipboard(LuminePushLog.report());
+            Toast.makeText(getContext(), LumineStrings.get(R.string.LuminePushReportCopied), Toast.LENGTH_SHORT).show();
+        });
 
         LinearLayout accountCard = addCard(list, R.string.LumineCardAccount);
         nameValue = addRow(accountCard, R.string.LumineAccountName);
@@ -200,7 +211,7 @@ public class LumineHomePage extends ScrollView {
         final String status = SharedConfig.pushStringStatus == null ? "" : SharedConfig.pushStringStatus;
         if (!TextUtils.isEmpty(token)) {
             set(tokenValue, str(R.string.LumineTokenReady), GOOD);
-        } else if (status.startsWith("__FIREBASE_FAILED__") || status.startsWith("__NO_GOOGLE_PLAY_SERVICES__")) {
+        } else if (!TextUtils.isEmpty(LuminePushLog.tokenError()) || status.startsWith("__FIREBASE_FAILED__") || status.startsWith("__NO_GOOGLE_PLAY_SERVICES__")) {
             set(tokenValue, str(R.string.LumineTokenFailed), BAD);
         } else {
             set(tokenValue, str(R.string.LumineTokenWaiting), NEUTRAL);
@@ -208,6 +219,20 @@ public class LumineHomePage extends ScrollView {
 
         final boolean registered = UserConfig.getInstance(account).registeredForPush;
         set(registrationValue, str(registered ? R.string.LumineRegistered : R.string.LumineNotRegistered), registered ? GOOD : BAD);
+
+        final long lastPush = LuminePushLog.lastPushTime();
+        if (lastPush <= 0) {
+            set(lastPushValue, str(R.string.LumineNever), NEUTRAL);
+        } else {
+            set(lastPushValue, LocaleController.formatDateTime(lastPush / 1000L, true), GOOD);
+        }
+
+        final String error = LuminePushLog.lastError();
+        if (TextUtils.isEmpty(error)) {
+            set(lastErrorValue, str(R.string.LumineNone), GOOD);
+        } else {
+            set(lastErrorValue, error, BAD);
+        }
     }
 
     private void refreshAccount() {

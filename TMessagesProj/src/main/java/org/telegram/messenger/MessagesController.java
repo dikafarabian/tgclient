@@ -16211,6 +16211,7 @@ public class MessagesController extends BaseController implements NotificationCe
             }
         }
         getConnectionsManager().sendRequest(req, (response, error) -> {
+            app.lumine.push.LuminePushLog.registerResult(currentAccount, response instanceof TLRPC.TL_boolTrue ? null : error != null ? error : new TLRPC.TL_error("empty response"));
             if (response instanceof TLRPC.TL_boolTrue) {
                 if (BuildVars.LOGS_ENABLED) {
                     FileLog.d("account " + currentAccount + " registered for push, push type: " + pushType);
