@@ -105,7 +105,9 @@ jobs:
       - name: Write google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: printf '%s' "$GOOGLE_SERVICES_JSON" > TMessagesProj_App/google-services.json
+        run: |
+          printf '%s' "$GOOGLE_SERVICES_JSON" > TMessagesProj/google-services.json
+          printf '%s' "$GOOGLE_SERVICES_JSON" > TMessagesProj_App/google-services.json
 
       - name: Compute build info
         id: info
@@ -175,7 +177,7 @@ jobs:
           for apk in out/*.apk; do
             "$apksigner" verify --print-certs "$apk"
           done
-          rm -f TMessagesProj/config/release.keystore
+          rm -f TMessagesProj/config/release.keystore TMessagesProj/google-services.json TMessagesProj_App/google-services.json
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
