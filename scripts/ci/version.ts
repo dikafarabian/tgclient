@@ -7,10 +7,14 @@ if (!appVerName) throw new Error('failed to read APP_VERSION_NAME')
 const buildType = process.env.BUILD_TYPE ?? 'release'
 if (buildType !== 'beta' && buildType !== 'release') throw new Error(`invalid BUILD_TYPE: ${buildType}`)
 
+const flavor = process.env.FLAVOR ?? 'normal'
+if (flavor !== 'normal' && flavor !== 'plugin') throw new Error(`invalid FLAVOR: ${flavor}`)
+const prefix = flavor === 'plugin' ? 'luminegram-plugin' : 'luminegram'
+
 const out = {
   'ver-name': `${appVerName}-${(process.env.GITHUB_SHA ?? '').slice(0, 7)}`,
-  'apk-arm64': `luminegram-arm64-v8a-${appVerName}-${buildType}.apk`,
-  'apk-arm7': `luminegram-armeabi-v7a-${appVerName}-${buildType}.apk`,
+  'apk-arm64': `${prefix}-arm64-v8a-${appVerName}-${buildType}.apk`,
+  'apk-arm7': `${prefix}-armeabi-v7a-${appVerName}-${buildType}.apk`,
 }
 
 const githubOutput = process.env.GITHUB_OUTPUT

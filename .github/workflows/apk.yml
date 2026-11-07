@@ -11,6 +11,13 @@ on:
           - armeabi-v7a
           - all
         default: arm64-v8a
+      flavor:
+        description: Flavor
+        type: choice
+        options:
+          - normal
+          - plugin
+        default: normal
       build_type:
         description: Build type
         type: choice
@@ -111,6 +118,7 @@ jobs:
         id: info
         env:
           BUILD_TYPE: ${{ inputs.build_type }}
+          FLAVOR: ${{ inputs.flavor }}
         run: bun scripts/ci/version.ts
 
       - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
@@ -125,6 +133,16 @@ jobs:
             build-tools;36.0.0
             cmake;3.31.6
             ndk;27.2.12479018
+
+      - name: Set up Python
+        if: inputs.flavor == 'plugin'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+
+      - name: Install Cython
+        if: inputs.flavor == 'plugin'
+        run: python -m pip install Cython==3.0.11
 
       - name: Write release.keystore
         env:
@@ -157,6 +175,7 @@ jobs:
           COMMIT_ID: ${{ github.sha }}
           NATIVE_TARGET: ${{ matrix.abi }}
           BUILD_TYPE: ${{ inputs.build_type }}
+          FLAVOR: ${{ inputs.flavor }}
           APK_NAME: ${{ matrix.abi == 'arm64-v8a' && steps.info.outputs.apk-arm64 || steps.info.outputs.apk-arm7 }}
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
           ALIAS_NAME: lumine
@@ -167,9 +186,10 @@ jobs:
         run: |
           export BUILD_TIMESTAMP=$(date +%s)
           if [ "$BUILD_TYPE" = release ]; then variant=Release; dir=release; else variant=Staging; dir=staging; fi
-          ./gradlew --no-daemon ":TMessagesProj:assembleNormal$variant"
+          if [ "$FLAVOR" = plugin ]; then flavor=Plugin; else flavor=Normal; fi
+          ./gradlew --no-daemon ":TMessagesProj:assemble$flavor$variant"
           mkdir -p out
-          apks=(TMessagesProj/build/outputs/apk/normal/$dir/*.apk)
+          apks=(TMessagesProj/build/outputs/apk/$FLAVOR/$dir/*.apk)
           [ "${#apks[@]}" -eq 1 ] || { ls -laR TMessagesProj/build/outputs/apk >&2; exit 1; }
           cp "${apks[0]}" "out/$APK_NAME"
 
