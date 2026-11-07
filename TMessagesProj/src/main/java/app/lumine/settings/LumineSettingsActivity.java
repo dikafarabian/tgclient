@@ -78,7 +78,7 @@ public class LumineSettingsActivity extends BaseFragment {
 
     private View createPage(Context context, int index) {
         if (index == TAB_HOME) {
-            homePage = new LumineHomePage(context, currentAccount);
+            homePage = new LumineHomePage(context, currentAccount, () -> presentFragment(new LumineNotificationActivity()));
             return homePage;
         }
         if (index == TAB_GENERAL) {

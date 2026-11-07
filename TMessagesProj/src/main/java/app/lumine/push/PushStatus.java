@@ -15,7 +15,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import app.lumine.LumineStrings;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
@@ -37,29 +36,6 @@ public final class PushStatus {
             default:
                 return LumineStrings.get(R.string.LuminePushTypeFcm);
         }
-    }
-
-    public static String summary() {
-        final int type = PushConfig.type();
-        final String name = typeName(type);
-        if (!osNotificationsEnabled()) {
-            return name + " \u00b7 " + LumineStrings.get(R.string.LuminePushStatusBlocked);
-        }
-        if (type == PushConfig.TYPE_IN_APP) {
-            final boolean running = MessagesController.getGlobalNotificationsSettings().getBoolean("pushService", false);
-            return name + " \u00b7 " + LumineStrings.get(running ? R.string.LuminePushStatusServiceOn : R.string.LuminePushStatusServiceOff);
-        }
-        if (TextUtils.isEmpty(SharedConfig.pushString)) {
-            return name + " \u00b7 " + LumineStrings.get(R.string.LuminePushStatusNoToken);
-        }
-        if (!UserConfig.getInstance(UserConfig.selectedAccount).registeredForPush) {
-            return name + " \u00b7 " + LumineStrings.get(R.string.LuminePushStatusNotRegistered);
-        }
-        final long last = LuminePushLog.lastPushTime();
-        if (last <= 0) {
-            return name + " \u00b7 " + LumineStrings.get(R.string.LuminePushStatusNothing);
-        }
-        return name + " \u00b7 " + LocaleController.formatDateTime(last / 1000L, true);
     }
 
     public static final class Health {
@@ -88,8 +64,7 @@ public final class PushStatus {
             return new Health(R.string.LumineHealthNoServices, Health.BAD);
         }
         if (TextUtils.isEmpty(SharedConfig.pushString)) {
-            final String status = SharedConfig.pushStringStatus == null ? "" : SharedConfig.pushStringStatus;
-            if (!TextUtils.isEmpty(LuminePushLog.tokenError()) || status.startsWith("__FIREBASE_FAILED__") || status.startsWith("__NO_GOOGLE_PLAY_SERVICES__")) {
+            if (tokenFailed()) {
                 return new Health(R.string.LumineHealthTokenFailed, Health.BAD);
             }
             return new Health(R.string.LumineHealthWaitingToken, Health.NEUTRAL);
@@ -100,7 +75,30 @@ public final class PushStatus {
             }
             return new Health(R.string.LumineHealthRegistering, Health.NEUTRAL);
         }
-        return new Health(R.string.LumineHealthReady, Health.GOOD);
+        return new Health(R.string.LumineHealthRunning, Health.GOOD);
+    }
+
+    public static Health services() {
+        return playServicesAvailable() ? new Health(R.string.LumineAvailable, Health.GOOD) : new Health(R.string.LumineMissing, Health.BAD);
+    }
+
+    public static Health token() {
+        if (!TextUtils.isEmpty(SharedConfig.pushString)) {
+            return new Health(R.string.LumineTokenReady, Health.GOOD);
+        }
+        if (tokenFailed()) {
+            return new Health(R.string.LumineTokenFailed, Health.BAD);
+        }
+        return new Health(R.string.LumineTokenWaiting, Health.NEUTRAL);
+    }
+
+    public static Health registration(int account) {
+        return UserConfig.getInstance(account).registeredForPush ? new Health(R.string.LumineRegistered, Health.GOOD) : new Health(R.string.LumineNotRegistered, Health.BAD);
+    }
+
+    private static boolean tokenFailed() {
+        final String status = SharedConfig.pushStringStatus == null ? "" : SharedConfig.pushStringStatus;
+        return !TextUtils.isEmpty(LuminePushLog.tokenError()) || status.startsWith("__FIREBASE_FAILED__") || status.startsWith("__NO_GOOGLE_PLAY_SERVICES__");
     }
 
     private static boolean playServicesAvailable() {

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import app.lumine.push.PushStatus;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
 
@@ -34,14 +35,16 @@ final class LumineCards {
         LinearLayout card = new LinearLayout(context);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setBackground(Theme.createRoundRectDrawable(dp(12), Theme.getColor(Theme.key_windowBackgroundWhite)));
-        card.setPadding(dp(16), dp(14), dp(16), dp(10));
+        card.setPadding(dp(16), title == null ? dp(4) : dp(14), dp(16), title == null ? dp(4) : dp(10));
 
-        TextView header = new TextView(context);
-        header.setTextSize(14);
-        header.setTypeface(AndroidUtilities.bold());
-        header.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
-        header.setText(title);
-        card.addView(header, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        if (title != null) {
+            TextView header = new TextView(context);
+            header.setTextSize(14);
+            header.setTypeface(AndroidUtilities.bold());
+            header.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
+            header.setText(title);
+            card.addView(header, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        }
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.bottomMargin = dp(12);
@@ -77,6 +80,17 @@ final class LumineCards {
         }
         card.addView(row, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         return new Row(row, value);
+    }
+
+    static void setValue(TextView view, CharSequence text, int level) {
+        int key = Theme.key_windowBackgroundWhiteBlackText;
+        if (level == PushStatus.Health.GOOD) {
+            key = Theme.key_windowBackgroundWhiteGreenText2;
+        } else if (level == PushStatus.Health.BAD) {
+            key = Theme.key_text_RedRegular;
+        }
+        view.setText(text);
+        view.setTextColor(Theme.getColor(key));
     }
 
     static void info(Context context, LinearLayout parent, String text) {
