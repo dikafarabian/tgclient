@@ -39,4 +39,23 @@
     <string name="LumineUpdating">Updating</string>
     <string name="LumineProxy">Connecting to proxy</string>
     <string name="LumineNotLoggedIn">Not logged in</string>
+    <string name="LumineGeneralNotifications">Notifications</string>
+    <string name="LuminePushService">Push service</string>
+    <string name="LuminePushTypeInApp">In-app service</string>
+    <string name="LuminePushTypeFcm">FCM</string>
+    <string name="LuminePushTypeMicroG">MicroG</string>
+    <string name="LuminePushTypeUnified">UnifiedPush</string>
+    <string name="LuminePushStatus">Push status</string>
+    <string name="LuminePushStatusBlocked">blocked by system</string>
+    <string name="LuminePushStatusNoToken">no token</string>
+    <string name="LuminePushStatusNotRegistered">not registered</string>
+    <string name="LuminePushStatusNothing">nothing received</string>
+    <string name="LuminePushStatusServiceOn">service running</string>
+    <string name="LuminePushStatusServiceOff">service off</string>
+    <string name="LumineBatteryOptimization">Battery optimization</string>
+    <string name="LumineBatteryOn">Enabled, pushes may be delayed</string>
+    <string name="LumineBatteryOff">Disabled</string>
+    <string name="LumineBatteryUnavailable">Battery settings are unavailable on this device</string>
+    <string name="LuminePushRestartHint">Restart the app to apply the push service</string>
+    <string name="LuminePushInfo">Tap the push status to copy diagnostics. If battery optimization is enabled, Android may delay or drop pushes while the app is in the background.</string>
 </resources>

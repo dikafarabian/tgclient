@@ -18,11 +18,13 @@ import org.telegram.ui.ActionBar.Theme;
 public class LumineSettingsActivity extends BaseFragment {
 
     private static final int TAB_HOME = 0;
+    private static final int TAB_GENERAL = 1;
     private static final int TAB_COUNT = 5;
 
     private FrameLayout content;
     private LumineTabBar tabBar;
     private LumineHomePage homePage;
+    private LumineGeneralPage generalPage;
     private final View[] pages = new View[TAB_COUNT];
     private int current = -1;
     private boolean resumed;
@@ -79,6 +81,10 @@ public class LumineSettingsActivity extends BaseFragment {
             homePage = new LumineHomePage(context, currentAccount);
             return homePage;
         }
+        if (index == TAB_GENERAL) {
+            generalPage = new LumineGeneralPage(context, this);
+            return generalPage;
+        }
         return new LumineComingSoonPage(context);
     }
 
@@ -98,6 +104,9 @@ public class LumineSettingsActivity extends BaseFragment {
         if (index == TAB_HOME && homePage != null && resumed) {
             homePage.start();
         }
+        if (index == TAB_GENERAL && generalPage != null) {
+            generalPage.refresh();
+        }
     }
 
     @Override
@@ -106,6 +115,9 @@ public class LumineSettingsActivity extends BaseFragment {
         resumed = true;
         if (current == TAB_HOME && homePage != null) {
             homePage.start();
+        }
+        if (current == TAB_GENERAL && generalPage != null) {
+            generalPage.refresh();
         }
     }
 
