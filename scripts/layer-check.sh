@@ -15,6 +15,7 @@ APP=TMessagesProj_App
 
 OWN_FILES=(
 "$J/app/lumine/LumineConfig.java"
+"$J/app/lumine/LumineStrings.java"
 "$J/app/lumine/settings/LumineSettingsActivity.java"
 "$J/app/lumine/settings/LumineTabBar.java"
 "$J/app/lumine/settings/LumineHomePage.java"
@@ -50,6 +51,7 @@ MARKERS=(
 "$J/org/telegram/ui/SettingsActivity.java|import app.lumine.settings.LumineSettingsActivity;"
 "$J/org/telegram/ui/SettingsActivity.java|presentSettingFragment(new LumineSettingsActivity());"
 "$J/org/telegram/ui/SettingsActivity.java|R.drawable.lumine_settings_sparkle"
+"$J/org/telegram/ui/SettingsActivity.java|LumineStrings.get(R.string.LumineSettings)"
 "$J/org/telegram/messenger/AndroidUtilities.java|BuildVars.BUILD_COMMIT"
 "$J/org/telegram/messenger/ApplicationLoader.java|BuildVars.BUILD_COMMIT"
 "$J/org/telegram/ui/IntroActivity.java|paint.setColor(0xFFFFFFFF);"

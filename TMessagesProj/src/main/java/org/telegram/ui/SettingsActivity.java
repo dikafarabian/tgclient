@@ -63,6 +63,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import app.lumine.LumineStrings;
 import app.lumine.settings.LumineSettingsActivity;
 
 import org.telegram.PhoneFormat.PhoneFormat;
@@ -718,7 +719,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             items.add(UItem.asShadow(null));
         }
 
-        items.add(SettingCell.Factory.of(30, 0xFFFA456C, 0xFFE0345A, R.drawable.lumine_settings_sparkle, getString(R.string.LumineSettings), getString(R.string.LumineSettingsSummary)));
+        items.add(SettingCell.Factory.of(30, 0xFFFA456C, 0xFFE0345A, R.drawable.lumine_settings_sparkle, LumineStrings.get(R.string.LumineSettings), LumineStrings.get(R.string.LumineSettingsSummary)));
         items.add(UItem.asShadow(null));
 
         items.add(SettingCell.Factory.of(1, IconBackgroundColors.BLUE.top, IconBackgroundColors.BLUE.bottom, R.drawable.settings_account, getString(R.string.SettingsAccount), getString(R.string.SettingsAccountInfo)));

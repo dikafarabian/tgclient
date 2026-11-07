@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import org.telegram.messenger.LocaleController;
+import app.lumine.LumineStrings;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
@@ -31,7 +31,7 @@ public class LumineSettingsActivity extends BaseFragment {
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setAllowOverlayTitle(true);
-        actionBar.setTitle(LocaleController.getString(R.string.LumineSettings));
+        actionBar.setTitle(LumineStrings.get(R.string.LumineSettings));
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
@@ -59,11 +59,11 @@ public class LumineSettingsActivity extends BaseFragment {
                         R.drawable.lumine_tab_experimental
                 },
                 new String[]{
-                        LocaleController.getString(R.string.LumineTabHome),
-                        LocaleController.getString(R.string.LumineTabGeneral),
-                        LocaleController.getString(R.string.LumineTabAppearance),
-                        LocaleController.getString(R.string.LumineTabStealth),
-                        LocaleController.getString(R.string.LumineTabExperimental)
+                        LumineStrings.get(R.string.LumineTabHome),
+                        LumineStrings.get(R.string.LumineTabGeneral),
+                        LumineStrings.get(R.string.LumineTabAppearance),
+                        LumineStrings.get(R.string.LumineTabStealth),
+                        LumineStrings.get(R.string.LumineTabExperimental)
                 }
         );
         tabBar.setListener(this::showPage);

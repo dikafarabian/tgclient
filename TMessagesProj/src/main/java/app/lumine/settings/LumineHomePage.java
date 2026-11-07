@@ -18,10 +18,10 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import app.lumine.LumineStrings;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
@@ -115,7 +115,7 @@ public class LumineHomePage extends ScrollView {
         title.setTextSize(14);
         title.setTypeface(AndroidUtilities.bold());
         title.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
-        title.setText(LocaleController.getString(titleRes));
+        title.setText(LumineStrings.get(titleRes));
         card.addView(title, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -133,7 +133,7 @@ public class LumineHomePage extends ScrollView {
         TextView label = new TextView(context);
         label.setTextSize(14);
         label.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        label.setText(LocaleController.getString(labelRes));
+        label.setText(LumineStrings.get(labelRes));
         row.addView(label, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         TextView value = new TextView(context);
@@ -164,7 +164,7 @@ public class LumineHomePage extends ScrollView {
     }
 
     private static String str(int res) {
-        return LocaleController.getString(res);
+        return LumineStrings.get(res);
     }
 
     public void refresh() {
