@@ -27,6 +27,8 @@ OWN_FILES=(
 "$J/app/lumine/settings/LumineCards.java"
 "$J/app/lumine/settings/LumineGeneralPage.java"
 "$J/app/lumine/settings/LumineNotificationActivity.java"
+"$J/app/lumine/md3/LumineMd3.java"
+"$J/app/lumine/md3/LumineTonalCard.java"
 "$APP/src/main/res/raw/lumine_keep.xml"
 "$R/values/lumine_strings.xml"
 "$R/drawable/lumine_settings_sparkle.xml"
