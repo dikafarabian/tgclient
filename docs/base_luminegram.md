@@ -1,0 +1,118 @@
+# base-luminegram
+
+Branch `base-luminegram` of `dikafarabian/tgclient`. General rules (working style, git conventions, sandbox facts) are in `tgclient_project.md`; this document only covers what is specific to this base.
+
+Last checked against the tree: 2026-11-07 (head `77bb7854` before this document was added). This is the fresh base: it starts from official Telegram for Android, not from another fork. `base-nagramxf` stays in the repo as a reference to read features from; features are ported by hand, never merged.
+
+Verification state (layers as in section 8 of `tgclient_project.md`):
+- Built by CI and confirmed by the owner on a device: a canary APK (arm64-v8a) builds, installs and runs, and the Telegram card arrives with the new format (owner screenshot, 2026-11-07, build `65b3ba2`). The commit hash in the card is monospace (owner confirmed).
+- Built by CI, owner reported "berhasil" without per-feature detail: the later commits (version text with commit hash, app name, launcher icons, wordmark, intro). Treat these as unconfirmed on the device until the owner sends screenshots: launcher icon shape on the owner's launcher, themed (monochrome) icon, the `luminegram` wordmark on login / chat list / stories row, intro page animation with the sparkle (the old plane used to fly over the sphere), intro sphere on the light theme (white sphere on white background), the version line in Settings.
+- Not verified at all: FCM push notifications (the secret `google-services.json` is injected, but no push was received and checked), the `release` build type, the `armeabi-v7a` ABI, the sync procedure on a real upstream update (only simulated, section 4).
+
+## 1. Identity
+
+- Upstream: https://github.com/DrKLO/Telegram, branch `master` (official Telegram for Android). Remote name `upstream`. License GPL-3.0 (the repo is public; distributing an APK means the source must stay open).
+- Sync point: `3de37c8cf` "update to 13.1.1 (7237)", 2026-10-25. Upstream had nothing newer on 2026-11-07 (`git ls-remote` returned the same sha).
+- Upstream history is kept in full (about 650 commits; the official repo is small because releases land as one commit "update to X.Y.Z (code)" plus merged pull requests). The merge-base is real, so a plain `git merge` works.
+- App: name `luminegram` (lowercase), package `com.lumine.gram`. API ID/hash come from CI secrets (never in the repo). Brand: sparkle logo, black sparkle on a white circle (colors differ from `base-nagramxf`, which used white on `#FA456C`).
+- Own commits on top of upstream: 20 at head `77bb7854` (`git rev-list --count upstream/master..HEAD`).
+- Language: Java only. There are no Kotlin sources in `TMessagesProj` and the Kotlin plugin is not applied there (only `buildSrc` and the root classpath use Kotlin). Adding Kotlin to the module is a build change of its own; do it only when a feature needs it.
+
+## 2. Structure of the upstream project (read from the tree, 2026-11-07)
+
+- `TMessagesProj` is the Android library with all code, resources and the native code (`jni`, CMake target `tmessages.49`). Namespace `org.telegram.messenger`.
+- `TMessagesProj_App` is the app module that CI builds. Namespace `org.telegram.messenger.regular`, `applicationId = APP_PACKAGE`. Flavors `afat` (all ABIs; the only one we build) and `bundleAfat`. A `variantFilter` ignores every build type other than `release` unless the flavor is `afat`, so `canary` works through `afat`.
+- Other app modules (`TMessagesProj_AppStandalone`, `_AppHuawei`, `_AppHockeyApp`, `_AppTests`) exist and are configured by Gradle but never built by us.
+- Build types: library has `debug`, `standalone`, `release` (and others); app has `debug`, `release`, and our `canary` (`initWith release`, `matchingFallbacks = ['release']`, same minify and signing as release, so a stable canary means a stable release). Output file is always `app.apk`; CI renames it.
+- Signing: the app reads `TMessagesProj/config/release.keystore` with `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD` from `gradle.properties`. CI overrides them with `ORG_GRADLE_PROJECT_*` environment variables and writes the keystore from a secret. The upstream keystore (password `android`) and the five upstream `google-services.json` files were deleted from the tree.
+- The Google Services plugin is applied only in the app module. In the library it was removed because the library namespace `org.telegram.messenger` has no matching client in our `google-services.json` (run 88 failed with `No matching client found for package name 'org.telegram.messenger'`). No library code reads the resources that plugin generates.
+- Native build ABIs follow the library, not the app: the app's `abiFilters` alone did not stop the library from compiling all four ABIs (51 minutes). Both modules read the Gradle property `ABI_FILTERS` (comma separated, default all four).
+- Version text: `SettingsActivity.getVersionName`, `AndroidUtilities` and `ApplicationLoader` (the `buildVersion` log line) build `v<ver> (<code>) <label> <abi>`. The label used to be the literal `universal`; it is `BuildVars.BUILD_COMMIT` now. The ABI printed is the device's `Build.CPU_ABI`, not the APK's.
+
+## 3. Our layer
+
+Source of truth: `git diff --name-status 3de37c8cf HEAD` and `bash scripts/layer-check.sh` (must print `layer OK`).
+
+### 3.1 Own code and tooling (cannot conflict with upstream)
+
+| Path | Purpose |
+|---|---|
+| `TMessagesProj/src/main/java/app/lumine/LumineConfig.java` | own settings storage (`lumine_config` SharedPreferences, typed getters and setters). Every feature toggle goes here. Not called by anything yet. |
+| `TMessagesProj/src/main/res/drawable/lumine_icon_foreground.xml` | black sparkle vector, used by the adaptive launcher icon (foreground and monochrome) |
+| `.github/workflows/apk.yml` | workflow "Build APK" (section 5) |
+| `scripts/ci/version.ts`, `post-card.ts`, `upload.sh` | APK names, Telegram card, upload |
+| `scripts/layer-check.sh` | marker check (section 3.3) |
+| `docs/base_luminegram.md` | this document (snapshot; the project copy is the one the owner uploads to the Claude project) |
+
+New own code goes in the package `app.lumine.<feature>`, new resources get the prefix `lumine_`, new strings go in a file of ours (not in upstream's `strings.xml`), and each feature needs one settings entry and a toggle in `LumineConfig`.
+
+### 3.2 Hooks and edits inside upstream files
+
+Every row is a place where a merge can conflict.
+
+| What | File | Marker |
+|---|---|---|
+| Application id override (the upstream line is left untouched, ours is appended at the end; the last definition wins) | `gradle.properties` | `APP_PACKAGE=com.lumine.gram` |
+| API id/hash and commit from secrets and env; `getSecret` fails the build when a secret is missing | `TMessagesProj/build.gradle` | `getSecret("TELEGRAM_APP_ID")`, `"BUILD_COMMIT"` |
+| Library ABI filter | `TMessagesProj/build.gradle` | `ABI_FILTERS` |
+| Google Services plugin removed from the library | `TMessagesProj/build.gradle` | the string `com.google.gms.google-services` must be absent |
+| `canary` build type, its source sets, ABI filter | `TMessagesProj_App/build.gradle` | `canary {`, `sourceSets.canary`, `abiFilterList` |
+| API id/hash/commit read from BuildConfig (official id 4 and hash removed) | `messenger/BuildVars.java` | `BuildConfig.APP_ID`, `BuildConfig.APP_HASH`, `BuildConfig.BUILD_COMMIT` |
+| Commit hash instead of `universal` | `ui/SettingsActivity.java`, `messenger/AndroidUtilities.java`, `messenger/ApplicationLoader.java` | `BuildVars.BUILD_COMMIT` |
+| App name | `res/values/strings.xml` and 9 translations | `<string name="AppName">luminegram</string>` |
+| Launcher icon: adaptive (API 26+) and PNG (API 23-25) | `res/mipmap-anydpi-v26/ic_launcher*.xml`, `res/mipmap-*/ic_launcher*.png` | `lumine_icon_foreground` |
+| Small icon (contact sync, call and message notifications) | `res/drawable-*/ic_launcher_dr.webp` | none (binary) |
+| Wordmark "luminegram" (generated from the bundled `rmediumitalic.ttf`; same viewport and size as the originals so the code that stretches them keeps working) | `res/drawable/telegram_logo.xml` (intro title), `telegram_logo_2.xml` (chat list title, stories row) | none (the file names are upstream's; the names are the marker) |
+| Intro: sparkle texture replaces the plane, sphere is white | `res/drawable-*/intro_tg_plane.webp`, `ui/IntroActivity.java` | `paint.setColor(0xFFFFFFFF);` |
+| Removed upstream secrets | `TMessagesProj/config/release.keystore`, five `google-services.json` | `layer-check.sh` fails if any keystore or `google-services.json` is tracked |
+
+`IntroActivity.java` still imports `ThemeColors` (now unused); leave it, removing it only adds a conflict surface.
+
+### 3.3 Layer check
+
+`bash scripts/layer-check.sh` verifies the own files, every marker above, that the official API id and hash are gone, that no secret file is tracked and that the effective `APP_PACKAGE` (last definition in `gradle.properties`) is `com.lumine.gram`. Negative tests were run on 2026-11-07: removing a hook, restoring the official app id, reverting the package and tracking a `google-services.json` were each reported. When a new hook is added to an upstream file, add its marker in the same commit.
+
+## 4. Syncing with upstream
+
+How hard is it? On 2026-11-07, by simulation: our patch (`git diff --binary 3de37c8cf HEAD`) was applied with `git apply --3way` onto three older releases (13.1.0, 13.0.3, 13.0.1; the last one is 324 files and about 39,000 lines away). Every hunk applied except `gradle.properties` (the package line sat next to the version lines that change every release). That conflict source was removed afterwards by moving the override to the end of the file. The simulation measures text conflicts only; it cannot show a compile error when upstream renames something a hook calls, and the real procedure below has not run yet.
+
+Procedure:
+1. `git fetch upstream master`.
+2. Merge up to the latest release commit (`git log upstream/master --grep='^update to' -1`), not necessarily the tip of `master`: the tip often carries merged pull requests that are not in a release yet.
+3. `git merge <release commit> --no-commit --no-ff`, resolve, then `bash scripts/layer-check.sh` (must print `layer OK`).
+4. Compare the upstream lines that affect the build (`TMessagesProj/build.gradle`, `TMessagesProj_App/build.gradle`, `gradle.properties`, NDK and CMake versions in the workflow) before accepting.
+5. Commit with the default merge message, push, run a `canary` build, test on the device, and only then a `release` build.
+6. Record the new sync point at the top of this document.
+
+If upstream ever rewrites its history, use the tree-delta method described in `base_nagramxf.md` section 2.
+
+## 5. CI
+
+- `.github/workflows/apk.yml` ("Build APK", `workflow_dispatch` only): job `prepare` then `build` (matrix per ABI) then `post`. Inputs: `abi` (arm64-v8a, armeabi-v7a, all), `build_type` (`canary` default, `release`), `destination` (private, community). Pick `base-luminegram` in the "Run workflow" dropdown.
+- Secrets used (names only): `TELEGRAM_API_ID`, `TELEGRAM_API_HASH` (also the upload API for the bot; passed to Gradle as `TELEGRAM_APP_ID` and `TELEGRAM_APP_HASH`), `GOOGLE_SERVICES_JSON` (written to `TMessagesProj_App/google-services.json`), `KEYSTORE_BASE64` (written to `TMessagesProj/config/release.keystore`), `KEYSTORE_PASSWORD`, `KEY_PASSWORD`, `TELEGRAM_BOT_TOKEN`; variable `TELEGRAM_DM_CHAT_ID`. Key alias `lumine`.
+- Gradle task: `:TMessagesProj_App:assembleAfatCanary` or `assembleAfatRelease`; output `TMessagesProj_App/build/outputs/apk/afat/<canary|release>/app.apk`. `canary` is a real build type end to end (Gradle, folder, file name, card); the word `staging` does not exist in this base.
+- File name: `luminegram-<ver>-<hash7>-<abi>-<type>.apk`, for example `luminegram-13.1.1-65b3ba2-arm64-v8a-canary.apk`. Card: title "luminegram Build Completed", table with Build Type (`canary` or `release`), Base (`13.1.1`) and Commit (hash in `<code>`, plain text, no link), then the APK.
+- Toolchain: JDK 21, NDK `27.2.12479018`, CMake `3.22.1` (what the library asks for; `3.31.6` is still installed and unused), `platforms;android-36`, `build-tools;36.0.0`, `nasm`. ccache is enabled through `CMAKE_C_COMPILER_LAUNCHER` and `CMAKE_CXX_COMPILER_LAUNCHER` (6941 cacheable calls in run 88, so it works).
+- Build history: run 88 (4 ABIs compiled, 51 min, failed at `processReleaseGoogleServices` for the library); the next run failed in 1 min with `No matching client found for package name 'org.telegram.messenger'`; after the plugin was removed from the library the build succeeded.
+- The workflow file must exist in the branch picked in the "Run workflow" dropdown. The owner ran it from `base-luminegram` while the default branch is still `base-nagramxf`; keep the workflow on both if the default branch changes.
+- Reading CI logs: the sandbox cannot download them (the log storage hosts are blocked; `api.github.com` answers with a redirect to a host that does not resolve). Ask the owner for the zip of the logs; inside it the build step is `Build <abi>/15_Build <abi>.txt` (search `What went wrong`). The annotations endpoint (`/check-runs/<job id>/annotations`) answers, but only with "exit code 1". A step that copies the Gradle error lines into annotations would let the sandbox read failures without the owner; not added yet.
+
+## 6. Known gaps and next work (nothing below is verified or done)
+
+Branding left over from upstream (order is my suggestion):
+1. `BuildVars.CHECK_UPDATES = true`: the app may ask Telegram's servers for an app update and offer the official APK. Turn it off first and check what `help.getAppUpdate` does for our package; in `base-nagramxf` the update checker was switched off on purpose.
+2. Official identities still in `BuildVars`: `SAFETYNET_KEY`, `GOOGLE_AUTH_CLIENT_ID`, `PLAYSTORE_APP_URL` (points at `org.telegram.messenger`), `SUPPORTS_PASSKEYS` (the upstream comment says passkeys only work for official app ids; set to false unless proven). Check every reader of each field before changing it.
+3. Contact sync account type `org.telegram.messenger` (`res/xml/auth.xml`, `contacts.xml`, `sync_contacts.xml`, `ContactsController`): can collide with the official Telegram app if both are installed.
+4. Small notification icon in the status bar is still the paper plane (`notification` drawables; `icon_plane` is now unused). Alternate launcher icons `icon_2` to `icon_6` in the app-icon picker are still Telegram's.
+5. Text that names Telegram products or the app ("Telegram for Android" in Settings, Premium, Stars, Business, Help links, `Page1Title` and other intro texts) was left alone on purpose.
+6. FCM: check that a push arrives (the Telegram servers need the FCM service account for our API id, see `tgclient_project.md` section 11).
+7. Plugin flavor and Python plugins: not applicable on this base.
+
+## 7. Gotchas learned on this base
+
+- Upstream commit messages are not tags. Releases are the commits whose message starts with `update to`; use them as sync points.
+- `git log -n N -- <file>` limits the number of commits that touch the file, not a window of N commits: do not use it to estimate how often a file changes (this gave a wrong "8 of 8" once). Use a range such as `<old>..<new> -- <file>`.
+- `git push` from a shallow clone to a repo that does not have the commits is refused; this base was pushed from a full clone of upstream.
+- The wordmark vectors are generated: `fontTools` reads `assets/fonts/rmediumitalic.ttf`, positions the glyphs of `luminegram`, flips Y and fits them into the original viewport (249x57 and 269x61), keeping the aspect ratio. Regenerating is cheap; the font file is part of the upstream tree.
+- The launcher icon art is generated too: sparkle path `M12 3Q12.8 11.2 21 12Q12.8 12.8 12 21Q11.2 12.8 3 12Q11.2 11.2 12 3Z` plus the small one `M18 3Q18.3 5.7 21 6Q18.3 6.3 18 9Q17.7 6.3 15 6Q17.7 5.7 18 3Z`, scaled 58/24 and shifted 25 on a 108 viewport (adaptive), 60% of the circle width in the PNGs.
+- The intro page is OpenGL: textures `intro_tg_plane` (plane) and a sphere bitmap drawn in `IntroActivity`, composed by native code. A texture replacement keeps the same canvas size on purpose.
