@@ -21,6 +21,7 @@ OWN_FILES=(
 "$J/app/lumine/settings/LumineHomePage.java"
 "$J/app/lumine/settings/LumineComingSoonPage.java"
 "$J/app/lumine/push/LuminePushLog.java"
+"$APP/src/main/res/raw/lumine_keep.xml"
 "$R/values/lumine_strings.xml"
 "$R/drawable/lumine_settings_sparkle.xml"
 "$R/drawable/lumine_tab_home.xml"
