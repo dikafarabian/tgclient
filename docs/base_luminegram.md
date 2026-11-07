@@ -99,8 +99,8 @@ If upstream ever rewrites its history, use the tree-delta method described in `b
 
 ## 6. Known gaps and next work (nothing below is verified or done)
 
-Branding left over from upstream (order is my suggestion):
-1. `BuildVars.CHECK_UPDATES = true`: the app may ask Telegram's servers for an app update and offer the official APK. Turn it off first and check what `help.getAppUpdate` does for our package; in `base-nagramxf` the update checker was switched off on purpose.
+Branding left over from upstream (order is my suggestion; item 1 was checked and needs no change):
+1. Update check (checked 2026-11-07, nothing to change): `BuildVars.CHECK_UPDATES` is `true` but is not an active risk. `LaunchActivity.checkAppUpdate` returns at its first guard unless `ApplicationLoader.isStandaloneBuild()` or `isBetaBuild()` is true, forced or not, and both are `false` by default; only `TMessagesProj_AppStandalone` overrides them. Our app module `TMessagesProj_App` does not, so the app never sends `help.getAppUpdate`. Nothing was edited (a change would only add a conflict surface). `layer-check.sh` flags the case where an upstream merge adds `isStandalone` or `isBeta` to `ApplicationLoaderImpl` of our module. Not tested on a device (no way to observe a request that is never sent).
 2. Official identities still in `BuildVars`: `SAFETYNET_KEY`, `GOOGLE_AUTH_CLIENT_ID`, `PLAYSTORE_APP_URL` (points at `org.telegram.messenger`), `SUPPORTS_PASSKEYS` (the upstream comment says passkeys only work for official app ids; set to false unless proven). Check every reader of each field before changing it.
 3. Contact sync account type `org.telegram.messenger` (`res/xml/auth.xml`, `contacts.xml`, `sync_contacts.xml`, `ContactsController`): can collide with the official Telegram app if both are installed.
 4. Small notification icon in the status bar is still the paper plane (`notification` drawables; `icon_plane` is now unused). Alternate launcher icons `icon_2` to `icon_6` in the app-icon picker are still Telegram's.
