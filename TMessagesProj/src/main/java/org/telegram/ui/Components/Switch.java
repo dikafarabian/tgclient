@@ -377,7 +377,7 @@ public class Switch extends View {
             return;
         }
 
-        if (app.lumine.md3.LumineSwitchDraw.draw(canvas, getMeasuredWidth(), getMeasuredHeight(), progress, overrideColorProgress == 0 && iconDrawable == null && drawIconType == 0 && iconAnimator == null)) {
+        if (app.lumine.md3.LumineSwitchDraw.draw(canvas, getMeasuredWidth(), getMeasuredHeight(), progress, overrideColorProgress == 0 && iconDrawable == null && drawIconType == 0 && iconAnimator == null, processColor(Theme.getColor(trackCheckedColorKey, resourcesProvider)), processColor(Theme.getColor(thumbCheckedColorKey, resourcesProvider)), resourcesProvider)) {
             return;
         }
 

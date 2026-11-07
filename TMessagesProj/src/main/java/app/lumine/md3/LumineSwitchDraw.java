@@ -3,8 +3,10 @@
  * Called from the start of Switch.onDraw. Draws a capsule track and a round
  * thumb that grows from 16dp to 24dp with the progress of the switch. The
  * 52x32dp design is scaled to fit the view as laid out by the caller, so the
- * size and the touch area stay stock. Returns false when the stock drawing
- * must run (disabled, icon switches, color override animation).
+ * size and the touch area stay stock. Colors follow the active theme: the on
+ * colors are the ones the switch was given, the off colors come from the
+ * theme text and background keys. Returns false when the stock drawing must
+ * run (disabled, icon switches, color override animation).
  */
 package app.lumine.md3;
 
@@ -16,6 +18,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import androidx.core.graphics.ColorUtils;
+
+import org.telegram.ui.ActionBar.Theme;
 
 public final class LumineSwitchDraw {
 
@@ -37,7 +41,7 @@ public final class LumineSwitchDraw {
     private LumineSwitchDraw() {
     }
 
-    public static boolean draw(Canvas canvas, int width, int height, float progress, boolean plain) {
+    public static boolean draw(Canvas canvas, int width, int height, float progress, boolean plain, int trackOn, int thumbOn, Theme.ResourcesProvider resourcesProvider) {
         if (!plain || width <= 0 || height <= 0 || !LumineMd3.switchEnabled()) {
             return false;
         }
@@ -48,16 +52,19 @@ public final class LumineSwitchDraw {
         final float top = (height - trackHeight) / 2f;
         final float t = Math.max(0f, Math.min(1f, progress));
 
-        final LumineMd3.Roles roles = LumineMd3.roles();
+        final int surface = Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider);
+        final int onSurface = Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
+        final int outline = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
+        final int trackOff = ColorUtils.blendARGB(surface, onSurface, 0.08f);
 
-        TRACK.setColor(ColorUtils.blendARGB(roles.surfaceContainerHigh, roles.primary, t));
+        TRACK.setColor(ColorUtils.blendARGB(trackOff, trackOn, t));
         RECT.set(left, top, left + trackWidth, top + trackHeight);
         canvas.drawRoundRect(RECT, trackHeight / 2f, trackHeight / 2f, TRACK);
 
         if (t < 1f) {
             final float stroke = dpf2(OUTLINE_DP) * scale;
             STROKE.setStrokeWidth(stroke);
-            STROKE.setColor(ColorUtils.setAlphaComponent(roles.outline, Math.round(255 * (1f - t))));
+            STROKE.setColor(ColorUtils.setAlphaComponent(outline, Math.round(255 * (1f - t))));
             RECT.inset(stroke / 2f, stroke / 2f);
             final float radius = (trackHeight - stroke) / 2f;
             canvas.drawRoundRect(RECT, radius, radius, STROKE);
@@ -66,7 +73,7 @@ public final class LumineSwitchDraw {
         final float thumb = dpf2(THUMB_OFF_DP + (THUMB_ON_DP - THUMB_OFF_DP) * t) * scale;
         final float cx = left + dpf2(16f + (TRACK_WIDTH_DP - 32f) * t) * scale;
         final float cy = top + trackHeight / 2f;
-        THUMB.setColor(ColorUtils.blendARGB(roles.outline, roles.onPrimary, t));
+        THUMB.setColor(ColorUtils.blendARGB(outline, thumbOn, t));
         canvas.drawCircle(cx, cy, thumb / 2f, THUMB);
         return true;
     }
