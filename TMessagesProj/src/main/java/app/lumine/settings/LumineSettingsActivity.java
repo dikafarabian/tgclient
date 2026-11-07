@@ -60,6 +60,13 @@ public class LumineSettingsActivity extends BaseFragment {
                         R.drawable.lumine_tab_stealth,
                         R.drawable.lumine_tab_experimental
                 },
+                new int[]{
+                        R.drawable.lumine_tab_home_outline,
+                        R.drawable.lumine_tab_general_outline,
+                        R.drawable.lumine_tab_appearance_outline,
+                        R.drawable.lumine_tab_stealth_outline,
+                        R.drawable.lumine_tab_experimental_outline
+                },
                 new String[]{
                         LumineStrings.get(R.string.LumineTabHome),
                         LumineStrings.get(R.string.LumineTabGeneral),

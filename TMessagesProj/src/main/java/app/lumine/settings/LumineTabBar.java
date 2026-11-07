@@ -1,8 +1,8 @@
 /*
  * luminegram - bottom navigation bar of the luminegram settings.
  * Floating pill in the geometry of the main tab bar of the app: 56dp pill,
- * 8dp margin, 48dp tabs. Only the selected tab shows its label and sits in a
- * tonal capsule; the other tabs are icon only. Tab widths follow the
+ * 8dp margin, 48dp tabs. Only the selected tab shows its label (beside the icon) and
+ * sits in a tonal capsule, its icon fills in from outline; the other tabs are icon only. Tab widths follow the
  * selection animation (250 ms, fast-out-slow-in). Own view, no dependency on
  * the main tabs.
  */
@@ -40,8 +40,13 @@ public class LumineTabBar extends View {
 
     private static final float TEXT_SIZE_DP = 12f;
     private static final float TEXT_SIZE_MIN_DP = 9f;
+    private static final float PAD_LEFT_DP = 14f;
+    private static final float PAD_RIGHT_DP = 16f;
+    private static final float ICON_DP = 24f;
+    private static final float ICON_GAP_DP = 6f;
 
     private final Drawable[] icons;
+    private final Drawable[] outlines;
     private final String[] labels;
     private final float[] tabLeft;
     private final float[] tabWidth;
@@ -62,15 +67,17 @@ public class LumineTabBar extends View {
     private float availableWidth;
     private int metricsWidth = -1;
 
-    public LumineTabBar(Context context, int[] iconRes, String[] labels) {
+    public LumineTabBar(Context context, int[] iconRes, int[] outlineRes, String[] labels) {
         super(context);
         this.labels = labels;
         icons = new Drawable[iconRes.length];
+        outlines = new Drawable[iconRes.length];
         tabLeft = new float[iconRes.length];
         tabWidth = new float[iconRes.length];
         fullWidth = new float[iconRes.length];
         for (int i = 0; i < iconRes.length; i++) {
             icons[i] = ContextCompat.getDrawable(context, iconRes[i]).mutate();
+            outlines[i] = ContextCompat.getDrawable(context, outlineRes[i]).mutate();
         }
         textPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_EXTRA_BOLD));
         strokePaint.setStyle(Paint.Style.STROKE);
@@ -122,7 +129,7 @@ public class LumineTabBar extends View {
     private void computeMetrics(int width) {
         final int count = icons.length;
         final float padding = dp(4);
-        final float gap = dp(20);
+        final float extra = dp(PAD_LEFT_DP + ICON_DP + ICON_GAP_DP + PAD_RIGHT_DP);
         final float minTab = dp(48);
         availableWidth = Math.min(width - dp(16), dp(328)) - padding * 2;
 
@@ -131,12 +138,12 @@ public class LumineTabBar extends View {
         for (String label : labels) {
             maxLabel = Math.max(maxLabel, textPaint.measureText(label));
         }
-        final float room = availableWidth - (count - 1) * minTab - gap;
+        final float room = availableWidth - (count - 1) * minTab - extra;
         if (maxLabel > room && maxLabel > 0) {
             textPaint.setTextSize(dp(Math.max(TEXT_SIZE_MIN_DP, TEXT_SIZE_DP * room / maxLabel)));
         }
         for (int i = 0; i < count; i++) {
-            fullWidth[i] = Math.max(minTab, textPaint.measureText(labels[i]) + gap);
+            fullWidth[i] = Math.max(minTab, textPaint.measureText(labels[i]) + extra);
         }
         metricsWidth = width;
     }
@@ -211,22 +218,34 @@ public class LumineTabBar extends View {
                 canvas.drawRoundRect(rect, r, r, capsulePaint);
             }
 
-            final Drawable icon = icons[i];
-            final int half = dp(12);
-            final int iconTop = (int) (tabTop + dp(12) - dp(8) * t);
-            icon.setBounds((int) cx - half, iconTop, (int) cx + half, iconTop + dp(24));
-            icon.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(normalColor, selectedColor, t), PorterDuff.Mode.SRC_IN));
-            icon.draw(canvas);
+            final int iconSize = dp(ICON_DP);
+            final float padLeft = dp(PAD_LEFT_DP);
+            final float iconX = tabLeft[i] + (tabWidth[i] - iconSize) / 2f * (1f - t) + padLeft * t;
+            final int iconTop = (int) (tabTop + (tabHeight - iconSize) / 2f);
+            final int iconColor = ColorUtils.blendARGB(normalColor, selectedColor, t);
+            final Drawable outline = outlines[i];
+            outline.setBounds((int) iconX, iconTop, (int) iconX + iconSize, iconTop + iconSize);
+            outline.setColorFilter(new PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN));
+            outline.draw(canvas);
+            if (t > 0f) {
+                final Drawable icon = icons[i];
+                icon.setBounds((int) iconX, iconTop, (int) iconX + iconSize, iconTop + iconSize);
+                icon.setColorFilter(new PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN));
+                icon.setAlpha((int) (255 * t));
+                icon.draw(canvas);
+            }
 
             if (t > 0.02f) {
                 final int color = ColorUtils.setAlphaComponent(selectedTextColor, (int) (Color.alpha(selectedTextColor) * t));
                 textPaint.setColor(color);
-                final CharSequence text = TextUtils.ellipsize(labels[i], textPaint, fullWidth[i] - dp(4), TextUtils.TruncateAt.END);
-                final float textWidth = textPaint.measureText(text, 0, text.length());
-                final float baseline = tabTop + dp(28.33f) - textPaint.getFontMetrics().top;
+                final float extra = dp(PAD_LEFT_DP + ICON_DP + ICON_GAP_DP + PAD_RIGHT_DP);
+                final CharSequence text = TextUtils.ellipsize(labels[i], textPaint, Math.max(0f, fullWidth[i] - extra), TextUtils.TruncateAt.END);
+                final float textX = tabLeft[i] + padLeft + iconSize + dp(ICON_GAP_DP);
+                final android.graphics.Paint.FontMetrics fm = textPaint.getFontMetrics();
+                final float baseline = tabTop + tabHeight / 2f - (fm.ascent + fm.descent) / 2f;
                 canvas.save();
                 canvas.clipRect(tabLeft[i], tabTop, tabLeft[i] + tabWidth[i], tabTop + tabHeight);
-                canvas.drawText(text, 0, text.length(), cx - textWidth / 2f, baseline, textPaint);
+                canvas.drawText(text, 0, text.length(), textX, baseline, textPaint);
                 canvas.restore();
             }
         }
