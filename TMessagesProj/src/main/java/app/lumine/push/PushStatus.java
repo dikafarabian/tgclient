@@ -10,6 +10,9 @@ import android.text.TextUtils;
 
 import androidx.core.app.NotificationManagerCompat;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 import app.lumine.LumineStrings;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.LocaleController;
@@ -57,6 +60,55 @@ public final class PushStatus {
             return name + " \u00b7 " + LumineStrings.get(R.string.LuminePushStatusNothing);
         }
         return name + " \u00b7 " + LocaleController.formatDateTime(last / 1000L, true);
+    }
+
+    public static final class Health {
+        public static final int NEUTRAL = 0;
+        public static final int GOOD = 1;
+        public static final int BAD = 2;
+
+        public final String text;
+        public final int level;
+
+        Health(int res, int level) {
+            this.text = LumineStrings.get(res);
+            this.level = level;
+        }
+    }
+
+    public static Health health(int account) {
+        if (!osNotificationsEnabled()) {
+            return new Health(R.string.LumineHealthBlocked, Health.BAD);
+        }
+        if (!PushConfig.usesGoogle()) {
+            final boolean running = MessagesController.getGlobalNotificationsSettings().getBoolean("pushService", false);
+            return running ? new Health(R.string.LumineHealthRunning, Health.GOOD) : new Health(R.string.LumineHealthStopped, Health.BAD);
+        }
+        if (!playServicesAvailable()) {
+            return new Health(R.string.LumineHealthNoServices, Health.BAD);
+        }
+        if (TextUtils.isEmpty(SharedConfig.pushString)) {
+            final String status = SharedConfig.pushStringStatus == null ? "" : SharedConfig.pushStringStatus;
+            if (!TextUtils.isEmpty(LuminePushLog.tokenError()) || status.startsWith("__FIREBASE_FAILED__") || status.startsWith("__NO_GOOGLE_PLAY_SERVICES__")) {
+                return new Health(R.string.LumineHealthTokenFailed, Health.BAD);
+            }
+            return new Health(R.string.LumineHealthWaitingToken, Health.NEUTRAL);
+        }
+        if (!UserConfig.getInstance(account).registeredForPush) {
+            if (!TextUtils.isEmpty(LuminePushLog.registerError())) {
+                return new Health(R.string.LumineHealthRegisterFailed, Health.BAD);
+            }
+            return new Health(R.string.LumineHealthRegistering, Health.NEUTRAL);
+        }
+        return new Health(R.string.LumineHealthReady, Health.GOOD);
+    }
+
+    private static boolean playServicesAvailable() {
+        try {
+            return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(ApplicationLoader.applicationContext) == ConnectionResult.SUCCESS;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
     public static boolean osNotificationsEnabled() {

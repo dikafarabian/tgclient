@@ -10,23 +10,22 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-
 import app.lumine.LumineStrings;
 import app.lumine.push.LuminePushLog;
+import app.lumine.push.PushConfig;
+import app.lumine.push.PushStatus;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.ConnectionsManager;
@@ -47,9 +46,8 @@ public class LumineHomePage extends ScrollView {
     private TextView versionValue;
     private TextView buildTypeValue;
     private TextView abiValue;
-    private TextView servicesValue;
-    private TextView tokenValue;
-    private TextView registrationValue;
+    private TextView serviceValue;
+    private TextView statusValue;
     private TextView lastPushValue;
     private TextView lastErrorValue;
     private TextView nameValue;
@@ -73,9 +71,8 @@ public class LumineHomePage extends ScrollView {
         abiValue = addRow(appCard, R.string.LumineAbi);
 
         LinearLayout pushCard = addCard(list, R.string.LumineCardPush);
-        servicesValue = addRow(pushCard, R.string.LumineGooglePlayServices);
-        tokenValue = addRow(pushCard, R.string.LumineFcmToken);
-        registrationValue = addRow(pushCard, R.string.LumineServerRegistration);
+        serviceValue = addRow(pushCard, R.string.LuminePushService);
+        statusValue = addRow(pushCard, R.string.LumineStatus);
         lastPushValue = addRow(pushCard, R.string.LumineLastPush);
         lastErrorValue = addRow(pushCard, R.string.LumineLastError);
         pushCard.setOnClickListener(v -> {
@@ -200,26 +197,12 @@ public class LumineHomePage extends ScrollView {
     }
 
     private void refreshPush() {
-        boolean services = false;
-        try {
-            services = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(ApplicationLoader.applicationContext) == ConnectionResult.SUCCESS;
-        } catch (Throwable ignore) {
-        }
-        set(servicesValue, str(services ? R.string.LumineAvailable : R.string.LumineMissing), services ? GOOD : BAD);
+        set(serviceValue, PushStatus.typeName(PushConfig.type()), NEUTRAL);
+        final PushStatus.Health health = PushStatus.health(account);
+        set(statusValue, health.text, health.level);
 
-        final String token = SharedConfig.pushString;
-        final String status = SharedConfig.pushStringStatus == null ? "" : SharedConfig.pushStringStatus;
-        if (!TextUtils.isEmpty(token)) {
-            set(tokenValue, str(R.string.LumineTokenReady), GOOD);
-        } else if (!TextUtils.isEmpty(LuminePushLog.tokenError()) || status.startsWith("__FIREBASE_FAILED__") || status.startsWith("__NO_GOOGLE_PLAY_SERVICES__")) {
-            set(tokenValue, str(R.string.LumineTokenFailed), BAD);
-        } else {
-            set(tokenValue, str(R.string.LumineTokenWaiting), NEUTRAL);
-        }
-
-        final boolean registered = UserConfig.getInstance(account).registeredForPush;
-        set(registrationValue, str(registered ? R.string.LumineRegistered : R.string.LumineNotRegistered), registered ? GOOD : BAD);
-
+        final boolean google = PushConfig.usesGoogle();
+        setRowVisible(lastPushValue, google);
         final long lastPush = LuminePushLog.lastPushTime();
         if (lastPush <= 0) {
             set(lastPushValue, str(R.string.LumineNever), NEUTRAL);
@@ -227,12 +210,13 @@ public class LumineHomePage extends ScrollView {
             set(lastPushValue, LocaleController.formatDateTime(lastPush / 1000L, true), GOOD);
         }
 
-        final String error = LuminePushLog.lastError();
-        if (TextUtils.isEmpty(error)) {
-            set(lastErrorValue, str(R.string.LumineNone), GOOD);
-        } else {
-            set(lastErrorValue, error, BAD);
-        }
+        final String error = google ? LuminePushLog.lastError() : "";
+        setRowVisible(lastErrorValue, !TextUtils.isEmpty(error));
+        set(lastErrorValue, error, BAD);
+    }
+
+    private static void setRowVisible(TextView value, boolean visible) {
+        ((View) value.getParent()).setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void refreshAccount() {
