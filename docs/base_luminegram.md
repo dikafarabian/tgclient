@@ -7,6 +7,7 @@ Last checked against the tree: 2026-11-07 (head `77bb7854` before this document 
 Verification state (layers as in section 8 of `tgclient_project.md`):
 - Built by CI and confirmed by the owner on a device: a canary APK (arm64-v8a) builds, installs and runs, and the Telegram card arrives with the new format (owner screenshot, 2026-11-07, build `65b3ba2`). The commit hash in the card is monospace (owner confirmed).
 - Built by CI, owner reported "berhasil" without per-feature detail: the later commits (version text with commit hash, app name, launcher icons, wordmark, intro). Treat these as unconfirmed on the device until the owner sends screenshots: launcher icon shape on the owner's launcher, themed (monochrome) icon, the `luminegram` wordmark on login / chat list / stories row, intro page animation with the sparkle (the old plane used to fly over the sphere), intro sphere on the light theme (white sphere on white background), the version line in Settings.
+- Repo layer only (patch applied, `layer-check.sh` OK, javac syntax check clean, XML valid, icons rendered offline): the luminegram settings page (`2b7e816`, section 3.1). Not built by CI, not seen on a device. Open: the row position in Settings, tab bar look and spacing, the Home cards values.
 - Not verified at all: FCM push notifications (the secret `google-services.json` is injected, but no push was received and checked), the `release` build type, the `armeabi-v7a` ABI, the sync procedure on a real upstream update (only simulated, section 4).
 
 ## 1. Identity
@@ -38,6 +39,7 @@ Source of truth: `git diff --name-status 3de37c8cf HEAD` and `bash scripts/layer
 | Path | Purpose |
 |---|---|
 | `TMessagesProj/src/main/java/app/lumine/LumineConfig.java` | own settings storage (`lumine_config` SharedPreferences, typed getters and setters). Every feature toggle goes here. Not called by anything yet. |
+| `TMessagesProj/src/main/java/app/lumine/settings/*.java` | the luminegram settings screen: `LumineSettingsActivity` (content plus bottom bar), `LumineTabBar` (own view, no dependency on `MainTabsLayout`), `LumineHomePage` (cards: App, Push notifications, Account; refreshes every 2 s while visible), `LumineComingSoonPage` (General, Appearance, Stealth, Experimental are placeholders). Strings in `res/values/lumine_strings.xml`, icons `drawable/lumine_tab_*.xml` and `lumine_settings_sparkle.xml`. |
 | `TMessagesProj/src/main/res/drawable/lumine_icon_foreground.xml` | black sparkle vector, used by the adaptive launcher icon (foreground and monochrome) |
 | `.github/workflows/apk.yml` | workflow "Build APK" (section 5) |
 | `scripts/ci/version.ts`, `post-card.ts`, `upload.sh` | APK names, Telegram card, upload |
@@ -64,6 +66,7 @@ Every row is a place where a merge can conflict.
 | Small icon (contact sync, call and message notifications) | `res/drawable-*/ic_launcher_dr.webp` | none (binary) |
 | Wordmark "luminegram" (generated from the bundled `rmediumitalic.ttf`; same viewport and size as the originals so the code that stretches them keeps working) | `res/drawable/telegram_logo.xml` (intro title), `telegram_logo_2.xml` (chat list title, stories row) | none (the file names are upstream's; the names are the marker) |
 | Intro: sparkle texture replaces the plane, sphere is white | `res/drawable-*/intro_tg_plane.webp`, `ui/IntroActivity.java` | `paint.setColor(0xFFFFFFFF);` |
+| Entry row "luminegram" in the main Settings (id 30, brand gradient, own sparkle icon) | `ui/SettingsActivity.java` | `import app.lumine.settings.LumineSettingsActivity;`, `presentSettingFragment(new LumineSettingsActivity());`, `R.drawable.lumine_settings_sparkle` |
 | Removed upstream secrets | `TMessagesProj/config/release.keystore`, five `google-services.json` | `layer-check.sh` fails if any keystore or `google-services.json` is tracked |
 
 `IntroActivity.java` still imports `ThemeColors` (now unused); leave it, removing it only adds a conflict surface.
@@ -105,7 +108,7 @@ Branding left over from upstream (order is my suggestion; item 1 was checked and
 3. Contact sync account type `org.telegram.messenger` (`res/xml/auth.xml`, `contacts.xml`, `sync_contacts.xml`, `ContactsController`): can collide with the official Telegram app if both are installed.
 4. Small notification icon in the status bar is still the paper plane (`notification` drawables; `icon_plane` is now unused). Alternate launcher icons `icon_2` to `icon_6` in the app-icon picker are still Telegram's.
 5. Text that names Telegram products or the app ("Telegram for Android" in Settings, Premium, Stars, Business, Help links, `Page1Title` and other intro texts) was left alone on purpose.
-6. FCM: check that a push arrives (the Telegram servers need the FCM service account for our API id, see `tgclient_project.md` section 11).
+6. FCM: the client code is stock (token request, `registerForPush`, `GcmPushListenerService` in the release manifest used by `canary`). On 2026-11-07 the owner uploaded the service account JSON at my.telegram.org (Push credentials). The CI secret `GOOGLE_SERVICES_JSON` must hold the whole `google-services.json` of the same Firebase project (`lumine-gram`, package `com.lumine.gram`). Not verified: a push arriving with the app closed. The Home tab of the settings page shows Google Play Services, FCM token and Telegram registration (`UserConfig.registeredForPush`) to tell which step fails.
 7. Plugin flavor and Python plugins: not applicable on this base.
 
 ## 7. Gotchas learned on this base
