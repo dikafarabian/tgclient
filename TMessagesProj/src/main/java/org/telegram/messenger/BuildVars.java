@@ -26,6 +26,7 @@ public class BuildVars {
     public static boolean NO_SCOPED_STORAGE = Build.VERSION.SDK_INT <= 29;
     public static String BUILD_VERSION_STRING = BuildConfig.BUILD_VERSION_STRING;
     public static String BUILD_COMMIT = BuildConfig.BUILD_COMMIT;
+    public static String BUILD_TYPE_NAME = BuildConfig.BUILD_TYPE_NAME;
 
     public static int APP_ID = BuildConfig.APP_ID;
     public static String APP_HASH = BuildConfig.APP_HASH;

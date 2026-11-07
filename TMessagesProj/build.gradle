@@ -143,6 +143,7 @@ android {
         }
 
         buildConfigField "String", "BUILD_COMMIT", "\"" + (System.getenv("GITHUB_SHA") ?: "local").take(7) + "\""
+        buildConfigField "String", "BUILD_TYPE_NAME", "\"" + (System.getenv("BUILD_TYPE") ?: "local") + "\""
         buildConfigField "int", "APP_ID", Integer.parseInt(getSecret("TELEGRAM_APP_ID")).toString()
         buildConfigField "String", "APP_HASH", "\"" + getSecret("TELEGRAM_APP_HASH") + "\""
 

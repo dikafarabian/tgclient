@@ -42,8 +42,7 @@ public class LumineHomePage extends ScrollView {
     private boolean running;
 
     private TextView versionValue;
-    private TextView buildValue;
-    private TextView commitValue;
+    private TextView buildTypeValue;
     private TextView abiValue;
     private TextView servicesValue;
     private TextView tokenValue;
@@ -65,9 +64,8 @@ public class LumineHomePage extends ScrollView {
 
         LinearLayout appCard = addCard(list, R.string.LumineCardApp);
         versionValue = addRow(appCard, R.string.LumineVersion);
-        buildValue = addRow(appCard, R.string.LumineBuild);
-        commitValue = addRow(appCard, R.string.LumineCommit);
-        abiValue = addRow(appCard, R.string.LumineDevice);
+        buildTypeValue = addRow(appCard, R.string.LumineBuildType);
+        abiValue = addRow(appCard, R.string.LumineAbi);
 
         LinearLayout pushCard = addCard(list, R.string.LumineCardPush);
         servicesValue = addRow(pushCard, R.string.LumineGooglePlayServices);
@@ -175,17 +173,18 @@ public class LumineHomePage extends ScrollView {
 
     private void refreshApp() {
         String version = "";
-        String build = "";
         try {
             final Context context = ApplicationLoader.applicationContext;
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            version = info.versionName;
-            build = String.valueOf(info.versionCode / 10);
+            version = info.versionName + " (" + (info.versionCode / 10) + ")";
         } catch (Throwable ignore) {
         }
+        String type = BuildVars.BUILD_TYPE_NAME;
+        if (!TextUtils.isEmpty(type)) {
+            type = Character.toUpperCase(type.charAt(0)) + type.substring(1);
+        }
         set(versionValue, version, NEUTRAL);
-        set(buildValue, build, NEUTRAL);
-        set(commitValue, BuildVars.BUILD_COMMIT, NEUTRAL);
+        set(buildTypeValue, type + " (" + BuildVars.BUILD_COMMIT + ")", NEUTRAL);
         set(abiValue, Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : Build.CPU_ABI, NEUTRAL);
     }
 

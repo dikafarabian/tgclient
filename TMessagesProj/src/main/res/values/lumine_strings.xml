@@ -13,9 +13,8 @@
     <string name="LumineCardPush">Push notifications</string>
     <string name="LumineCardAccount">Account</string>
     <string name="LumineVersion">Version</string>
-    <string name="LumineBuild">Build</string>
-    <string name="LumineCommit">Commit</string>
-    <string name="LumineDevice">Device ABI</string>
+    <string name="LumineBuildType">Build Type</string>
+    <string name="LumineAbi">ABI</string>
     <string name="LumineGooglePlayServices">Google Play Services</string>
     <string name="LumineFcmToken">FCM token</string>
     <string name="LumineServerRegistration">Telegram registration</string>
