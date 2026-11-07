@@ -138,6 +138,9 @@ android {
         minSdkVersion 23
         targetSdkVersion 36
 
+        buildConfigField "int", "APP_ID", Integer.parseInt(getSecret("TELEGRAM_APP_ID")).toString()
+        buildConfigField "String", "APP_HASH", "\"" + getSecret("TELEGRAM_APP_HASH") + "\""
+
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 
         multiDexEnabled true
@@ -234,6 +237,14 @@ android {
     namespace 'org.telegram.messenger'
 }
 
+
+def getSecret(String name) {
+    def value = System.getenv(name) ?: getProps(name)
+    if (!value) {
+        throw new GradleException("Missing build secret: " + name)
+    }
+    return value.trim()
+}
 
 def getProps(String propName) {
     def propsFile = rootProject.file('local.properties')
