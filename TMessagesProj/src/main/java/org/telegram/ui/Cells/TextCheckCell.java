@@ -149,7 +149,11 @@ public class TextCheckCell extends FrameLayout {
         if (isMultiline) {
             super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         } else {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(valueTextView.getVisibility() == VISIBLE ? 64 : height) + (needDivider ? 1 : 0), MeasureSpec.EXACTLY));
+            final boolean detail = valueTextView.getVisibility() == VISIBLE;
+            final float shift = detail ? AndroidUtilities.dp(app.lumine.md3.LumineListItems.detailRowHeight(64) - 64) / 2f : 0;
+            textView.setTranslationY(shift);
+            valueTextView.setTranslationY(shift);
+            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(detail ? app.lumine.md3.LumineListItems.detailRowHeight(64) : app.lumine.md3.LumineListItems.rowHeight(height)) + (needDivider ? 1 : 0), MeasureSpec.EXACTLY));
         }
     }
 

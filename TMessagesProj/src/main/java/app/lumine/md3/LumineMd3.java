@@ -15,9 +15,11 @@ public final class LumineMd3 {
 
     public static final String KEY_SWITCH = "LumineMd3Switch";
     public static final String KEY_SLIDER = "LumineMd3Slider";
+    public static final String KEY_LIST = "LumineMd3ListItems";
 
     private static volatile int switchState = -1;
     private static volatile int sliderState = -1;
+    private static volatile int listState = -1;
 
     public static final int HERO_RADIUS_DP = 28;
     public static final int TILE_RADIUS_DP = 22;
@@ -153,6 +155,20 @@ public final class LumineMd3 {
     public static void setSliderEnabled(boolean enabled) {
         LumineConfig.setBoolean(KEY_SLIDER, enabled);
         sliderState = enabled ? 1 : 0;
+    }
+
+    public static boolean listEnabled() {
+        int state = listState;
+        if (state < 0) {
+            state = LumineConfig.getBoolean(KEY_LIST, false) ? 1 : 0;
+            listState = state;
+        }
+        return state == 1;
+    }
+
+    public static void setListEnabled(boolean enabled) {
+        LumineConfig.setBoolean(KEY_LIST, enabled);
+        listState = enabled ? 1 : 0;
     }
 
     private static int tone(float hue, float saturation, int tone) {

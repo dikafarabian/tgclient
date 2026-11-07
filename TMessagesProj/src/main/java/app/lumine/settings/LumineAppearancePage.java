@@ -26,6 +26,7 @@ public class LumineAppearancePage extends ScrollView {
 
     private final Switch switchToggle;
     private final Switch sliderToggle;
+    private final Switch listToggle;
     private final SeekBarView sliderPreview;
 
     public LumineAppearancePage(Context context) {
@@ -46,6 +47,12 @@ public class LumineAppearancePage extends ScrollView {
         });
         sliderToggle = toggleRow(context, card, LumineStrings.get(R.string.LumineMd3Sliders), LumineMd3.sliderEnabled(), enabled -> {
             LumineMd3.setSliderEnabled(enabled);
+            refresh();
+        });
+
+        listToggle = toggleRow(context, card, LumineStrings.get(R.string.LumineMd3ListItems), LumineMd3.listEnabled(), enabled -> {
+            LumineMd3.setListEnabled(enabled);
+            Theme.applyCommonTheme();
             refresh();
         });
 
@@ -97,6 +104,7 @@ public class LumineAppearancePage extends ScrollView {
     private void refresh() {
         switchToggle.invalidate();
         sliderToggle.invalidate();
+        listToggle.invalidate();
         sliderPreview.invalidate();
     }
 }

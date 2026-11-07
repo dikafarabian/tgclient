@@ -66,7 +66,10 @@ public class TextDetailSettingsCell extends FrameLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (!multiline) {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(64) + (needDivider ? 1 : 0), MeasureSpec.EXACTLY));
+            final float shift = app.lumine.md3.LumineListItems.enabled() ? AndroidUtilities.dp(4) : 0;
+            textView.setTranslationY(shift);
+            valueTextView.setTranslationY(shift);
+            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(app.lumine.md3.LumineListItems.detailRowHeight(64)) + (needDivider ? 1 : 0), MeasureSpec.EXACTLY));
         } else {
             super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         }
