@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="LumineSettings">luminegram</string>
+    <string name="LumineSettingsSummary">Settings and status</string>
+    <string name="LumineTabHome">Home</string>
+    <string name="LumineTabGeneral">General</string>
+    <string name="LumineTabAppearance">Appearance</string>
+    <string name="LumineTabStealth">Stealth</string>
+    <string name="LumineTabExperimental">Experimental</string>
+    <string name="LumineComingSoon">Coming soon</string>
+    <string name="LumineComingSoonInfo">This page is not ready yet.</string>
+    <string name="LumineCardApp">App</string>
+    <string name="LumineCardPush">Push notifications</string>
+    <string name="LumineCardAccount">Account</string>
+    <string name="LumineVersion">Version</string>
+    <string name="LumineBuild">Build</string>
+    <string name="LumineCommit">Commit</string>
+    <string name="LumineDevice">Device ABI</string>
+    <string name="LumineGooglePlayServices">Google Play Services</string>
+    <string name="LumineFcmToken">FCM token</string>
+    <string name="LumineServerRegistration">Telegram registration</string>
+    <string name="LumineAvailable">Available</string>
+    <string name="LumineMissing">Missing</string>
+    <string name="LumineTokenReady">Received</string>
+    <string name="LumineTokenWaiting">Requesting</string>
+    <string name="LumineTokenFailed">Failed</string>
+    <string name="LumineRegistered">Registered</string>
+    <string name="LumineNotRegistered">Not registered</string>
+    <string name="LumineAccountName">Name</string>
+    <string name="LumineAccountId">User ID</string>
+    <string name="LumineConnection">Connection</string>
+    <string name="LumineConnected">Connected</string>
+    <string name="LumineConnecting">Connecting</string>
+    <string name="LumineWaitingNetwork">Waiting for network</string>
+    <string name="LumineUpdating">Updating</string>
+    <string name="LumineProxy">Connecting to proxy</string>
+    <string name="LumineNotLoggedIn">Not logged in</string>
+</resources>
