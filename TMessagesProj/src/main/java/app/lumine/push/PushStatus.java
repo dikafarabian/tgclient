@@ -46,7 +46,7 @@ public final class PushStatus {
             final boolean running = MessagesController.getGlobalNotificationsSettings().getBoolean("pushService", false);
             return name + " \u00b7 " + LumineStrings.get(running ? R.string.LuminePushStatusServiceOn : R.string.LuminePushStatusServiceOff);
         }
-        if (TextUtils.isEmpty(SharedConfig.pushString) || SharedConfig.pushStringStatus != null && SharedConfig.pushStringStatus.contains("_GENERATING_SINCE_")) {
+        if (TextUtils.isEmpty(SharedConfig.pushString)) {
             return name + " \u00b7 " + LumineStrings.get(R.string.LuminePushStatusNoToken);
         }
         if (!UserConfig.getInstance(UserConfig.selectedAccount).registeredForPush) {
