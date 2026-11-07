@@ -7,11 +7,16 @@ package app.lumine.md3;
 
 import androidx.core.graphics.ColorUtils;
 
+import app.lumine.LumineConfig;
 import org.telegram.ui.ActionBar.Theme;
 
 public final class LumineMd3 {
 
     public static final int SEED = 0xFFFA456C;
+
+    public static final String KEY_SWITCH = "LumineMd3Switch";
+
+    private static volatile int switchState = -1;
 
     public static final int HERO_RADIUS_DP = 28;
     public static final int TILE_RADIUS_DP = 22;
@@ -101,6 +106,20 @@ public final class LumineMd3 {
 
     public static Roles roles() {
         return Theme.isCurrentThemeDark() ? DARK : LIGHT;
+    }
+
+    public static boolean switchEnabled() {
+        int state = switchState;
+        if (state < 0) {
+            state = LumineConfig.getBoolean(KEY_SWITCH, true) ? 1 : 0;
+            switchState = state;
+        }
+        return state == 1;
+    }
+
+    public static void setSwitchEnabled(boolean enabled) {
+        LumineConfig.setBoolean(KEY_SWITCH, enabled);
+        switchState = enabled ? 1 : 0;
     }
 
     private static int tone(float hue, float saturation, int tone) {

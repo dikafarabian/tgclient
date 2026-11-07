@@ -377,6 +377,10 @@ public class Switch extends View {
             return;
         }
 
+        if (app.lumine.md3.LumineSwitchDraw.draw(canvas, getMeasuredWidth(), getMeasuredHeight(), progress, overrideColorProgress == 0 && iconDrawable == null && drawIconType == 0 && iconAnimator == null)) {
+            return;
+        }
+
         int width = AndroidUtilities.dp(31);
         int thumb = AndroidUtilities.dp(20);
         int x = (getMeasuredWidth() - width) / 2;
