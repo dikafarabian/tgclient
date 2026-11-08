@@ -663,6 +663,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int userInfoRow;
     private int channelInfoRow;
     private int usernameRow;
+    private int idDcRow;
     private int notificationsDividerRow;
     private int notificationsRow;
     private int bizHoursRow;
@@ -7327,6 +7328,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private boolean processOnClickOrPress(final int position, final View view, final float x, final float y) {
+        if (position == idDcRow) {
+            app.lumine.stealth.LumineIdDc.showSheet(this, userId, chatId);
+            return true;
+        }
         if (position == usernameRow || position == setUsernameRow) {
             final String username;
             final TLRPC.TL_username usernameObj;
@@ -10568,6 +10573,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         locationRow = -1;
         channelInfoRow = -1;
         usernameRow = -1;
+        idDcRow = -1;
         settingsTimerRow = -1;
         settingsKeyRow = -1;
         notificationsDividerRow = -1;
@@ -10762,6 +10768,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 if (user != null && username != null) {
                     usernameRow = rowCount++;
                 }
+                if (app.lumine.stealth.LumineIdDc.enabled()) {
+                    idDcRow = rowCount++;
+                }
                 if (userInfo != null) {
                     if (userInfo.birthday != null) {
                         birthdayRow = rowCount++;
@@ -10927,6 +10936,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 } else {
                     emptyRow = rowCount++;
                 }
+            }
+            if (app.lumine.stealth.LumineIdDc.enabled()) {
+                idDcRow = rowCount++;
             }
             if (actionsView == null) {
                 if (infoHeaderRow != -1) {
@@ -13639,6 +13651,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             TLRPC.TL_channelLocation location = (TLRPC.TL_channelLocation) chatInfo.location;
                             detailCell.setTextAndValue(location.address, LocaleController.getString(R.string.AttachLocation), false);
                         }
+                    } else if (position == idDcRow) {
+                        detailCell.setTextAndValue(app.lumine.stealth.LumineIdDc.idText(currentAccount, userId, chatId), app.lumine.stealth.LumineIdDc.dcLine(app.lumine.stealth.LumineIdDc.dc(currentAccount, userId, chatId, userInfo, chatInfo)), birthdayRow >= 0 || bizHoursRow != -1 || bizLocationRow != -1 || noteRow != -1);
                     } else if (position == numberRow) {
                         TLRPC.User user = UserConfig.getInstance(currentAccount).getCurrentUser();
                         String value;
@@ -14372,7 +14386,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (position == infoHeaderRow || position == membersHeaderRow || position == settingsSectionRow2 ||
                     position == numberSectionRow || position == helpHeaderRow || position == debugHeaderRow || position == botPermissionsHeader) {
                 return VIEW_TYPE_HEADER;
-            } else if (position == phoneRow || position == locationRow || position == numberRow || position == birthdayRow) {
+            } else if (position == phoneRow || position == locationRow || position == numberRow || position == birthdayRow || position == idDcRow) {
                 return VIEW_TYPE_TEXT_DETAIL;
             } else if (position == usernameRow || position == setUsernameRow) {
                 return VIEW_TYPE_TEXT_DETAIL_MULTILINE;
