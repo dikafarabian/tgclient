@@ -437,15 +437,15 @@ public class SeekBarView extends FrameLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         int thumbX = this.thumbX;
-        if (app.lumine.md3.LumineSliderDraw.draw(canvas, getMeasuredWidth(), getMeasuredHeight(), thumbX, selectorWidth, !twoSided && minProgress < 0 && bufferedProgress <= 0 && separatorsCount <= 1 && (timestamps == null || timestamps.isEmpty()) && (delegate == null || !delegate.needVisuallyDivideSteps()), outerPaint1.getColor(), getThemedColor(Theme.key_player_progressBackground))) {
-            return;
-        }
         if (!twoSided && separatorsCount > 1) {
             float step = (getMeasuredWidth() - selectorWidth) / ((float) separatorsCount - 1f);
             thumbX = (int) animatedThumbX.set(Math.round((thumbX) / step) * step);
         } else if (delegate != null && delegate.needVisuallyDivideSteps()) {
             float step = (getMeasuredWidth() - selectorWidth) / ((float) delegate.getStepsCount() - 1f);
             thumbX = (int) (Math.round((thumbX) / step) * step);
+        }
+        if (app.lumine.md3.LumineSliderDraw.draw(canvas, getMeasuredWidth(), getMeasuredHeight(), thumbX, selectorWidth, !twoSided && minProgress < 0 && bufferedProgress <= 0 && (timestamps == null || timestamps.isEmpty()) && (delegate == null || !delegate.needVisuallyDivideSteps()), outerPaint1.getColor(), getThemedColor(Theme.key_player_progressBackground))) {
+            return;
         }
         int y = (getMeasuredHeight() - thumbSize) / 2;
         innerPaint1.setColor(getThemedColor(Theme.key_player_progressBackground));
