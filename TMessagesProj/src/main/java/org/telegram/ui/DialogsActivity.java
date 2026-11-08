@@ -8856,8 +8856,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
     }
 
+    private float mainTabsScrollHideProgress;
+
+    public void setMainTabsScrollHideProgress(float progress) {
+        final float clamped = Math.max(0f, Math.min(1f, progress));
+        if (mainTabsScrollHideProgress == clamped) {
+            return;
+        }
+        mainTabsScrollHideProgress = clamped;
+        updateFloatingButtonOffset();
+    }
+
     private void updateFloatingButtonOffset() {
-        final float top = -navigationBarHeight - additionFloatingButtonOffset - additionalFloatingTranslation;
+        final float top = -navigationBarHeight - additionFloatingButtonOffset * (1f - mainTabsScrollHideProgress) - additionalFloatingTranslation;
         final float baseTranslationY = top
             - floatingButtonPanOffset;
 
@@ -11159,6 +11170,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     boolean floatingButtonHidden;
 
     private void hideFloatingButton(boolean hide) {
+        final boolean hideTabsOnScroll = hide || rightSlidingDialogContainer.hasFragment();
         if (rightSlidingDialogContainer.hasFragment()) {
             hide = true;
         }
@@ -11168,6 +11180,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         floatingButtonHidden = hide;
         updateFloatingButtonVisibility(true);
+
+        if (mainTabsActivityController != null && app.lumine.tabs.LumineTabs.displayMode() == app.lumine.tabs.LumineTabs.DISPLAY_FLOATING) {
+            mainTabsActivityController.setTabsScrollHide(hideTabsOnScroll);
+        }
 
         if (hide) {
             if (storyHint != null) {
@@ -14077,6 +14093,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         final boolean mainTabsVisible = !searching && (blurredView == null || blurredView.getBackground() == null || blurredView.getAlpha() < 0.01f || blurredView.getVisibility() == View.GONE);
         if (mainTabsActivityController != null) {
             mainTabsActivityController.setTabsVisible(mainTabsVisible);
+            if (!mainTabsVisible) {
+                mainTabsActivityController.setTabsScrollHide(false);
+            }
         }
     }
 

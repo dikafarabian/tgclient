@@ -113,6 +113,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     }
 
     private static final int ANIMATOR_ID_TABS_VISIBLE = 0;
+    private static final int ANIMATOR_ID_TABS_SCROLL_HIDE = 1;
+    private final BoolAnimator animatorTabsScrollHide = new BoolAnimator(ANIMATOR_ID_TABS_SCROLL_HIDE,
+        this, CubicBezierInterpolator.EASE_OUT_QUINT, 380);
+    private boolean lastBottomBarHidden = LumineTabs.displayMode() == LumineTabs.DISPLAY_HIDE;
+
+    private boolean isBottomBarHidden() {
+        return LumineTabs.displayMode() == LumineTabs.DISPLAY_HIDE;
+    }
+
     private final BoolAnimator animatorTabsVisible = new BoolAnimator(ANIMATOR_ID_TABS_VISIBLE,
         this, CubicBezierInterpolator.EASE_OUT_QUINT, 380, true);
 
@@ -816,7 +825,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             bundle = new Bundle();
         }
 
-        bundle.putBoolean("hasMainTabs", true);
+        bundle.putBoolean("hasMainTabs", !isBottomBarHidden());
         dialogsActivity = new DialogsActivity(bundle);
         dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
         putFragmentAtPosition(positionChats(), dialogsActivity);
@@ -830,20 +839,20 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             Bundle args = new Bundle();
             args.putBoolean("needPhonebook", true);
             args.putBoolean("needFinishFragment", false);
-            args.putBoolean("hasMainTabs", true);
+            args.putBoolean("hasMainTabs", !isBottomBarHidden());
             return new ContactsActivity(args);
         } else if (type == LumineTabs.Type.CALLS) {
             Bundle args = new Bundle();
             args.putBoolean("needFinishFragment", false);
-            args.putBoolean("hasMainTabs", true);
+            args.putBoolean("hasMainTabs", !isBottomBarHidden());
             return new CallLogActivity(args);
         } else if (type == LumineTabs.Type.SETTINGS) {
             Bundle args = new Bundle();
-            args.putBoolean("hasMainTabs", true);
+            args.putBoolean("hasMainTabs", !isBottomBarHidden());
             return new SettingsActivity(args);
         } else if (type == LumineTabs.Type.CHATS) {
             Bundle args = new Bundle();
-            args.putBoolean("hasMainTabs", true);
+            args.putBoolean("hasMainTabs", !isBottomBarHidden());
             dialogsActivity = new DialogsActivity(args);
             dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
             return dialogsActivity;
@@ -852,7 +861,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
             args.putBoolean("my_profile", true);
             // args.putBoolean("expandPhoto", true);
-            args.putBoolean("hasMainTabs", true);
+            args.putBoolean("hasMainTabs", !isBottomBarHidden());
             return new ProfileActivity(args);
         }
         return null;
@@ -950,7 +959,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
         ViewGroup.MarginLayoutParams lp;
         {
-            final int height = navigationBarHeight + updateLayoutHeight + dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS);
+            final int height = isBottomBarHidden() ? 0 : navigationBarHeight + updateLayoutHeight + dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS);
             lp = (ViewGroup.MarginLayoutParams) fadeView.getLayoutParams();
             if (lp.height != height) {
                 lp.height = height;
@@ -1066,9 +1075,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
     @Override
     public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {
-        if (id == ANIMATOR_ID_TABS_VISIBLE) {
+        if (id == ANIMATOR_ID_TABS_VISIBLE || id == ANIMATOR_ID_TABS_SCROLL_HIDE) {
             checkUi_tabsPosition();
             checkUi_fadeView();
+            if (dialogsActivity != null) {
+                dialogsActivity.setMainTabsScrollHideProgress(animatorTabsScrollHide.getFloatValue());
+            }
         }
     }
 
@@ -1080,7 +1092,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         final float animatedPosition = viewPager.getPositionAnimated();
         final float isProfile = 1f - MathUtils.clamp(Math.abs(positionProfile() - animatedPosition), 0, 1);
         final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
-        float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
+        float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue() * (1f - animatorTabsScrollHide.getFloatValue());
+        if (isBottomBarHidden()) {
+            alpha = 0f;
+        }
         if (tabletLayout) {
             alpha = 0.0f;
         }
@@ -1091,15 +1106,23 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     }
 
     private void checkUi_tabsPosition() {
+        if (isBottomBarHidden()) {
+            tabsViewWrapper.setVisibility(View.GONE);
+            tabsView.setClickable(false);
+            tabsView.setEnabled(false);
+            return;
+        }
+        tabsViewWrapper.setVisibility(View.VISIBLE);
         final boolean isUpdateLayoutVisible = updateLayoutWrapper.isUpdateLayoutVisible();
         final int updateLayoutHeight = isUpdateLayoutVisible ? dp(UpdateLayoutWrapper.HEIGHT) : 0;
         final int normalY = -(updateLayoutHeight);
         final int hiddenY = normalY + dp(40);
 
-        final float factor = animatorTabsVisible.getFloatValue();
+        final float scrollHide = animatorTabsScrollHide.getFloatValue();
+        final float factor = animatorTabsVisible.getFloatValue() * (1f - scrollHide);
         final float scale = lerp(0.85f, 1f, factor);
 
-        tabsViewWrapper.setTranslationY(lerp(hiddenY, normalY, factor));
+        tabsViewWrapper.setTranslationY(lerp(hiddenY, normalY, animatorTabsVisible.getFloatValue()) + dp(DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS) * scrollHide);
         tabsView.setClickable(factor > 1);
         tabsView.setEnabled(factor > 1);
         tabsView.setAlpha(factor);
@@ -1188,8 +1211,17 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         final ArrayList<LumineTabs.Type> oldTypes = shownTypes;
         final int current = viewPager.getCurrentPosition();
         final LumineTabs.Type selected = current >= 0 && current < oldTypes.size() ? oldTypes.get(current) : LumineTabs.Type.CHATS;
+        final boolean hidden = isBottomBarHidden();
+        final boolean hiddenChanged = hidden != lastBottomBarHidden;
+        lastBottomBarHidden = hidden;
+        if (LumineTabs.displayMode() != LumineTabs.DISPLAY_FLOATING) {
+            animatorTabsScrollHide.setValue(false, false);
+        }
         layoutTabs(true);
-        if (newTypes.equals(oldTypes)) {
+        if (hiddenChanged && fragmentView != null) {
+            fragmentView.requestApplyInsets();
+        }
+        if (newTypes.equals(oldTypes) && !hiddenChanged) {
             return;
         }
         for (int i = fragmentsArr.size() - 1; i >= 0; i--) {
@@ -1225,6 +1257,14 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         @Override
         public void setTabsVisible(boolean visible) {
             animatorTabsVisible.setValue(visible, true);
+        }
+
+        @Override
+        public void setTabsScrollHide(boolean hide) {
+            if (LumineTabs.displayMode() != LumineTabs.DISPLAY_FLOATING) {
+                return;
+            }
+            animatorTabsScrollHide.setValue(hide, true);
         }
     }
 
