@@ -1093,6 +1093,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         for (LumineTabs.State state : states) {
             tabsView.setViewVisible(tabs[state.type.ordinal()], state.enabled, animated && sameOrder);
         }
+        for (GlassTabView tab : tabs) {
+            tab.setTitleVisible(LumineTabs.titlesVisible());
+        }
         tabsView.setMaxWidth(dp(Math.max(328, 82 * LumineTabs.count()) + DialogsActivity.MAIN_TABS_MARGIN * 2));
         shownTypes = LumineTabs.getEnabled();
     }

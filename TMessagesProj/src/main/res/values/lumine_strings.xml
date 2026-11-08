@@ -74,5 +74,13 @@
     <string name="LumineIdTypeBotApi">Bot API</string>
     <string name="LumineInterface">Interface</string>
     <string name="LumineTabsTitle">Customize Bottom Tabs</string>
+    <string name="LumineTabTitles">Tab Titles</string>
+    <string name="LumineTabDisplayMode">Display Mode</string>
+    <string name="LumineTabShow">Show</string>
+    <string name="LumineTabHide">Hide</string>
+    <string name="LumineTabFloating">Floating</string>
+    <string name="LumineTabSearchButton">Search</string>
+    <string name="LumineTabForceChats">Always search in chats</string>
+    <string name="LumineTabForceChatsInfo">The search button always opens search in Chats, even when another tab is open.</string>
     <string name="LumineTabsInfo">Tap a tab to show or hide it. Long-press and drag to reorder. Chats cannot be hidden.</string>
 </resources>

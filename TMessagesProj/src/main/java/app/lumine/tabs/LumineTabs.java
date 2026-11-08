@@ -40,7 +40,15 @@ public final class LumineTabs {
         void onTabsChanged();
     }
 
+    public static final int DISPLAY_SHOW = 0;
+    public static final int DISPLAY_HIDE = 1;
+    public static final int DISPLAY_FLOATING = 2;
+
     private static final String KEY_ORDER = "tabs_order";
+    private static final String KEY_TITLES = "tabs_titles";
+    private static final String KEY_SEARCH = "tabs_search";
+    private static final String KEY_DISPLAY = "tabs_display";
+    private static final String KEY_FORCE_CHATS = "tabs_force_chats";
     private static final String DEFAULT_ORDER = "CHATS,CONTACTS,SETTINGS,!CALLS,PROFILE";
     private static final String CALLS_ORDER = "CHATS,CONTACTS,!SETTINGS,CALLS,PROFILE";
 
@@ -55,6 +63,42 @@ public final class LumineTabs {
 
     public static void removeListener(Listener listener) {
         listeners.remove(listener);
+    }
+
+    public static boolean titlesVisible() {
+        return LumineConfig.getBoolean(KEY_TITLES, true);
+    }
+
+    public static void setTitlesVisible(boolean visible) {
+        LumineConfig.setBoolean(KEY_TITLES, visible);
+        notifyChanged();
+    }
+
+    public static boolean searchButton() {
+        return LumineConfig.getBoolean(KEY_SEARCH, false);
+    }
+
+    public static void setSearchButton(boolean enabled) {
+        LumineConfig.setBoolean(KEY_SEARCH, enabled);
+        notifyChanged();
+    }
+
+    public static int displayMode() {
+        final int mode = LumineConfig.getInt(KEY_DISPLAY, DISPLAY_SHOW);
+        return mode == DISPLAY_HIDE || mode == DISPLAY_FLOATING ? mode : DISPLAY_SHOW;
+    }
+
+    public static void setDisplayMode(int mode) {
+        LumineConfig.setInt(KEY_DISPLAY, mode);
+        notifyChanged();
+    }
+
+    public static boolean forceOpenChats() {
+        return LumineConfig.getBoolean(KEY_FORCE_CHATS, false);
+    }
+
+    public static void setForceOpenChats(boolean enabled) {
+        LumineConfig.setBoolean(KEY_FORCE_CHATS, enabled);
     }
 
     public static ArrayList<State> getAll() {
