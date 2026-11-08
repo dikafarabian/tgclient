@@ -81,6 +81,7 @@ MARKERS=(
 "$J/org/telegram/messenger/ApplicationLoader.java|BuildVars.BUILD_COMMIT"
 "$J/org/telegram/ui/IntroActivity.java|paint.setColor(0xFFFFFFFF);"
 "$J/org/telegram/ui/Components/Switch.java|app.lumine.md3.LumineSwitchDraw.draw"
+"$J/org/telegram/ui/Components/Switch.java|app.lumine.md3.LumineSwitchDraw.measuredSize"
 "$J/org/telegram/ui/Components/SeekBarView.java|app.lumine.md3.LumineSliderDraw.draw"
 "$J/org/telegram/ui/Cells/TextCell.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Cells/TextCheckCell.java|app.lumine.md3.LumineListItems"

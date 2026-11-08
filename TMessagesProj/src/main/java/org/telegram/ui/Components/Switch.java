@@ -372,6 +372,15 @@ public class Switch extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        final int size = app.lumine.md3.LumineSwitchDraw.measuredSize(getMeasuredWidth(), getMeasuredHeight());
+        if (size != 0) {
+            setMeasuredDimension(size >>> 16, size & 0xFFFF);
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         if (getVisibility() != VISIBLE) {
             return;

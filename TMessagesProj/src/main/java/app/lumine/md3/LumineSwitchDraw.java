@@ -2,8 +2,8 @@
  * luminegram - Material 3 switch drawing.
  * Called from the start of Switch.onDraw. Draws a capsule track and a round
  * thumb that grows from 16dp to 24dp with the progress of the switch. The
- * 52x32dp design is scaled to fit the view as laid out by the caller, so the
- * size and the touch area stay stock. Colors follow the active theme: the on
+ * 52x32dp design is drawn at full size: the standard small switch (about
+ * 37x20dp) is measured up to 52x32dp, other sizes are scaled to fit. Colors follow the active theme: the on
  * colors are the ones the switch was given, the off colors come from the
  * theme text and background keys. Returns false when the stock drawing must
  * run (disabled, icon switches, color override animation).
@@ -39,6 +39,13 @@ public final class LumineSwitchDraw {
     }
 
     private LumineSwitchDraw() {
+    }
+
+    public static int measuredSize(int stockWidth, int stockHeight) {
+        if (!LumineMd3.switchEnabled() || stockWidth < dp(30) || stockWidth > dp(40)) {
+            return 0;
+        }
+        return (dp(TRACK_WIDTH_DP) << 16) | Math.max(stockHeight, dp(TRACK_HEIGHT_DP));
     }
 
     public static boolean draw(Canvas canvas, int width, int height, float progress, boolean plain, int trackOn, int thumbOn, Theme.ResourcesProvider resourcesProvider) {
