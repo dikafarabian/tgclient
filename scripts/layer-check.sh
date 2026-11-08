@@ -90,6 +90,7 @@ MARKERS=(
 "$J/org/telegram/ui/Components/RecyclerListView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/UniversalRecyclerView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/RecyclerListView.java|isSegmentedHeader"
+"$J/org/telegram/ui/Components/RecyclerListView.java|view instanceof HeaderCell ? 1 : 0"
 "$J/org/telegram/ui/SettingsActivity.java|app.lumine.md3.LumineListItems.tonalBackground"
 "$J/org/telegram/messenger/LocaleController.java|app.lumine.stealth.LumineStealth.relativeLastSeen"
 "$J/org/telegram/ui/ProfileActivity.java|shortStatus ? new boolean[1] : null, true)"

@@ -76,6 +76,7 @@ import org.telegram.ui.Cells.ChatActionCell;
 import org.telegram.ui.Cells.ChatMessageCell;
 import org.telegram.ui.Cells.CollapseTextCell;
 import org.telegram.ui.Cells.GraySectionCell;
+import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
@@ -3297,6 +3298,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
     }
     private static Pair<Utilities.CallbackReturn<View, Boolean>, Utilities.CallbackReturn<Integer, Boolean>> cachedIsViewTypeShadow(RecyclerListView listView, Utilities.CallbackReturn<View, Boolean> isSectionView) {
         SparseIntArray cache = new SparseIntArray();
+        SparseIntArray headers = new SparseIntArray();
         return new Pair<>(
             (view) -> {
                 try {
@@ -3305,6 +3307,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                     final ViewHolder viewHolder = listView.getChildViewHolder(view);
                     if (viewHolder != null) {
                         cache.put(viewHolder.getItemViewType(), isSection ? 1 : 0);
+                        headers.put(viewHolder.getItemViewType(), view instanceof HeaderCell ? 1 : 0);
                     }
                     return isSection;
                 } catch (Exception e) {
@@ -3314,6 +3317,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
             (viewType) -> {
                 int cached = cache.get(viewType, -1);
                 if (cached == -1) return true;
+                if (cached == 1 && headers.get(viewType, 0) == 1 && app.lumine.md3.LumineListItems.enabled()) return false;
                 return cached == 1;
             }
         );
