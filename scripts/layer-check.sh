@@ -35,6 +35,7 @@ OWN_FILES=(
 "$J/app/lumine/md3/LumineSliderDraw.java"
 "$J/app/lumine/md3/LumineListItems.java"
 "$J/app/lumine/stealth/LumineStealth.java"
+"$J/app/lumine/stealth/LumineIdDc.java"
 "$APP/src/main/res/raw/lumine_keep.xml"
 "$R/values/lumine_strings.xml"
 "$R/drawable/lumine_settings_sparkle.xml"

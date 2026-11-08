@@ -10,6 +10,11 @@ public final class LumineStealth {
 
     public static final String KEY_RELATIVE_LAST_SEEN = "LumineRelativeLastSeen";
     public static final String KEY_HIDE_PHONE = "LumineHidePhone";
+    public static final String KEY_ID_DC_TYPE = "LumineIdDcType";
+
+    public static final int ID_HIDDEN = 0;
+    public static final int ID_API = 1;
+    public static final int ID_BOT_API = 2;
 
     private LumineStealth() {
     }
@@ -28,5 +33,14 @@ public final class LumineStealth {
 
     public static void setHidePhone(boolean enabled) {
         LumineConfig.setBoolean(KEY_HIDE_PHONE, enabled);
+    }
+
+    public static int idDcType() {
+        final int type = LumineConfig.getInt(KEY_ID_DC_TYPE, ID_API);
+        return type < ID_HIDDEN || type > ID_BOT_API ? ID_API : type;
+    }
+
+    public static void setIdDcType(int type) {
+        LumineConfig.setInt(KEY_ID_DC_TYPE, type);
     }
 }

@@ -14,6 +14,7 @@ import app.lumine.LumineStrings;
 import app.lumine.stealth.LumineStealth;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
+import org.telegram.ui.ActionBar.AlertDialog;
 
 public class LumineStealthPage extends ScrollView {
 
@@ -33,5 +34,24 @@ public class LumineStealthPage extends ScrollView {
                 LumineStealth.relativeLastSeen(), LumineStealth::setRelativeLastSeen);
         LumineCards.toggleRow(context, profile, LumineStrings.get(R.string.LumineHidePhoneNumber), null,
                 LumineStealth.hidePhone(), LumineStealth::setHidePhone);
+
+        final CharSequence[] options = {
+                LocaleController.getString(R.string.Hide),
+                LumineStrings.get(R.string.LumineIdTypeApi),
+                LumineStrings.get(R.string.LumineIdTypeBotApi)
+        };
+        final LumineCards.Row idRow = LumineCards.row(context, profile, LumineStrings.get(R.string.LumineShowIdAndDc), null);
+        LumineCards.setValue(idRow.value, options[LumineStealth.idDcType()], 0);
+        idRow.view.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(LumineStrings.get(R.string.LumineShowIdAndDc));
+            builder.setItems(options, (dialog, which) -> {
+                LumineStealth.setIdDcType(which);
+                LumineCards.setValue(idRow.value, options[which], 0);
+            });
+            builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+            builder.show();
+        });
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineShowIdAndDcInfo));
     }
 }

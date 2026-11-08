@@ -68,4 +68,8 @@
     <string name="LumineProfile">Profile</string>
     <string name="LumineRelativeLastSeen">Relative Last Seen</string>
     <string name="LumineHidePhoneNumber">Hide Phone Number</string>
+    <string name="LumineShowIdAndDc">Show ID and DC</string>
+    <string name="LumineShowIdAndDcInfo">Shows the ID and the data center of a user or chat on its profile.</string>
+    <string name="LumineIdTypeApi">Telegram API</string>
+    <string name="LumineIdTypeBotApi">Bot API</string>
 </resources>
