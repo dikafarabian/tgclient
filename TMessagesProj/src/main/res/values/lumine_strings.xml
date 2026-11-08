@@ -55,7 +55,7 @@
     <string name="LuminePushTypeMicroG">MicroG</string>
     <string name="LuminePushTypeUnified">UnifiedPush</string>
     <string name="LumineBatteryOptimization">Battery optimization</string>
-    <string name="LumineBatteryOn">Enabled, pushes may be delayed</string>
+    <string name="LumineBatteryOn">Enabled</string>
     <string name="LumineBatteryOff">Disabled</string>
     <string name="LumineBatteryUnavailable">Battery settings are unavailable on this device</string>
     <string name="LuminePushRestartHint">Restart the app to apply the push service</string>
