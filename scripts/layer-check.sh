@@ -91,6 +91,8 @@ MARKERS=(
 "$J/org/telegram/tgnet/ConnectionsManager.java|LumineGhostRequests.blocks"
 "$J/org/telegram/tgnet/ConnectionsManager.java|LumineGhostRequests.wrap"
 "$J/org/telegram/ui/MainTabsActivity.java|layoutSearchGroup"
+"$J/org/telegram/ui/MainTabsActivity.java|applyBarWidth"
+"$J/org/telegram/ui/MainTabsLayout.java|setEqualWidth"
 "$J/org/telegram/ui/DialogsActivity.java|MAIN_TABS_MARGIN = 16;"
 "$J/org/telegram/ui/MainTabsActivity.java|searchButtonIcon = null;"
 "$J/org/telegram/messenger/ApplicationLoader.java|LumineCrashLog.install"

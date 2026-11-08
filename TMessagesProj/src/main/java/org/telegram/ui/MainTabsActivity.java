@@ -396,6 +396,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
         tabsViewWrapper = new FrameLayout(context) {
             @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                applyBarWidth(MeasureSpec.getSize(widthMeasureSpec));
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
+
+            @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
                 super.onLayout(changed, l, t, r, b);
                 layoutSearchGroup(r - l);
@@ -411,7 +417,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         searchButton.setBackground(searchButtonBackground);
         searchButtonIcon = new ImageView(context);
         searchButtonIcon.setImageResource(R.drawable.outline_header_search);
-        searchButtonIcon.setScaleType(ImageView.ScaleType.CENTER);
+        searchButtonIcon.setPadding(dp(14), dp(14), dp(14), dp(14));
         searchButtonIcon.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_tabUnselected), PorterDuff.Mode.SRC_IN));
         searchButton.addView(searchButtonIcon, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         searchButton.setContentDescription(getString(R.string.Search));
@@ -1145,6 +1151,30 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     private ArrayList<LumineTabs.Type> shownTypes = new ArrayList<>();
     private final LumineTabs.Listener lumineTabsListener = this::rebuildTabs;
 
+    private static final float SEARCH_GAP_DP = 6f;
+    private static final int GROUP_SIDE_MARGIN_DP = 18;
+    private static final int TAB_WIDTH_DP = 80;
+
+    private void applyBarWidth(int wrapperWidth) {
+        if (tabsView == null || wrapperWidth <= 0) {
+            return;
+        }
+        final ViewGroup.LayoutParams lp = tabsView.getLayoutParams();
+        if (lp == null) {
+            return;
+        }
+        final int inset = dp(DialogsActivity.MAIN_TABS_MARGIN - 0.334f);
+        int visibleMax = wrapperWidth - dp(GROUP_SIDE_MARGIN_DP) * 2;
+        if (searchButtonShown()) {
+            visibleMax -= dp(SEARCH_GAP_DP) + dp(DialogsActivity.MAIN_TABS_HEIGHT) - dp(0.334f) * 2;
+        }
+        final int desired = dp(TAB_WIDTH_DP * LumineTabs.count() + (DialogsActivity.MAIN_TABS_MARGIN + 4) * 2);
+        final int width = Math.min(desired, visibleMax + inset * 2);
+        if (lp.width != width) {
+            lp.width = width;
+        }
+    }
+
     private void layoutSearchGroup(int width) {
         if (searchButton == null || tabsView == null || !searchButtonShown() || tabsView.getVisibility() == View.GONE) {
             return;
@@ -1153,7 +1183,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         final int buttonWidth = searchButton.getMeasuredWidth();
         final int barInset = dp(DialogsActivity.MAIN_TABS_MARGIN - 0.334f);
         final int buttonInset = dp(0.334f);
-        final int gap = dp(3);
+        final int gap = dp(SEARCH_GAP_DP);
         final int visibleBar = barWidth - barInset * 2;
         final int visibleButton = buttonWidth - buttonInset * 2;
         final int groupLeft = (width - (visibleBar + gap + visibleButton)) / 2;
@@ -1171,15 +1201,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         if (tabsView == null || searchButton == null) {
             return;
         }
-        final boolean show = searchButtonShown();
-        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) tabsView.getLayoutParams();
-        if (lp == null) {
-            return;
-        }
-        final int margin = show ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN / 2f) : 0;
-        if (lp.rightMargin != margin) {
-            lp.rightMargin = margin;
-            tabsView.setLayoutParams(lp);
+        if (tabsViewWrapper != null) {
+            tabsViewWrapper.requestLayout();
         }
         checkUi_tabsPosition();
         if (dialogsActivity != null) {
@@ -1228,6 +1251,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         for (GlassTabView tab : tabs) {
             tab.setTitleVisible(LumineTabs.titlesVisible());
         }
+        tabsView.setEqualWidth(!LumineTabs.titlesVisible());
         updateSearchButton();
         tabsView.setMaxWidth(dp(Math.max(328, 82 * LumineTabs.count()) + DialogsActivity.MAIN_TABS_MARGIN * 2));
         shownTypes = LumineTabs.getEnabled();
