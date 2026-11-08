@@ -710,6 +710,14 @@
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="org.telegram.messenger.chromecast.ChromecastOptionsProvider" />
 
+        <activity
+            android:name="app.lumine.crash.LumineCrashActivity"
+            android:process=":lumine_crash"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
     </application>
 
 </manifest>

@@ -102,4 +102,9 @@
     <string name="LumineAskStoryTitle">Open story</string>
     <string name="LumineAskStoryGhost">Open in ghost mode</string>
     <string name="LumineAskStoryNormal">Open normally</string>
+    <string name="LumineCrashTitle">luminegram crashed</string>
+    <string name="LumineCrashHint">Copy this report and send it.</string>
+    <string name="LumineCrashCopy">Copy</string>
+    <string name="LumineCrashClose">Close</string>
+    <string name="LumineCrashCopied">Report copied</string>
 </resources>

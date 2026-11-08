@@ -290,6 +290,11 @@ public class ApplicationLoader extends Application {
 
         super.onCreate();
 
+        if (app.lumine.crash.LumineCrashLog.isCrashProcess()) {
+            return;
+        }
+        app.lumine.crash.LumineCrashLog.install(this);
+
         // AndroidUtilities must be initialized before FileLog
         final String helloWorld = AndroidUtilities.getHelloWorld();
 
