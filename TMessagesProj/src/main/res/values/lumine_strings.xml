@@ -65,4 +65,7 @@
     <string name="LumineMd3Sliders">Sliders</string>
     <string name="LumineMd3ListItems">List items</string>
     <string name="LumineMd3Info">Applies to the whole app. Screens that are already open update when you reopen them.</string>
+    <string name="LumineProfile">Profile</string>
+    <string name="LumineRelativeLastSeen">Relative Last Seen</string>
+    <string name="LumineHidePhoneNumber">Hide Phone Number</string>
 </resources>

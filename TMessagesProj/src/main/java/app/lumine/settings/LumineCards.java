@@ -16,6 +16,7 @@ import app.lumine.md3.LumineListItems;
 import app.lumine.push.PushStatus;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.Switch;
 
 final class LumineCards {
 
@@ -142,6 +143,56 @@ final class LumineCards {
         }
         add(card, row);
         return new Row(row, value);
+    }
+
+    interface OnToggle {
+        void onToggle(boolean enabled);
+    }
+
+    static Switch toggleRow(Context context, LinearLayout card, String label, CharSequence subtitle, boolean checked, OnToggle onToggle) {
+        final boolean segmented = segmented();
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(segmented ? dp(16) : 0, dp(12), segmented ? dp(16) : 0, dp(12));
+        if (!segmented) {
+            row.setBackground(Theme.getSelectorDrawable(false));
+        }
+
+        LinearLayout texts = new LinearLayout(context);
+        texts.setOrientation(LinearLayout.VERTICAL);
+
+        TextView name = new TextView(context);
+        name.setTextSize(16);
+        name.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        name.setText(label);
+        texts.addView(name, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        if (!TextUtils.isEmpty(subtitle)) {
+            TextView sub = new TextView(context);
+            sub.setTextSize(13);
+            sub.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+            sub.setText(subtitle);
+            LinearLayout.LayoutParams subParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            subParams.topMargin = dp(2);
+            texts.addView(sub, subParams);
+        }
+        row.addView(texts, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        Switch toggle = new Switch(context);
+        toggle.setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
+        toggle.setChecked(checked, false);
+        LinearLayout.LayoutParams switchParams = new LinearLayout.LayoutParams(dp(37), dp(20));
+        switchParams.leftMargin = dp(16);
+        row.addView(toggle, switchParams);
+
+        row.setOnClickListener(v -> {
+            final boolean enabled = !toggle.isChecked();
+            toggle.setChecked(enabled, true);
+            onToggle.onToggle(enabled);
+        });
+        add(card, row);
+        return toggle;
     }
 
     static void setValue(TextView view, CharSequence text, int level) {

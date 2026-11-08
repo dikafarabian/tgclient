@@ -9,12 +9,10 @@ package app.lumine.settings;
 import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import app.lumine.LumineStrings;
 import app.lumine.md3.LumineMd3;
@@ -42,16 +40,16 @@ public class LumineAppearancePage extends ScrollView {
 
         LinearLayout card = LumineCards.card(context, list, LumineStrings.get(R.string.LumineMd3Title));
 
-        switchToggle = toggleRow(context, card, LumineStrings.get(R.string.LumineMd3Switches), LumineMd3.switchEnabled(), enabled -> {
+        switchToggle = LumineCards.toggleRow(context, card, LumineStrings.get(R.string.LumineMd3Switches), null, LumineMd3.switchEnabled(), enabled -> {
             LumineMd3.setSwitchEnabled(enabled);
             refresh();
         });
-        sliderToggle = toggleRow(context, card, LumineStrings.get(R.string.LumineMd3Sliders), LumineMd3.sliderEnabled(), enabled -> {
+        sliderToggle = LumineCards.toggleRow(context, card, LumineStrings.get(R.string.LumineMd3Sliders), null, LumineMd3.sliderEnabled(), enabled -> {
             LumineMd3.setSliderEnabled(enabled);
             refresh();
         });
 
-        listToggle = toggleRow(context, card, LumineStrings.get(R.string.LumineMd3ListItems), LumineMd3.listEnabled(), enabled -> {
+        listToggle = LumineCards.toggleRow(context, card, LumineStrings.get(R.string.LumineMd3ListItems), null, LumineMd3.listEnabled(), enabled -> {
             LumineMd3.setListEnabled(enabled);
             Theme.applyCommonTheme();
             refresh();
@@ -74,42 +72,6 @@ public class LumineAppearancePage extends ScrollView {
         }
 
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineMd3Info));
-    }
-
-    private interface OnToggle {
-        void onToggle(boolean enabled);
-    }
-
-    private static Switch toggleRow(Context context, LinearLayout card, String label, boolean checked, OnToggle onToggle) {
-        LinearLayout row = new LinearLayout(context);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        final boolean segmented = LumineCards.segmented();
-        row.setPadding(segmented ? dp(16) : 0, dp(12), segmented ? dp(16) : 0, dp(12));
-        if (!segmented) {
-            row.setBackground(Theme.getSelectorDrawable(false));
-        }
-
-        TextView name = new TextView(context);
-        name.setTextSize(16);
-        name.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        name.setText(label);
-        row.addView(name, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-        Switch toggle = new Switch(context);
-        toggle.setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
-        toggle.setChecked(checked, false);
-        LinearLayout.LayoutParams switchParams = new LinearLayout.LayoutParams(dp(37), dp(20));
-        switchParams.leftMargin = dp(16);
-        row.addView(toggle, switchParams);
-
-        row.setOnClickListener((View v) -> {
-            final boolean enabled = !toggle.isChecked();
-            toggle.setChecked(enabled, true);
-            onToggle.onToggle(enabled);
-        });
-        LumineCards.add(card, row);
-        return toggle;
     }
 
     private void refresh() {
