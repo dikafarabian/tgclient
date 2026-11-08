@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import app.lumine.tabs.LumineTabs;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
@@ -90,12 +91,6 @@ import me.vkryl.android.animator.FactorAnimator;
 
 public class MainTabsActivity extends ViewPagerActivity implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
 
-    public static final int TABS_COUNT = 4;
-    private static final int POSITION_CHATS = 0;
-    private static final int POSITION_CONTACTS = 1;
-    private static final int POSITION_CALLS_OR_SETTINGS = 2;
-    private static final int POSITION_PROFILE = 3;
-
     private static final int INDEX_CHATS = 0;
     private static final int INDEX_CONTACTS = 1;
     private static final int INDEX_SETTINGS = 2;
@@ -103,7 +98,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     private static final int INDEX_PROFILE = 4;
 
     private static int indexToPosition(int index) {
-        return index > 2 ? index - 1 : index;
+        return LumineTabs.position(LumineTabs.Type.values()[index]);
+    }
+
+    private static int positionChats() {
+        return LumineTabs.position(LumineTabs.Type.CHATS);
+    }
+
+    private static int positionProfile() {
+        return LumineTabs.position(LumineTabs.Type.PROFILE);
     }
 
     private static final int ANIMATOR_ID_TABS_VISIBLE = 0;
@@ -112,7 +115,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
 
     private IUpdateLayout updateLayout;
-    private boolean dropCallsFragmentAfterPageScroll;
 
     private UpdateLayoutWrapper updateLayoutWrapper;
     private FrameLayout tabsViewWrapper;
@@ -328,11 +330,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
 
         for (int index = 0; index < tabs.length; index++) {
-            final GlassTabView view = tabs[index];
-
-            final int position = indexToPosition(index);
+            final int tabIndex = index;
             tabs[index].setOnClickListener(v -> {
-                if (viewPager.isManualScrolling() || viewPager.isTouch()) {
+                final int position = indexToPosition(tabIndex);
+                if (position < 0 || viewPager.isManualScrolling() || viewPager.isTouch()) {
                     return;
                 }
 
@@ -347,11 +348,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                 selectTab(position, true);
                 viewPager.scrollToPosition(position);
             });
-
-            tabsView.addView(tabs[index]);
-            tabsView.setViewVisible(view, true, false);
         }
-        checkUi_callTabVisible(getUserConfig().showCallsTab, false);
+        layoutTabs(false);
 
         selectTab(viewPager.getCurrentPosition(), false);
 
@@ -439,13 +437,11 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         if (getUserConfig().showCallsTab) {
             o.add(R.drawable.msg_archive_hide, getString(R.string.HideCallTab), () -> {
                 getUserConfig().setShowCallsTab(false);
-                checkUi_callTabVisible(false, true);
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.callTabsVisibleToggled);
             });
         } else {
             o.add(R.drawable.menu_add_tab_24, getString(R.string.GroupCallShowInMainTabs), () -> {
                 getUserConfig().setShowCallsTab(true);
-                checkUi_callTabVisible(true, true);
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.callTabsVisibleToggled);
             });
         }
@@ -589,15 +585,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     }
 
     private void openFolder(int folderId) {
-        if (viewPager.getCurrentPosition() == POSITION_CHATS && dialogsActivity != null) {
+        if (viewPager.getCurrentPosition() == positionChats() && dialogsActivity != null) {
             dialogsActivity.scrollToFolder(folderId);
         } else {
             if (dialogsActivity == null) {
                 prepareDialogsActivity(null);
             }
             pendingFolderId = folderId;
-            selectTab(POSITION_CHATS, true);
-            viewPager.scrollToPosition(POSITION_CHATS);
+            selectTab(positionChats(), true);
+            viewPager.scrollToPosition(positionChats());
         }
     }
 
@@ -733,14 +729,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
         if (viewPager != null) {
             final int currentPosition = viewPager.getCurrentPosition();
-            if (currentPosition != POSITION_CALLS_OR_SETTINGS && dropCallsFragmentAfterPageScroll) {
-                dropFragmentAtPosition(POSITION_CALLS_OR_SETTINGS);
-                dropCallsFragmentAfterPageScroll = false;
+            if (currentPosition != positionProfile()) {
+                dropFragmentAtPosition(positionProfile());
             }
-            if (currentPosition != POSITION_PROFILE) {
-                dropFragmentAtPosition(POSITION_PROFILE);
-            }
-            if (pendingFolderId != null && currentPosition == POSITION_CHATS && dialogsActivity != null) {
+            if (pendingFolderId != null && currentPosition == positionChats() && dialogsActivity != null) {
                 dialogsActivity.scrollToFolder(pendingFolderId);
                 pendingFolderId = null;
             }
@@ -768,12 +760,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
     @Override
     protected int getFragmentsCount() {
-        return TABS_COUNT;
+        return LumineTabs.count();
     }
 
     @Override
     protected int getStartPosition() {
-        return POSITION_CHATS;
+        return positionChats();
     }
 
     private DialogsActivity dialogsActivity;
@@ -801,35 +793,35 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         bundle.putBoolean("hasMainTabs", true);
         dialogsActivity = new DialogsActivity(bundle);
         dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
-        putFragmentAtPosition(POSITION_CHATS, dialogsActivity);
+        putFragmentAtPosition(positionChats(), dialogsActivity);
         return dialogsActivity;
     }
 
     @Override
     protected BaseFragment createBaseFragmentAt(int position) {
-        if (position == POSITION_CONTACTS) {
+        final LumineTabs.Type type = LumineTabs.typeAt(position);
+        if (type == LumineTabs.Type.CONTACTS) {
             Bundle args = new Bundle();
             args.putBoolean("needPhonebook", true);
             args.putBoolean("needFinishFragment", false);
             args.putBoolean("hasMainTabs", true);
             return new ContactsActivity(args);
-        } else if (position == POSITION_CALLS_OR_SETTINGS) {
-            if (getUserConfig().showCallsTab) {
-                Bundle args = new Bundle();
-                args.putBoolean("needFinishFragment", false);
-                args.putBoolean("hasMainTabs", true);
-                return new CallLogActivity(args);
-            }
+        } else if (type == LumineTabs.Type.CALLS) {
+            Bundle args = new Bundle();
+            args.putBoolean("needFinishFragment", false);
+            args.putBoolean("hasMainTabs", true);
+            return new CallLogActivity(args);
+        } else if (type == LumineTabs.Type.SETTINGS) {
             Bundle args = new Bundle();
             args.putBoolean("hasMainTabs", true);
             return new SettingsActivity(args);
-        } else if (position == POSITION_CHATS) {
+        } else if (type == LumineTabs.Type.CHATS) {
             Bundle args = new Bundle();
             args.putBoolean("hasMainTabs", true);
             dialogsActivity = new DialogsActivity(args);
             dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
             return dialogsActivity;
-        } else if (position == POSITION_PROFILE) {
+        } else if (type == LumineTabs.Type.PROFILE) {
             Bundle args = new Bundle();
             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
             args.putBoolean("my_profile", true);
@@ -858,7 +850,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     public void setGestureSelectedOverride(float animatedPosition, boolean allow) {
         for (int index = 0; index < tabs.length; index++) {
             final int position = indexToPosition(index);
-            final float visibility = Math.max(0, 1f - Math.abs(position - animatedPosition));
+            final float visibility = position < 0 ? 0 : Math.max(0, 1f - Math.abs(position - animatedPosition));
             tabs[index].setGestureSelectedOverride(visibility, allow);
         }
         tabsView.invalidate();
@@ -992,15 +984,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         } else if (id == NotificationCenter.needSetDayNightTheme) {
             clearAllHiddenFragments();
         } else if (id == NotificationCenter.callTabsVisibleToggled) {
-            final boolean callTabsVisible = getUserConfig().showCallsTab;
-            checkUi_callTabVisible(callTabsVisible, true);
-            if (viewPager != null && viewPager.getCurrentPosition() == POSITION_CALLS_OR_SETTINGS) {
-                viewPager.scrollToPosition(POSITION_CHATS);
-                selectTab(POSITION_CHATS, true);
-                dropCallsFragmentAfterPageScroll = true;
-            } else {
-                dropFragmentAtPosition(POSITION_CALLS_OR_SETTINGS);
-            }
+            LumineTabs.applyCallsTabToggle(getUserConfig().showCallsTab);
         } else if (id == NotificationCenter.mainUserInfoChanged) {
             if (tabs != null && tabs[INDEX_PROFILE] != null) {
                 tabs[INDEX_PROFILE].updateUserAvatar(currentAccount);
@@ -1027,6 +1011,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             .addGlobal(NotificationCenter.appUpdateAvailable)
             .addGlobal(NotificationCenter.appUpdateLoading)
             .addGlobal(NotificationCenter.needSetDayNightTheme);
+        LumineTabs.addListener(lumineTabsListener);
 
         return super.onFragmentCreate();
     }
@@ -1035,6 +1020,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     public void onFragmentDestroy() {
         Bulletin.removeDelegate(this);
         Bulletin.removeDelegate(contentView);
+        LumineTabs.removeListener(lumineTabsListener);
 
         if (observersGroup != null) {
             observersGroup.removeAllObservers();
@@ -1058,7 +1044,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         }
 
         final float animatedPosition = viewPager.getPositionAnimated();
-        final float isProfile = 1f - MathUtils.clamp(Math.abs(POSITION_PROFILE - animatedPosition), 0, 1);
+        final float isProfile = 1f - MathUtils.clamp(Math.abs(positionProfile() - animatedPosition), 0, 1);
         final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
         float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
         if (tabletLayout) {
@@ -1086,11 +1072,57 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
     }
 
-    private void checkUi_callTabVisible(boolean callTabsVisible, boolean animated) {
-        if (tabsView != null) {
-            tabsView.setViewVisible(tabs[INDEX_SETTINGS], !callTabsVisible, animated);
-            tabsView.setViewVisible(tabs[INDEX_CALLS], callTabsVisible, animated);
+    private ArrayList<LumineTabs.Type> shownTypes = new ArrayList<>();
+    private final LumineTabs.Listener lumineTabsListener = this::rebuildTabs;
+
+    private void layoutTabs(boolean animated) {
+        if (tabsView == null) {
+            return;
         }
+        final ArrayList<LumineTabs.State> states = LumineTabs.getAll();
+        boolean sameOrder = tabsView.getChildCount() == states.size();
+        for (int i = 0; sameOrder && i < states.size(); i++) {
+            sameOrder = tabsView.getChildAt(i) == tabs[states.get(i).type.ordinal()];
+        }
+        if (!sameOrder) {
+            tabsView.removeAllViews();
+            for (LumineTabs.State state : states) {
+                tabsView.addView(tabs[state.type.ordinal()]);
+            }
+        }
+        for (LumineTabs.State state : states) {
+            tabsView.setViewVisible(tabs[state.type.ordinal()], state.enabled, animated && sameOrder);
+        }
+        tabsView.setMaxWidth(dp(Math.max(328, 82 * LumineTabs.count()) + DialogsActivity.MAIN_TABS_MARGIN * 2));
+        shownTypes = LumineTabs.getEnabled();
+    }
+
+    private void rebuildTabs() {
+        if (tabsView == null || viewPager == null) {
+            return;
+        }
+        final ArrayList<LumineTabs.Type> newTypes = LumineTabs.getEnabled();
+        final ArrayList<LumineTabs.Type> oldTypes = shownTypes;
+        final int current = viewPager.getCurrentPosition();
+        final LumineTabs.Type selected = current >= 0 && current < oldTypes.size() ? oldTypes.get(current) : LumineTabs.Type.CHATS;
+        layoutTabs(true);
+        if (newTypes.equals(oldTypes)) {
+            return;
+        }
+        for (int i = fragmentsArr.size() - 1; i >= 0; i--) {
+            dropFragmentAtPosition(fragmentsArr.keyAt(i));
+        }
+        dialogsActivity = null;
+        viewPager.rebuild(false);
+        int target = newTypes.indexOf(selected);
+        if (target < 0) {
+            target = positionChats();
+        }
+        if (viewPager.getCurrentPosition() != target) {
+            viewPager.setPosition(target);
+        }
+        selectTab(target, false);
+        setGestureSelectedOverride(0, false);
     }
 
     @Override

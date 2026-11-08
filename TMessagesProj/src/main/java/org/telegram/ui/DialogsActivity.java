@@ -13808,7 +13808,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
         }
-        if (getUserConfig().showCallsTab) {
+        if (!app.lumine.tabs.LumineTabs.isEnabled(app.lumine.tabs.LumineTabs.Type.SETTINGS)) {
             io.add(R.drawable.msg_settings_old, getString(R.string.Settings), () -> {
                 presentFragment(new SettingsActivity());
             });
