@@ -152,6 +152,9 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.MenuDrawable;
+import app.lumine.drawer.LumineDrawer;
+import app.lumine.drawer.LumineDrawerContainer;
+import app.lumine.tabs.LumineTabs;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
@@ -563,6 +566,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private boolean updatePullAfterScroll;
 
     private BackDrawable backDrawable;
+    private MenuDrawable menuDrawable;
+    private final LumineDrawer.Listener drawerListener = new LumineDrawer.Listener() {
+        @Override
+        public void onDrawerChanged() {
+            AndroidUtilities.runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateDrawerButton();
+                }
+            });
+        }
+    };
 
     private final Paint actionBarDefaultPaint = new Paint();
 
@@ -2833,6 +2848,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     public boolean onFragmentCreate() {
         super.onFragmentCreate();
+        LumineDrawer.addListener(drawerListener);
 
         if (arguments != null) {
             onlySelect = arguments.getBoolean("onlySelect", false);
@@ -3071,6 +3087,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
+        LumineDrawer.removeListener(drawerListener);
         if (observersGroup != null) {
             observersGroup.removeAllObservers();
             observersGroup = null;
@@ -3870,6 +3887,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     return;
                 }
                 if (id == -1) {
+                    if (!actionBar.isActionModeShowed() && LumineDrawer.enabled() && drawerContainer() != null && canOpenDrawer()) {
+                        drawerContainer().toggleDrawer();
+                        return;
+                    }
                     if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
                         if (actionBar.isActionModeShowed()) {
                             if (searchViewPager != null && searchViewPager.getVisibility() == View.VISIBLE && searchViewPager.actionModeShowing()) {
@@ -5318,7 +5339,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         };
         dialogStoriesCell.setActionBar(actionBar);
-        dialogStoriesCell.setMenuItemsOffset(isArchive() ? dp(68) : dpf2(16.66f));
+        dialogStoriesCell.setMenuItemsOffset(getDialogStoriesMenuItemsOffset());
         dialogStoriesCell.allowGlobalUpdates = false;
         dialogStoriesCell.setVisibility(View.GONE);
         animateToHasStories = false;
@@ -5639,6 +5660,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         checkUi_mainTabsVisible();
         checkUi_forwardCommentFieldVisible();
         checkUi_searchFieldStyle();
+        updateDrawerButton();
 
         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
         return fragmentView;
@@ -6718,7 +6740,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         // actionMode.setBackgroundColor(Color.TRANSPARENT);
         // actionMode.drawBlur = false;
 
-        if (hasMainTabs) {
+        actionModeCloseView = null;
+        if (hasMainTabs && !shouldUseDrawerActionBarLayout()) {
             actionModeCloseView = new ImageView(getContext());
             actionModeCloseView.setScaleType(ImageView.ScaleType.CENTER);
             actionModeCloseView.setImageDrawable(new BackDrawable(true));
@@ -6733,7 +6756,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         selectedDialogsCountTextView.setTextSize(18);
         selectedDialogsCountTextView.setTypeface(AndroidUtilities.bold());
         selectedDialogsCountTextView.setTextColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
-        actionMode.addView(selectedDialogsCountTextView, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1.0f, hasMainTabs ? 18 : 72, 0, 0, 0));
+        actionMode.addView(selectedDialogsCountTextView, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1.0f, actionModeCloseView != null ? 18 : 72, 0, 0, 0));
         selectedDialogsCountTextView.setOnTouchListener((v, event) -> true);
 
         pinItem = actionMode.addItemWithWidth(pin, R.drawable.msg_pin, dp(48));
@@ -9032,6 +9055,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         selectedDialogs.clear();
         if (backDrawable != null) {
             backDrawable.setRotation(0, true);
+        }
+        if (menuDrawable != null && actionBar.getBackButton() != null && !(actionBar.getBackButton().getDrawable() instanceof MenuDrawable)) {
+            actionBar.setBackButtonDrawable(menuDrawable);
         }
         if (filterTabsView != null) {
             filterTabsView.animateColorsTo(Theme.key_actionBarTabLine, Theme.key_actionBarTabActiveText, Theme.key_actionBarTabUnactiveText, Theme.key_actionBarTabSelector, Theme.key_windowBackgroundWhite);
@@ -14142,6 +14168,75 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         checkUi_itemSearchVisibility();
     }
 
+    private LumineDrawerContainer drawerContainer() {
+        if (getParentActivity() instanceof LaunchActivity) {
+            return ((LaunchActivity) getParentActivity()).drawerLayoutContainer.getDrawerContainer();
+        }
+        return null;
+    }
+
+    private boolean shouldUseDrawerActionBarLayout() {
+        return LumineDrawer.enabled() && !onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT
+                && folderId == 0 && communityId == 0 && searchString == null;
+    }
+
+    private float getDialogStoriesMenuItemsOffset() {
+        return (isArchive() || shouldUseDrawerActionBarLayout()) ? dp(68) : dpf2(16.66f);
+    }
+
+    public boolean canOpenDrawer() {
+        if (!LumineDrawer.enabled() || onlySelect || folderId != 0 || communityId != 0
+                || initialDialogsType != DIALOGS_TYPE_DEFAULT || searching
+                || (actionBar != null && actionBar.isActionModeShowed())
+                || animatorSearchVisible.getValue() || searchAnimator != null
+                || (rightSlidingDialogContainer != null && (rightSlidingDialogContainer.hasFragment() || rightFragmentTransitionInProgress))
+                || tabsAnimationInProgress || startedTracking || maybeStartTracking) {
+            return false;
+        }
+        return filterTabsView == null || (!filterTabsView.isEditing() && !filterTabsView.isAnimatingIndicator());
+    }
+
+    public boolean canOpenDrawerBySwipe(MotionEvent ev) {
+        final boolean bottomBarVisible = hasMainTabs && LumineTabs.displayMode() != LumineTabs.DISPLAY_HIDE && mainTabsScrollHideProgress < 1f;
+        if (ev != null && bottomBarVisible && fragmentView != null) {
+            final Rect bounds = AndroidUtilities.rectTmp2;
+            if (fragmentView.getGlobalVisibleRect(bounds)) {
+                final int y = ((int) ev.getRawY()) - bounds.top;
+                final int bottom = fragmentView.getMeasuredHeight() - navigationBarHeight;
+                if (y >= bottom - dp(MAIN_TABS_HEIGHT_WITH_MARGINS) && y <= bottom) {
+                    return false;
+                }
+            }
+        }
+        return canOpenDrawer() && (filterTabsView == null || filterTabsView.getVisibility() != View.VISIBLE
+                || SharedConfig.getChatSwipeAction(currentAccount) != SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS
+                || filterTabsView.getCurrentTabId() == filterTabsView.getFirstTabId());
+    }
+
+    private void updateDrawerButton() {
+        if (dialogStoriesCell != null) {
+            dialogStoriesCell.setMenuItemsOffset(getDialogStoriesMenuItemsOffset());
+        }
+        if (actionBar == null || onlySelect || initialDialogsType != DIALOGS_TYPE_DEFAULT || folderId != 0 || communityId != 0 || searchString != null) {
+            return;
+        }
+        if (LumineDrawer.enabled()) {
+            if (menuDrawable == null) {
+                menuDrawable = new MenuDrawable();
+                menuDrawable.setRotateToBack(false);
+            }
+            actionBar.setBackButtonDrawable(menuDrawable);
+            actionBar.setBackButtonContentDescription(getString(R.string.AccDescrOpenMenu));
+        } else {
+            if (actionBar.getBackButton() != null && actionBar.getBackButton().getDrawable() instanceof MenuDrawable) {
+                actionBar.setBackButtonDrawable(null);
+            }
+            menuDrawable = null;
+        }
+        checkUi_itemOptionsVisibility();
+        checkUi_itemBackButtonVisibility();
+    }
+
     private void checkUi_itemBackButtonVisibility() {
         if (actionBar == null) {
             return;
@@ -14158,7 +14253,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         final float factor1 = 1f - animatorSearchVisible.getFloatValue();
         final float factor2 = 1f - getRightSlidingProgress();
         final float factor3 = 1f - animatorDoneButtonVisible.getFloatValue();
-        final float factor = factor1 * factor2 * factor3;
+        final float factor4 = LumineDrawer.enabled() && shouldUseDrawerActionBarLayout() ? 0f : 1f;
+        final float factor = factor1 * factor2 * factor3 * factor4;
         FragmentFloatingButton.setAnimatedVisibility(optionsItem, factor);
     }
 

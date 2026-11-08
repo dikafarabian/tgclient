@@ -40,6 +40,7 @@ public class LumineAppearancePage extends ScrollView {
         addView(list, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         LinearLayout interfaceCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineInterface));
+        LumineIconRow.add(context, interfaceCard, R.drawable.lumine_drawer, LumineStrings.get(R.string.LumineDrawerTitle), null, v -> fragment.presentFragment(new LumineDrawerActivity()));
         LumineIconRow.add(context, interfaceCard, R.drawable.tabs_reorder, LumineStrings.get(R.string.LumineTabsTitle), null, v -> fragment.presentFragment(new LumineTabsActivity()));
 
         LinearLayout card = LumineCards.card(context, list, LumineStrings.get(R.string.LumineMd3Title));

@@ -107,4 +107,12 @@
     <string name="LumineCrashCopy">Copy</string>
     <string name="LumineCrashClose">Close</string>
     <string name="LumineCrashCopied">Report copied</string>
+    <string name="LumineDrawerTitle">Drawer</string>
+    <string name="LumineDrawerEnable">Navigation drawer</string>
+    <string name="LumineDrawerEnableInfo">Replaces the \u22ee menu with a burger button and a side menu. Swipe from the left edge of the chat list to open it.</string>
+    <string name="LumineDrawerImmersive">Immersive animation</string>
+    <string name="LumineDrawerGhostEnable">Enable Ghost Mode</string>
+    <string name="LumineDrawerGhostDisable">Disable Ghost Mode</string>
+    <string name="LumineDrawerGhostEnabled">Ghost Mode enabled</string>
+    <string name="LumineDrawerGhostDisabled">Ghost Mode disabled</string>
 </resources>

@@ -545,6 +545,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         setupActionBarLayout();
         drawerLayoutContainer.setParentActionBarLayout(actionBarLayout);
         actionBarLayout.setDrawerLayoutContainer(drawerLayoutContainer);
+        syncDrawerContainerEnabled();
         actionBarLayout.setFragmentStack(mainFragmentsStack);
         actionBarLayout.setFragmentStackChangedListener(() -> {
             checkSystemBarColors(true, false);
@@ -758,6 +759,14 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         }
                         if (!onBackPressed(true))
                             return;
+                        if (drawerPredictiveBackStarted && drawerLayoutContainer != null && drawerLayoutContainer.getDrawerContainer() != null) {
+                            drawerLayoutContainer.getDrawerContainer().commitPredictiveBack();
+                            drawerPredictiveBackStarted = false;
+                            return;
+                        }
+                        if (closeDrawerOnBack()) {
+                            return;
+                        }
                         if (actionBarLayout != null) {
                             actionBarLayout.onBackInvoked();
                         } else {
@@ -770,11 +779,17 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         started = true;
                         invoked = false;
                         predictiveBackStarted = false;
+                        drawerPredictiveBackStarted = false;
                     }
 
                     private void onBackStartedInternal(BackEvent backEvent) {
                         if (AndroidUtilities.isTablet()) return;
                         if (!onBackPressed(false)) return;
+                        if (drawerLayoutContainer != null && drawerLayoutContainer.getDrawerContainer() != null
+                                && drawerLayoutContainer.getDrawerContainer().startPredictiveBack()) {
+                            drawerPredictiveBackStarted = true;
+                            return;
+                        }
                         if (actionBarLayout != null) {
                             boolean started = actionBarLayout.onBackStarted(backEvent.getTouchX(), backEvent.getTouchY());
                             if (started && !locked) {
@@ -786,6 +801,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
                     private static final float LAZY_START = 0.015f;
                     private boolean predictiveBackStarted;
+                    private boolean drawerPredictiveBackStarted;
                     private boolean predictiveBackInvoked;
 
                     @Override
@@ -801,6 +817,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         final float fixedProgress = Math.max(0, progress - LAZY_START) / (1 - LAZY_START);
 
                         if (AndroidUtilities.isTablet()) return;
+                        if (drawerPredictiveBackStarted && drawerLayoutContainer != null && drawerLayoutContainer.getDrawerContainer() != null) {
+                            drawerLayoutContainer.getDrawerContainer().updatePredictiveBackProgress(fixedProgress);
+                            return;
+                        }
                         if (actionBarLayout != null) {
                             actionBarLayout.onBackProgress(fixedProgress);
                         }
@@ -816,6 +836,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         }
 
                         if (AndroidUtilities.isTablet()) return;
+                        if (drawerPredictiveBackStarted && drawerLayoutContainer != null && drawerLayoutContainer.getDrawerContainer() != null) {
+                            drawerLayoutContainer.getDrawerContainer().cancelPredictiveBack();
+                            drawerPredictiveBackStarted = false;
+                            return;
+                        }
                         if (actionBarLayout != null) {
                             actionBarLayout.onBackCancelled();
                         }
@@ -837,6 +862,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         }
                         if (!onBackPressed(true))
                             return;
+                        if (closeDrawerOnBack()) {
+                            return;
+                        }
                         if (actionBarLayout != null) {
                             actionBarLayout.onBackInvoked();
                         } else {
@@ -1237,7 +1265,33 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         updateCurrentConnectionState(currentAccount);
 
+        if (drawerLayoutContainer != null && drawerLayoutContainer.getDrawerContainer() != null) {
+            drawerLayoutContainer.getDrawerContainer().onAccountChanged();
+        }
+
         switchingAccount = false;
+    }
+
+    public void syncDrawerContainerEnabled() {
+        if (drawerLayoutContainer == null) {
+            return;
+        }
+        if (app.lumine.drawer.LumineDrawer.enabled()) {
+            if (drawerLayoutContainer.getDrawerContainer() == null) {
+                drawerLayoutContainer.setDrawerContainer(new app.lumine.drawer.LumineDrawerContainer(this));
+            }
+        } else if (drawerLayoutContainer.getDrawerContainer() != null) {
+            drawerLayoutContainer.setDrawerContainer(null);
+        }
+    }
+
+    private boolean closeDrawerOnBack() {
+        final app.lumine.drawer.LumineDrawerContainer drawer = drawerLayoutContainer != null ? drawerLayoutContainer.getDrawerContainer() : null;
+        if (drawer != null && drawer.isDrawerOpen()) {
+            drawer.closeDrawer(true);
+            return true;
+        }
+        return false;
     }
 
     private void switchToAvailableAccountOrLogout() {
@@ -8431,6 +8485,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     @Override
     public void onBackPressed() {
         if (!onBackPressed(true)) {
+            return;
+        }
+        if (closeDrawerOnBack()) {
             return;
         }
         if (AndroidUtilities.isTablet()) {
