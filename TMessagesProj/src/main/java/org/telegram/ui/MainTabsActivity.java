@@ -391,7 +391,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
         contentView.addView(fadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM));
 
-        tabsViewWrapper = new FrameLayout(context);
+        tabsViewWrapper = new FrameLayout(context) {
+            @Override
+            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+                super.onLayout(changed, l, t, r, b);
+                layoutSearchGroup(r - l);
+            }
+        };
         tabsViewWrapper.setOnClickListener(v -> {});
         tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
         tabsViewWrapper.setClipToPadding(false);
@@ -1135,6 +1141,24 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
     private ArrayList<LumineTabs.Type> shownTypes = new ArrayList<>();
     private final LumineTabs.Listener lumineTabsListener = this::rebuildTabs;
+
+    private void layoutSearchGroup(int width) {
+        if (searchButton == null || tabsView == null || !searchButtonShown() || tabsView.getVisibility() == View.GONE) {
+            return;
+        }
+        final int barWidth = tabsView.getMeasuredWidth();
+        final int buttonWidth = searchButton.getMeasuredWidth();
+        final int barInset = dp(DialogsActivity.MAIN_TABS_MARGIN - 0.334f);
+        final int buttonInset = dp(0.334f);
+        final int gap = dp(3);
+        final int visibleBar = barWidth - barInset * 2;
+        final int visibleButton = buttonWidth - buttonInset * 2;
+        final int groupLeft = (width - (visibleBar + gap + visibleButton)) / 2;
+        final int barLeft = groupLeft - barInset;
+        final int buttonLeft = groupLeft + visibleBar + gap - buttonInset;
+        tabsView.layout(barLeft, tabsView.getTop(), barLeft + barWidth, tabsView.getBottom());
+        searchButton.layout(buttonLeft, searchButton.getTop(), buttonLeft + buttonWidth, searchButton.getBottom());
+    }
 
     private boolean searchButtonShown() {
         return LumineTabs.searchButton();
