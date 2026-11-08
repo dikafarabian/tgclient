@@ -92,6 +92,8 @@ MARKERS=(
 "$J/org/telegram/ui/SettingsActivity.java|app.lumine.md3.LumineListItems.tonalBackground"
 "$J/org/telegram/messenger/LocaleController.java|app.lumine.stealth.LumineStealth.relativeLastSeen"
 "$J/org/telegram/ui/ProfileActivity.java|shortStatus ? new boolean[1] : null, true)"
+"$J/org/telegram/ui/Cells/ProfileSearchCell.java|app.lumine.stealth.LumineStealth.hidePhone"
+"$J/org/telegram/ui/SettingsActivity.java|app.lumine.stealth.LumineStealth.hidePhone"
 "$J/org/telegram/ui/Components/ChatAvatarContainer.java|statusMadeShorter : null, true)"
 "$J/org/telegram/messenger/AndroidUtilities.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/ActionBar/Theme.java|app.lumine.md3.LumineListItems"

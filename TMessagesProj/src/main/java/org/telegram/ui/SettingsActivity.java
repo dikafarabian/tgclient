@@ -552,12 +552,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         avatarView.setForUserOrChat(user, avatarDrawable);
         titleView.setText(UserObject.getUserName(user));
         final StringBuilder sb = new StringBuilder();
-        if (user != null) {
+        final boolean hidePhone = app.lumine.stealth.LumineStealth.hidePhone();
+        if (!hidePhone && user != null) {
             sb.append(PhoneFormat.getInstance().format("+" + user.phone));
         }
         final String username = UserObject.getPublicUsername(user);
         if (username != null) {
-            sb.append(" • @").append(username);
+            sb.append(hidePhone ? "@" : " • @").append(username);
         }
         subtitleView.setText(sb);
 

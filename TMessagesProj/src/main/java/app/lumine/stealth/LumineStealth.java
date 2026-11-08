@@ -9,6 +9,7 @@ import app.lumine.LumineConfig;
 public final class LumineStealth {
 
     public static final String KEY_RELATIVE_LAST_SEEN = "LumineRelativeLastSeen";
+    public static final String KEY_HIDE_PHONE = "LumineHidePhone";
 
     private LumineStealth() {
     }
@@ -19,5 +20,13 @@ public final class LumineStealth {
 
     public static void setRelativeLastSeen(boolean enabled) {
         LumineConfig.setBoolean(KEY_RELATIVE_LAST_SEEN, enabled);
+    }
+
+    public static boolean hidePhone() {
+        return LumineConfig.getBoolean(KEY_HIDE_PHONE, false);
+    }
+
+    public static void setHidePhone(boolean enabled) {
+        LumineConfig.setBoolean(KEY_HIDE_PHONE, enabled);
     }
 }
