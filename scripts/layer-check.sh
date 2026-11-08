@@ -38,6 +38,8 @@ OWN_FILES=(
 "$J/app/lumine/settings/LumineIconRow.java"
 "$J/app/lumine/stealth/LumineStealth.java"
 "$J/app/lumine/stealth/LumineIdDc.java"
+"$J/app/lumine/drawer/LumineDrawer.java"
+"$J/app/lumine/drawer/LumineDrawerItem.java"
 "$J/app/lumine/ghost/LumineGhost.java"
 "$J/app/lumine/ghost/LumineGhostRequests.java"
 "$J/app/lumine/ghost/LumineGhostStory.java"
