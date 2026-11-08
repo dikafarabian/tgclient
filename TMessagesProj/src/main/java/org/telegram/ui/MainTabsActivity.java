@@ -320,6 +320,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
     @Override
     public View createView(Context context) {
+        searchButton = null;
+        searchButtonBackground = null;
+        searchButtonIcon = null;
         super.createView(context);
         tabletLayout = false;
 
@@ -1170,6 +1173,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         }
         final boolean show = searchButtonShown();
         final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) tabsView.getLayoutParams();
+        if (lp == null) {
+            return;
+        }
         final int margin = show ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN / 2f) : 0;
         if (lp.rightMargin != margin) {
             lp.rightMargin = margin;
