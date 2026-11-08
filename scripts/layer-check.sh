@@ -83,6 +83,8 @@ MARKERS=(
 "$J/org/telegram/ui/SettingsActivity.java|R.drawable.lumine_settings_sparkle"
 "$J/org/telegram/ui/SettingsActivity.java|LumineStrings.get(R.string.LumineSettings)"
 "$J/org/telegram/messenger/AndroidUtilities.java|BuildVars.BUILD_COMMIT"
+"$J/org/telegram/tgnet/ConnectionsManager.java|LumineGhostRequests.blocks"
+"$J/org/telegram/tgnet/ConnectionsManager.java|LumineGhostRequests.wrap"
 "$J/org/telegram/messenger/ApplicationLoader.java|BuildVars.BUILD_COMMIT"
 "$J/org/telegram/ui/IntroActivity.java|paint.setColor(0xFFFFFFFF);"
 "$J/org/telegram/ui/Components/Switch.java|app.lumine.md3.LumineSwitchDraw.draw"

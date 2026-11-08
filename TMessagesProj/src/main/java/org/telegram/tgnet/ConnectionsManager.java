@@ -395,10 +395,14 @@ public class ConnectionsManager extends BaseController {
         return requestToken;
     }
 
-    private void sendRequestInternal(TLObject object, RequestDelegate onComplete, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
+    private void sendRequestInternal(TLObject object, RequestDelegate onCompleteOrig, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);
         }
+        if (app.lumine.ghost.LumineGhostRequests.blocks(object, onCompleteOrig)) {
+            return;
+        }
+        final RequestDelegate onComplete = app.lumine.ghost.LumineGhostRequests.wrap(currentAccount, object, onCompleteOrig);
         try {
             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
             object.serializeToStream(buffer);

@@ -56,10 +56,12 @@ public final class LumineGhostRequests {
             }
         }
         if (LumineGhost.get(LumineGhost.OFFLINE_AFTER_SEND) && isOnlineRequest(object)) {
+            if (onComplete == null) {
+                Utilities.globalQueue.postRunnable(() -> sendStatus(account, true), OFFLINE_DELAY_MS);
+                return null;
+            }
             return (response, error) -> {
-                if (onComplete != null) {
-                    Utilities.stageQueue.postRunnable(() -> onComplete.run(response, error));
-                }
+                Utilities.stageQueue.postRunnable(() -> onComplete.run(response, error));
                 Utilities.globalQueue.postRunnable(() -> sendStatus(account, true), OFFLINE_DELAY_MS);
             };
         }
