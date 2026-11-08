@@ -95,7 +95,7 @@ public class LumineSettingsActivity extends BaseFragment {
             return generalPage;
         }
         if (index == TAB_APPEARANCE) {
-            return new LumineAppearancePage(context);
+            return new LumineAppearancePage(context, this);
         }
         return new LumineComingSoonPage(context);
     }

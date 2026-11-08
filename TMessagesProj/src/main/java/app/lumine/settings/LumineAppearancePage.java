@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import app.lumine.LumineStrings;
 import app.lumine.md3.LumineMd3;
 import org.telegram.messenger.R;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.SeekBarView;
 import org.telegram.ui.Components.Switch;
@@ -28,7 +29,7 @@ public class LumineAppearancePage extends ScrollView {
     private final Switch listToggle;
     private final SeekBarView sliderPreview;
 
-    public LumineAppearancePage(Context context) {
+    public LumineAppearancePage(Context context, BaseFragment fragment) {
         super(context);
         setVerticalScrollBarEnabled(false);
         setClipToPadding(false);
@@ -37,6 +38,9 @@ public class LumineAppearancePage extends ScrollView {
         list.setOrientation(LinearLayout.VERTICAL);
         list.setPadding(dp(12), dp(12), dp(12), dp(12));
         addView(list, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
+        LinearLayout interfaceCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineInterface));
+        LumineIconRow.add(context, interfaceCard, R.drawable.tabs_reorder, LumineStrings.get(R.string.LumineTabsTitle), null, v -> fragment.presentFragment(new LumineTabsActivity()));
 
         LinearLayout card = LumineCards.card(context, list, LumineStrings.get(R.string.LumineMd3Title));
 
