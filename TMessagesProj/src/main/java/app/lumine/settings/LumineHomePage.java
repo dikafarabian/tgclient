@@ -16,6 +16,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import androidx.core.graphics.ColorUtils;
 
 import app.lumine.LumineStrings;
+import app.lumine.ghost.LumineGhost;
 import app.lumine.md3.LumineMd3;
 import app.lumine.md3.LumineTonalCard;
 import app.lumine.push.PushConfig;
@@ -67,6 +69,13 @@ public class LumineHomePage extends ScrollView {
     private TextView notificationService;
     private TextView notificationState;
 
+    private LumineTonalCard ghostTile;
+    private GradientDrawable ghostIconBackground;
+    private ImageView ghostIcon;
+    private TextView ghostCount;
+    private TextView ghostTitle;
+    private TextView ghostChip;
+
     private LumineTonalCard accountTile;
     private GradientDrawable accountIconBackground;
     private ImageView accountIcon;
@@ -74,7 +83,7 @@ public class LumineHomePage extends ScrollView {
     private TextView accountName;
     private TextView accountConnection;
 
-    public LumineHomePage(Context context, int account, Runnable onNotification) {
+    public LumineHomePage(Context context, int account, Runnable onNotification, Runnable onGhost) {
         super(context);
         this.account = account;
         setVerticalScrollBarEnabled(false);
@@ -131,6 +140,40 @@ public class LumineHomePage extends ScrollView {
         LinearLayout.LayoutParams accountParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
         accountParams.leftMargin = dp(LumineMd3.GAP_DP) / 2;
         tiles.addView(accountTile, accountParams);
+
+        ghostTile = new LumineTonalCard(context, LumineMd3.TILE_RADIUS_DP, 0);
+        ghostTile.setMinimumHeight(dp(LumineMd3.TILE_MIN_HEIGHT_DP));
+        ghostTile.setClickable(true);
+        ghostTile.setOnClickListener(v -> onGhost.run());
+        LinearLayout ghostContent = tileContent(context);
+        LinearLayout ghostTop = new LinearLayout(context);
+        ghostTop.setOrientation(LinearLayout.HORIZONTAL);
+        ghostTop.setGravity(Gravity.CENTER_VERTICAL);
+        FrameLayout ghostIconFrame = iconFrame(context, LumineMd3.TILE_ICON_DP, 20, R.drawable.lumine_tab_stealth);
+        ghostIconBackground = (GradientDrawable) ghostIconFrame.getBackground();
+        ghostIcon = (ImageView) ghostIconFrame.getChildAt(0);
+        ghostTop.addView(ghostIconFrame, new LinearLayout.LayoutParams(dp(LumineMd3.TILE_ICON_DP), dp(LumineMd3.TILE_ICON_DP)));
+        ghostTop.addView(new View(context), new LinearLayout.LayoutParams(0, 1, 1f));
+        ghostCount = tileText(context, 28, true);
+        ghostCount.setGravity(Gravity.END);
+        ghostTop.addView(ghostCount, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        ghostContent.addView(ghostTop, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        ghostTitle = tileText(context, 15, true);
+        ghostTitle.setText(LumineStrings.get(R.string.LumineGhostMode));
+        ghostContent.addView(ghostTitle, tileTextParams(10));
+        ghostChip = new TextView(context);
+        ghostChip.setTextSize(12);
+        ghostChip.setSingleLine(true);
+        ghostChip.setGravity(Gravity.CENTER);
+        ghostChip.setPadding(dp(12), 0, dp(12), 0);
+        ghostChip.setTypeface(AndroidUtilities.bold());
+        LinearLayout.LayoutParams ghostChipParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(28));
+        ghostChipParams.topMargin = dp(6);
+        ghostContent.addView(ghostChip, ghostChipParams);
+        ghostTile.addView(ghostContent, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams ghostParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        ghostParams.topMargin = dp(LumineMd3.GAP_DP);
+        list.addView(ghostTile, ghostParams);
 
         refresh();
     }
@@ -286,6 +329,7 @@ public class LumineHomePage extends ScrollView {
         refreshHero(roles, health.level == BAD);
         refreshNotification(roles, health);
         refreshAccount(roles);
+        refreshGhost(roles);
     }
 
     private void refreshHero(LumineMd3.Roles roles, boolean problem) {
@@ -323,6 +367,21 @@ public class LumineHomePage extends ScrollView {
         notificationService.setText(PushStatus.typeName(PushConfig.type()));
         notificationState.setText(health.text);
         notificationState.setTextColor(stateColor(health.level, roles.onSurfaceVariant));
+    }
+
+    private void refreshGhost(LumineMd3.Roles roles) {
+        ghostTile.setCardColor(roles.surfaceContainer);
+        ghostIconBackground.setColor(roles.primaryContainer);
+        ghostIcon.setColorFilter(roles.onPrimaryContainer, PorterDuff.Mode.SRC_IN);
+        ghostTitle.setTextColor(roles.onSurface);
+        final int count = LumineGhost.selectedCount();
+        ghostCount.setText(String.valueOf(count));
+        ghostCount.setTextColor(roles.onSurface);
+        if (count > 0) {
+            setChip(ghostChip, str(R.string.LumineGhostActive), roles.primary, roles.primary);
+        } else {
+            setChip(ghostChip, str(R.string.LumineGhostOff), roles.onSurfaceVariant, roles.onSurfaceVariant);
+        }
     }
 
     private void refreshAccount(LumineMd3.Roles roles) {

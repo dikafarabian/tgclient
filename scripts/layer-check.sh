@@ -40,6 +40,8 @@ OWN_FILES=(
 "$J/app/lumine/stealth/LumineIdDc.java"
 "$J/app/lumine/ghost/LumineGhost.java"
 "$J/app/lumine/ghost/LumineGhostRequests.java"
+"$J/app/lumine/settings/LumineGhostActivity.java"
+"$J/app/lumine/settings/LumineStealthPage.java"
 "$APP/src/main/res/raw/lumine_keep.xml"
 "$R/values/lumine_strings.xml"
 "$R/drawable/lumine_settings_sparkle.xml"

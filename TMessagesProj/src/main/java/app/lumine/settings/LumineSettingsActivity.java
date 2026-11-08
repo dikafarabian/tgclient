@@ -27,6 +27,7 @@ public class LumineSettingsActivity extends BaseFragment {
     private LumineTabBar tabBar;
     private LumineHomePage homePage;
     private LumineGeneralPage generalPage;
+    private LumineStealthPage stealthPage;
     private final View[] pages = new View[TAB_COUNT];
     private int current = -1;
     private boolean resumed;
@@ -87,7 +88,7 @@ public class LumineSettingsActivity extends BaseFragment {
 
     private View createPage(Context context, int index) {
         if (index == TAB_HOME) {
-            homePage = new LumineHomePage(context, currentAccount, () -> presentFragment(new LumineNotificationActivity()));
+            homePage = new LumineHomePage(context, currentAccount, () -> presentFragment(new LumineNotificationActivity()), () -> presentFragment(new LumineGhostActivity()));
             return homePage;
         }
         if (index == TAB_GENERAL) {
@@ -96,6 +97,10 @@ public class LumineSettingsActivity extends BaseFragment {
         }
         if (index == TAB_APPEARANCE) {
             return new LumineAppearancePage(context, this);
+        }
+        if (index == TAB_STEALTH) {
+            stealthPage = new LumineStealthPage(context, this);
+            return stealthPage;
         }
         return new LumineComingSoonPage(context);
     }
@@ -119,6 +124,9 @@ public class LumineSettingsActivity extends BaseFragment {
         if (index == TAB_GENERAL && generalPage != null) {
             generalPage.refresh();
         }
+        if (index == TAB_STEALTH && stealthPage != null) {
+            stealthPage.refresh();
+        }
     }
 
     @Override
@@ -130,6 +138,9 @@ public class LumineSettingsActivity extends BaseFragment {
         }
         if (current == TAB_GENERAL && generalPage != null) {
             generalPage.refresh();
+        }
+        if (current == TAB_STEALTH && stealthPage != null) {
+            stealthPage.refresh();
         }
     }
 

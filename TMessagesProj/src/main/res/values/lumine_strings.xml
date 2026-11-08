@@ -83,4 +83,23 @@
     <string name="LumineTabForceChats">Always search in chats</string>
     <string name="LumineTabForceChatsInfo">The search button always opens search in Chats, even when another tab is open.</string>
     <string name="LumineTabsInfo">Tap a tab to show or hide it. Long-press and drag to reorder. Chats cannot be hidden.</string>
+    <string name="LumineGhostMode">Ghost Mode</string>
+    <string name="LumineGhostActiveFeatures">Active features</string>
+    <string name="LumineGhostPackets">Packets</string>
+    <string name="LumineGhostNoRead">Don\u2019t send read packets</string>
+    <string name="LumineGhostNoStories">Don\u2019t send story read packets</string>
+    <string name="LumineGhostNoOnline">Don\u2019t send online status</string>
+    <string name="LumineGhostNoTyping">Don\u2019t send typing and upload progress</string>
+    <string name="LumineGhostOfflineAfterSend">Go offline after sending</string>
+    <string name="LumineGhostLockInfo">Long-press an option to lock it. A locked option is not changed by the Ghost Mode switch.</string>
+    <string name="LumineGhostMarkReadAfterSend">Mark as read after sending</string>
+    <string name="LumineGhostMarkReadAfterSendInfo">When you send a message, that chat is marked as read even while read packets are off.</string>
+    <string name="LumineGhostActive">Active</string>
+    <string name="LumineGhostOff">Off</string>
+    <string name="LumineGhostAskStory">Ask before opening a story</string>
+    <string name="LumineGhostAskStoryInfo">Choose whether to open a story in ghost mode or normally. Works while story read packets are sent.</string>
+    <string name="LumineStealthGhost">Ghost</string>
+    <string name="LumineAskStoryTitle">Open story</string>
+    <string name="LumineAskStoryGhost">Open in ghost mode</string>
+    <string name="LumineAskStoryNormal">Open normally</string>
 </resources>
