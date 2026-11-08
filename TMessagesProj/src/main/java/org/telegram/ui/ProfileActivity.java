@@ -11443,7 +11443,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
             } else {
                 isOnline[0] = false;
-                newString2 = LocaleController.formatUserStatus(currentAccount, user, isOnline, shortStatus ? new boolean[1] : null);
+                newString2 = LocaleController.formatUserStatus(currentAccount, user, isOnline, shortStatus ? new boolean[1] : null, true);
                 hiddenStatusButton = user != null && !isOnline[0] && !getUserConfig().isPremium() && user.status != null && (user.status instanceof TLRPC.TL_userStatusRecently || user.status instanceof TLRPC.TL_userStatusLastMonth || user.status instanceof TLRPC.TL_userStatusLastWeek) && user.status.by_me;
                 if (onlineTextView[1] != null && !mediaHeaderVisible) {
                     int key = isOnline[0] && peerColor == null ? Theme.key_profile_status : Theme.key_actionBarDefaultSubtitle;

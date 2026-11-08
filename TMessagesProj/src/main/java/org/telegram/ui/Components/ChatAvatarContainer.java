@@ -1239,7 +1239,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                     newStatus = UserObject.getBotStatus(user);
                 } else {
                     isOnline[0] = false;
-                    newStatus = LocaleController.formatUserStatus(currentAccount, user, isOnline, allowShorterStatus ? statusMadeShorter : null);
+                    newStatus = LocaleController.formatUserStatus(currentAccount, user, isOnline, allowShorterStatus ? statusMadeShorter : null, true);
                     useOnlineColor = isOnline[0];
                 }
                 newSubtitle = newStatus;

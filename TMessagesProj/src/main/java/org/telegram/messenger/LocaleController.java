@@ -2598,7 +2598,17 @@ public class LocaleController {
     }
 
     public static String formatDateOnline(long date, boolean[] madeShorter) {
+        return formatDateOnline(date, madeShorter, false);
+    }
+
+    public static String formatDateOnline(long date, boolean[] madeShorter, boolean relative) {
         try {
+            if (relative && app.lumine.stealth.LumineStealth.relativeLastSeen()) {
+                final long diff = Math.max(0, System.currentTimeMillis() / 1000 - date);
+                if (diff < 24 * 60 * 60) {
+                    return formatString(R.string.LastSeenDateFormatted, formatRelativeDate(diff));
+                }
+            }
             date *= 1000;
             Calendar rightNow = Calendar.getInstance();
             int day = rightNow.get(Calendar.DAY_OF_YEAR);
@@ -2921,6 +2931,10 @@ public class LocaleController {
     }
 
     public static String formatUserStatus(int currentAccount, TLRPC.User user, boolean[] isOnline, boolean[] madeShorter) {
+        return formatUserStatus(currentAccount, user, isOnline, madeShorter, false);
+    }
+
+    public static String formatUserStatus(int currentAccount, TLRPC.User user, boolean[] isOnline, boolean[] madeShorter, boolean relative) {
         if (user != null && user.status != null && user.status.expires == 0) {
             if (user.status instanceof TLRPC.TL_userStatusRecently) {
                 user.status.expires = user.status.by_me ? -1000 : -100;
@@ -2957,7 +2971,7 @@ public class LocaleController {
                 } else if (user.status.expires == -102 || user.status.expires == -1002) {
                     return getString("WithinAMonth", R.string.WithinAMonth);
                 } else {
-                    return formatDateOnline(user.status.expires, madeShorter);
+                    return formatDateOnline(user.status.expires, madeShorter, relative);
                 }
             }
         }
