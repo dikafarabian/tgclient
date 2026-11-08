@@ -88,6 +88,7 @@ MARKERS=(
 "$J/org/telegram/ui/Cells/TextDetailSettingsCell.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Cells/TextSettingsCell.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/UniversalAdapter.java|app.lumine.md3.LumineListItems"
+"$J/org/telegram/ui/Components/UniversalAdapter.java|viewType == VIEW_TYPE_ANIMATED_HEADER) && app.lumine.md3.LumineListItems.enabled()"
 "$J/org/telegram/ui/Components/RecyclerListView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/UniversalRecyclerView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/RecyclerListView.java|isSegmentedHeader"

@@ -333,6 +333,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
 
     public boolean shouldApplyBackground(int viewType) {
         if (!applyBackground) return false;
+        if ((viewType == VIEW_TYPE_HEADER || viewType == VIEW_TYPE_ANIMATED_HEADER) && app.lumine.md3.LumineListItems.enabled() && listView != null && listView.hasSections()) return false;
         if (viewType >= UItem.factoryViewTypeStartsWith) {
             return true;
         }
