@@ -117,6 +117,8 @@ MARKERS=(
 "$J/org/telegram/ui/MainTabsActivity.java|LumineTabs.removeListener(lumineTabsListener)"
 "$J/org/telegram/ui/MainTabsActivity.java|LumineTabs.titlesVisible()"
 "$J/org/telegram/ui/Components/glass/GlassTabView.java|public void setTitleVisible"
+"$J/org/telegram/ui/MainTabsActivity.java|onSearchButtonClicked()"
+"$J/org/telegram/ui/DialogsActivity.java|app.lumine.tabs.LumineTabs.searchButton()"
 "$J/org/telegram/ui/DialogsActivity.java|app.lumine.tabs.LumineTabs.isEnabled"
 "$R/values/strings.xml|<string name=\"AppName\">luminegram</string>"
 "$R/values/strings.xml|<string name=\"AppNameBeta\">luminegram</string>"

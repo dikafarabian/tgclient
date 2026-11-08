@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -120,6 +123,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     private FrameLayout tabsViewWrapper;
     private MainTabsLayout tabsView;
     private BlurredBackgroundDrawable tabsViewBackground;
+    private BlurredBackgroundDrawable searchButtonBackground;
+    private FrameLayout searchButton;
+    private ImageView searchButtonIcon;
     private View fadeView;
 
     public MainTabsActivity() {
@@ -380,6 +386,25 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsViewWrapper.setOnClickListener(v -> {});
         tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
         tabsViewWrapper.setClipToPadding(false);
+        searchButton = new FrameLayout(context);
+        searchButtonBackground = iBlur3FactoryGlass.create(searchButton, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
+        searchButtonBackground.setRadius(dp(DialogsActivity.MAIN_TABS_HEIGHT / 2f));
+        searchButtonBackground.setPadding(dp(0.334f));
+        searchButton.setBackground(searchButtonBackground);
+        searchButtonIcon = new ImageView(context);
+        searchButtonIcon.setImageResource(R.drawable.outline_header_search);
+        searchButtonIcon.setScaleType(ImageView.ScaleType.CENTER);
+        searchButtonIcon.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_tabUnselected), PorterDuff.Mode.SRC_IN));
+        searchButton.addView(searchButtonIcon, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        searchButton.setContentDescription(getString(R.string.Search));
+        searchButton.setOnClickListener(v -> onSearchButtonClicked());
+        searchButton.setOnLongClickListener(v -> {
+            final Bundle args = new Bundle();
+            args.putLong("user_id", getUserConfig().getClientUserId());
+            presentFragment(new ChatActivity(args));
+            return true;
+        });
+        tabsViewWrapper.addView(searchButton, LayoutHelper.createFrame(DialogsActivity.MAIN_TABS_HEIGHT, DialogsActivity.MAIN_TABS_HEIGHT, Gravity.BOTTOM | Gravity.END, 0, 0, DialogsActivity.MAIN_TABS_MARGIN, DialogsActivity.MAIN_TABS_MARGIN));
         contentView.addView(tabsViewWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
 
         updateLayoutWrapper = new UpdateLayoutWrapper(context);
@@ -391,6 +416,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         }
 
         updateLayout();
+        updateSearchButton();
         checkUnreadCount(false);
         return contentView;
     }
@@ -871,6 +897,14 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         default BlurredBackgroundSourceRenderNode getGlassSource() {
             return null;
         }
+
+        default boolean hasSearch() {
+            return false;
+        }
+
+        default void onSearchButtonClicked() {
+
+        }
     }
 
     @Override
@@ -1070,10 +1104,55 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsView.setEnabled(factor > 1);
         tabsView.setAlpha(factor);
         tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
+        if (searchButton != null) {
+            searchButton.setAlpha(factor);
+            searchButton.setVisibility(factor > 0 && searchButtonShown() ? View.VISIBLE : View.GONE);
+        }
     }
 
     private ArrayList<LumineTabs.Type> shownTypes = new ArrayList<>();
     private final LumineTabs.Listener lumineTabsListener = this::rebuildTabs;
+
+    private boolean searchButtonShown() {
+        return LumineTabs.searchButton();
+    }
+
+    private void updateSearchButton() {
+        if (tabsView == null || searchButton == null) {
+            return;
+        }
+        final boolean show = searchButtonShown();
+        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) tabsView.getLayoutParams();
+        final int margin = show ? dp(DialogsActivity.MAIN_TABS_HEIGHT + DialogsActivity.MAIN_TABS_MARGIN / 2f) : 0;
+        if (lp.rightMargin != margin) {
+            lp.rightMargin = margin;
+            tabsView.setLayoutParams(lp);
+        }
+        checkUi_tabsPosition();
+        if (dialogsActivity != null) {
+            dialogsActivity.updateSearchItemVisibility();
+        }
+    }
+
+    private void onSearchButtonClicked() {
+        if (!LumineTabs.forceOpenChats()) {
+            final BaseFragment fragment = getCurrentVisibleFragment();
+            if (fragment instanceof TabFragmentDelegate) {
+                final TabFragmentDelegate delegate = (TabFragmentDelegate) fragment;
+                if (delegate.hasSearch()) {
+                    delegate.onSearchButtonClicked();
+                    return;
+                }
+            }
+        }
+        final int chats = positionChats();
+        if (chats >= 0 && viewPager != null) {
+            viewPager.scrollToPosition(chats);
+            if (dialogsActivity != null) {
+                dialogsActivity.onSearchButtonClicked();
+            }
+        }
+    }
 
     private void layoutTabs(boolean animated) {
         if (tabsView == null) {
@@ -1096,6 +1175,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         for (GlassTabView tab : tabs) {
             tab.setTitleVisible(LumineTabs.titlesVisible());
         }
+        updateSearchButton();
         tabsView.setMaxWidth(dp(Math.max(328, 82 * LumineTabs.count()) + DialogsActivity.MAIN_TABS_MARGIN * 2));
         shownTypes = LumineTabs.getEnabled();
     }
@@ -1249,6 +1329,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
 
     private void blur3_updateColors() {
         blur3_updateFadeColors();
+        if (searchButtonBackground != null) {
+            searchButtonBackground.updateColors();
+            searchButtonIcon.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_tabUnselected), PorterDuff.Mode.SRC_IN));
+        }
         if (tabsViewBackground != null) {
             tabsViewBackground.updateColors();
         }

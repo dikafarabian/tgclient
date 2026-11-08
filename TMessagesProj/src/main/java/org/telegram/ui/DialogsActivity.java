@@ -14170,12 +14170,32 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         FragmentFloatingButton.setAnimatedVisibility(speedItem, factor);
     }
 
+    public void updateSearchItemVisibility() {
+        checkUi_itemSearchVisibility();
+    }
+
+    public void onSearchButtonClicked() {
+        showSearch(true, false, true);
+        fragmentSearchFieldWatcher.toggleSearch(true);
+        AndroidUtilities.runOnUIThread(() -> {
+            if (fragmentSearchField != null && fragmentSearchField.editText != null) {
+                fragmentSearchField.editText.requestFocus();
+                AndroidUtilities.showKeyboard(fragmentSearchField.editText);
+            }
+        }, 100);
+    }
+
+    @Override
+    public boolean hasSearch() {
+        return true;
+    }
+
     private void checkUi_itemSearchVisibility() {
         final float factor0 = isSupportSearch() ? 1 : 0;
         final float factor1 = animatorSearchButtonVisible.getFloatValue();
         final float factor2 = 1f - getRightSlidingProgress();
         final float factor3 = 1f - animatorDoneButtonVisible.getFloatValue();
-        final float factor = factor0 * factor1 * factor2 * factor3;
+        final float factor = hasMainTabs && app.lumine.tabs.LumineTabs.searchButton() ? 0 : factor0 * factor1 * factor2 * factor3;
         FragmentFloatingButton.setAnimatedVisibility(searchItem, factor);
         if (dialogStoriesCell != null) {
             dialogStoriesCell.invalidate();
