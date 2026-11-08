@@ -98,6 +98,7 @@ MARKERS=(
 "$J/org/telegram/ui/ProfileActivity.java|app.lumine.stealth.LumineIdDc.enabled"
 "$J/org/telegram/ui/ProfileActivity.java|app.lumine.stealth.LumineIdDc.showSheet"
 "$J/org/telegram/ui/ProfileActivity.java|app.lumine.stealth.LumineIdDc.idText"
+"$J/org/telegram/ui/ProfileActivity.java|put(++pointer, idDcRow, sparseIntArray);"
 "$J/org/telegram/ui/Cells/ProfileSearchCell.java|app.lumine.stealth.LumineStealth.hidePhone"
 "$J/org/telegram/ui/SettingsActivity.java|app.lumine.stealth.LumineStealth.hidePhone"
 "$J/org/telegram/ui/Components/ChatAvatarContainer.java|statusMadeShorter : null, true)"
