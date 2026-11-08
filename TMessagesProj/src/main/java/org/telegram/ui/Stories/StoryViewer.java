@@ -163,6 +163,8 @@ public class StoryViewer implements NotificationCenter.NotificationCenterDelegat
     boolean inSeekingMode;
     boolean allowSwipeToReply;
     boolean isShowing;
+    private boolean storyAskPassed;
+    private boolean ownsStoryGhostSession;
     public StoriesViewPager storiesViewPager;
     float pointPosition[] = new float[2];
 
@@ -375,6 +377,24 @@ public class StoryViewer implements NotificationCenter.NotificationCenterDelegat
     public void open(int account, Context context, TL_stories.StoryItem storyItem, ArrayList<Long> peerIds, int position, StoriesController.StoriesList storiesList, TL_stories.PeerStories userStories, PlaceProvider placeProvider, boolean reversed) {
         if (!isContextSafe(context)) {
             doOnAnimationReadyRunnables.clear();
+            return;
+        }
+        if (!storyAskPassed && !isShowing && app.lumine.ghost.LumineGhostStory.shouldAsk(account, storyItem, peerIds, position)) {
+            app.lumine.ghost.LumineGhostStory.ask(context, ghost -> {
+                if (ghost) {
+                    ownsStoryGhostSession = true;
+                    app.lumine.ghost.LumineGhost.storyGhostSession = true;
+                }
+                storyAskPassed = true;
+                try {
+                    open(account, context, storyItem, peerIds, position, storiesList, userStories, placeProvider, reversed);
+                } finally {
+                    storyAskPassed = false;
+                }
+                if (!isShowing) {
+                    releaseStoryGhostSession();
+                }
+            }, doOnAnimationReadyRunnables::clear);
             return;
         }
         if (openCloseAnimator != null) {
@@ -2663,8 +2683,16 @@ public class StoryViewer implements NotificationCenter.NotificationCenterDelegat
 
         globalInstances.remove(this);
         doOnAnimationReadyRunnables.clear();
+        releaseStoryGhostSession();
         selfStoriesViewsOffset = 0;
         lastStoryItem = null;
+    }
+
+    private void releaseStoryGhostSession() {
+        if (ownsStoryGhostSession) {
+            ownsStoryGhostSession = false;
+            app.lumine.ghost.LumineGhost.storyGhostSession = false;
+        }
     }
 
     public void close(boolean backAnimation) {
