@@ -97,9 +97,6 @@ public class LumineSettingsActivity extends BaseFragment {
         if (index == TAB_APPEARANCE) {
             return new LumineAppearancePage(context);
         }
-        if (index == TAB_STEALTH) {
-            return new LumineStealthPage(context);
-        }
         return new LumineComingSoonPage(context);
     }
 
