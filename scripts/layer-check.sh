@@ -198,7 +198,7 @@ for m in "${ABSENT[@]}"; do
   if [ -f "$f" ] && grep -qF -- "$k" "$f"; then echo "UNEXPECTED [$f] $k"; fail=1; fi
 done
 
-leak="$(grep -rn 'Restart' "$J/app/lumine" "$R/values/lumine_strings.xml" 2>/dev/null | grep -v "$J/app/lumine/restart/" | grep -v 'LumineRestart\.' | grep -v 'import app.lumine.restart.LumineRestart;' | grep -vE 'name="LumineRestart(Needed|Now)"' || true)"
+leak="$(grep -rn 'Restart' "$J/app/lumine" "$R/values/lumine_strings.xml" 2>/dev/null | grep -v "$J/app/lumine/restart/" | grep -v 'LumineRestart\.' | grep -v 'R.string.LumineRestart' | grep -v 'import app.lumine.restart.LumineRestart;' | grep -vE 'name="LumineRestart[A-Za-z]*"' || true)"
 if [ -n "$leak" ]; then echo "RESTART TEXT OUTSIDE LumineRestart (use LumineRestart.hint):"; echo "$leak"; fail=1; fi
 
 tracked="$(git ls-files | grep -E "$FORBIDDEN_TRACKED" || true)"

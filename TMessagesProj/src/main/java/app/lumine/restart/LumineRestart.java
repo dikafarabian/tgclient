@@ -12,7 +12,9 @@ import android.os.Process;
 
 import androidx.annotation.Nullable;
 
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.LaunchActivity;
@@ -38,6 +40,19 @@ public final class LumineRestart {
                 LumineStrings.get(R.string.LumineRestartNow),
                 () -> restart(activity)
         ).show();
+    }
+
+    public static void confirm(@Nullable BaseFragment fragment) {
+        if (fragment == null || fragment.getParentActivity() == null) {
+            return;
+        }
+        final Activity activity = fragment.getParentActivity();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(LumineStrings.get(R.string.LumineRestartApp));
+        builder.setMessage(LumineStrings.get(R.string.LumineRestartConfirm));
+        builder.setPositiveButton(LumineStrings.get(R.string.LumineRestartNow), (dialog, which) -> restart(activity));
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+        fragment.showDialog(builder.create());
     }
 
     public static void restart(Context context) {

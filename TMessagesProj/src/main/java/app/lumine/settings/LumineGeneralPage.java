@@ -13,6 +13,7 @@ import android.widget.ScrollView;
 import app.lumine.LumineStrings;
 import app.lumine.push.PushConfig;
 import app.lumine.push.PushStatus;
+import app.lumine.restart.LumineRestart;
 import app.lumine.stealth.LumineStealth;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -62,6 +63,9 @@ public class LumineGeneralPage extends ScrollView {
             builder.show();
         });
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineShowIdAndDcInfo));
+
+        LinearLayout restart = LumineCards.card(context, list, null);
+        LumineCards.row(context, restart, LumineStrings.get(R.string.LumineRestartApp), v -> LumineRestart.confirm(fragment));
 
         refresh();
     }
