@@ -48,6 +48,7 @@ OWN_FILES=(
 "$J/app/lumine/icons/LumineIconStorage.java"
 "$J/app/lumine/icons/LumineIconManager.java"
 "$J/app/lumine/icons/LumineIconResources.java"
+"$J/app/lumine/settings/LumineIconPacksActivity.java"
 "$J/app/lumine/settings/LumineIconRow.java"
 "$J/app/lumine/stealth/LumineStealth.java"
 "$J/app/lumine/stealth/LumineIdDc.java"

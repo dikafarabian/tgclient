@@ -38,6 +38,7 @@ public class LumineAppearancePage extends LinearLayout {
         LumineIconRow.add(context, interfaceCard, R.drawable.lumine_drawer, LumineStrings.get(R.string.LumineDrawerTitle), null, v -> fragment.presentFragment(new LumineDrawerActivity()));
         LumineIconRow.add(context, interfaceCard, R.drawable.tabs_reorder, LumineStrings.get(R.string.LumineTabsTitle), null, v -> fragment.presentFragment(new LumineTabsActivity()));
         LumineIconRow.add(context, interfaceCard, R.drawable.msg_discussion, LumineStrings.get(R.string.LumineChatTitle), null, v -> fragment.presentFragment(new LumineChatActivity()));
+        LumineIconRow.add(context, interfaceCard, R.drawable.msg_theme, LumineStrings.get(R.string.LumineIconPacksTitle), null, v -> fragment.presentFragment(new LumineIconPacksActivity()));
 
         LinearLayout card = LumineCards.card(context, list, LumineStrings.get(R.string.LumineMd3Title));
 

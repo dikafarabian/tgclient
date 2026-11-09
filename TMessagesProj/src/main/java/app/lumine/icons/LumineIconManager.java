@@ -186,6 +186,29 @@ public final class LumineIconManager {
         return !sources.isEmpty();
     }
 
+    public interface InstallCallback {
+        void onResult(@Nullable LumineIconError error);
+    }
+
+    public void installPack(File archive, InstallCallback callback) {
+        Utilities.globalQueue.postRunnable(() -> {
+            LumineIconError error = LumineIconStorage.install(archive);
+            if (error == null) {
+                reloadNow();
+            }
+            AndroidUtilities.runOnUIThread(() -> callback.onResult(error));
+        });
+    }
+
+    public void deletePack(String packId, Runnable done) {
+        LumineIconConfig.forgetPack(packId);
+        Utilities.globalQueue.postRunnable(() -> {
+            LumineIconStorage.delete(packId);
+            reloadNow();
+            AndroidUtilities.runOnUIThread(done);
+        });
+    }
+
     @Nullable
     public Drawable drawable(int resId, int density, @Nullable Resources.Theme theme) {
         if (resId == 0 || !LumineIconConfig.enabled()) {

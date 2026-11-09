@@ -73,4 +73,33 @@ public final class LumineIconConfig {
             setActivePackIds(ids);
         }
     }
+
+    public static boolean isPackActive(String packId) {
+        return activePackIds().contains(packId);
+    }
+
+    public static boolean togglePack(String packId) {
+        List<String> ids = activePackIds();
+        boolean active;
+        if (ids.remove(packId)) {
+            active = false;
+        } else {
+            ids.add(0, packId);
+            active = true;
+        }
+        setActivePackIds(ids);
+        return active;
+    }
+
+    public static void movePack(String packId, int delta) {
+        List<String> ids = activePackIds();
+        int index = ids.indexOf(packId);
+        int target = index + delta;
+        if (index < 0 || target < 0 || target >= ids.size()) {
+            return;
+        }
+        ids.remove(index);
+        ids.add(target, packId);
+        setActivePackIds(ids);
+    }
 }
