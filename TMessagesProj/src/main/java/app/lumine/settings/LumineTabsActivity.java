@@ -9,17 +9,15 @@ import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.content.ClipData;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -35,7 +33,6 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.glass.GlassTabView;
 import org.telegram.ui.MainTabsLayout;
 
-import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
@@ -86,17 +83,34 @@ public class LumineTabsActivity extends BaseFragment {
         final FrameLayout host = new FrameLayout(context);
         host.setPadding(dp(8), dp(8), dp(8), dp(8));
         final int base = Theme.getColor(Theme.key_switchTrack);
-        final GradientDrawable pill = new GradientDrawable();
-        pill.setColor(Theme.multAlpha(base, 0.12f));
-        pill.setStroke(Math.max(2, dp(1)), Theme.multAlpha(base, 0.25f));
-        pill.setCornerRadius(dp(32));
-        final FrameLayout pillHost = new FrameLayout(context);
-        pillHost.setBackground(pill);
-        host.addView(pillHost, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dp(64)));
 
+        final LinearLayout group = new LinearLayout(context);
+        group.setOrientation(LinearLayout.HORIZONTAL);
+        host.addView(group, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dp(56)));
+
+        final FrameLayout barHost = new FrameLayout(context);
+        barHost.setBackground(glass(base));
         preview = new Preview(context);
         preview.bind();
-        pillHost.addView(preview, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+        barHost.addView(preview, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+        group.addView(barHost, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
+
+        final FrameLayout searchCircle = new FrameLayout(context);
+        searchCircle.setBackground(glass(base));
+        searchCircle.setAlpha(LumineTabs.searchButton() ? 1f : 0.4f);
+        final ImageView searchIcon = new ImageView(context);
+        searchIcon.setImageResource(R.drawable.outline_header_search);
+        searchIcon.setPadding(dp(14), dp(14), dp(14), dp(14));
+        searchIcon.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_glass_tabUnselected), PorterDuff.Mode.SRC_IN));
+        searchCircle.addView(searchIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        searchCircle.setOnClickListener(v -> {
+            final boolean enabled = !LumineTabs.searchButton();
+            LumineTabs.setSearchButton(enabled);
+            searchCircle.setAlpha(enabled ? 1f : 0.4f);
+        });
+        final LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(56), dp(56));
+        searchParams.leftMargin = dp(6);
+        group.addView(searchCircle, searchParams);
         LumineCards.add(card, host);
 
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineTabsInfo));
@@ -167,6 +181,14 @@ public class LumineTabsActivity extends BaseFragment {
         super.onFragmentDestroy();
     }
 
+    private static GradientDrawable glass(int base) {
+        final GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(Theme.multAlpha(base, 0.12f));
+        drawable.setStroke(Math.max(2, dp(1)), Theme.multAlpha(base, 0.25f));
+        drawable.setCornerRadius(dp(28));
+        return drawable;
+    }
+
     private GlassTabView createTab(Context context, LumineTabs.Type type) {
         switch (type) {
             case CONTACTS:
@@ -188,8 +210,8 @@ public class LumineTabsActivity extends BaseFragment {
 
         Preview(Context context) {
             super(context, getResourceProvider());
-            setPadding(dp(12), dp(6), dp(12), dp(6));
-            setMaxWidth(dp(82 * (LumineTabs.Type.values().length + 1) + 24));
+            setPadding(dp(4), dp(4), dp(4), dp(4));
+            setEqualWidth(!LumineTabs.titlesVisible());
         }
 
         void bind() {
@@ -208,32 +230,16 @@ public class LumineTabsActivity extends BaseFragment {
                 tab.setOnLongClickListener(v -> startDrag(index, v));
                 addView(tab);
                 setViewVisible(tab, true, false);
+                if (state.type == LumineTabs.Type.CHATS) {
+                    tab.setSelected(true, false);
+                    setTabSelected(tab, false);
+                }
             }
-            addSearchTab();
             requestLayout();
         }
 
-        private void addSearchTab() {
-            final GlassTabView search = GlassTabView.createMainTab(getContext(), getResourceProvider(), GlassTabView.TabAnimation.CONTACTS, R.string.Search);
-            search.setIcon(R.drawable.outline_header_search);
-            search.setTitleVisible(LumineTabs.titlesVisible());
-            search.setSelected(false, false);
-            search.setGestureSelectedOverride(0, false);
-            search.setTag(Boolean.valueOf(LumineTabs.searchButton()));
-            search.setAlpha(LumineTabs.searchButton() ? 1f : 0.4f);
-            search.setBackground(new DividerDrawable(Theme.multAlpha(Theme.getColor(Theme.key_switchTrack), 0.25f)));
-            addTabToIgnoreClick(search);
-            search.setOnClickListener(v -> {
-                final boolean enabled = !LumineTabs.searchButton();
-                LumineTabs.setSearchButton(enabled);
-                search.setTag(Boolean.valueOf(enabled));
-                search.setAlpha(enabled ? 1f : 0.4f);
-            });
-            addView(search);
-            setViewVisible(search, true, false);
-        }
-
         void refreshTitles() {
+            setEqualWidth(!LumineTabs.titlesVisible());
             for (int i = 0; i < getChildCount(); i++) {
                 final View child = getChildAt(i);
                 if (child instanceof GlassTabView) {
@@ -330,36 +336,6 @@ public class LumineTabsActivity extends BaseFragment {
             }
             states.add(to, states.remove(from));
             bind();
-        }
-    }
-
-    private static final class DividerDrawable extends Drawable {
-
-        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        DividerDrawable(int color) {
-            paint.setColor(color);
-            paint.setStrokeWidth(dp(2));
-            paint.setStrokeCap(Paint.Cap.ROUND);
-        }
-
-        @Override
-        public void draw(@NonNull Canvas canvas) {
-            final float x = dp(1);
-            canvas.drawLine(x, dp(6), x, getBounds().height() - dp(6), paint);
-        }
-
-        @Override
-        public void setAlpha(int alpha) {
-        }
-
-        @Override
-        public void setColorFilter(ColorFilter colorFilter) {
-        }
-
-        @Override
-        public int getOpacity() {
-            return PixelFormat.TRANSLUCENT;
         }
     }
 }
