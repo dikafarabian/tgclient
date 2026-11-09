@@ -19,28 +19,20 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
 import app.lumine.LumineStrings;
-import app.lumine.restart.LumineRestart;
 import app.lumine.tabs.LumineTabs;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.AlertDialog;
-import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.SectionsScrollView;
 import org.telegram.ui.Components.glass.GlassTabView;
 import org.telegram.ui.MainTabsLayout;
 
-
 import java.util.ArrayList;
 
-public class LumineTabsActivity extends BaseFragment {
+public class LumineTabsActivity extends LumineSubPage {
 
     private ArrayList<LumineTabs.State> states = new ArrayList<>();
     private Preview preview;
@@ -53,42 +45,13 @@ public class LumineTabsActivity extends BaseFragment {
         return super.onFragmentCreate();
     }
 
-    private SectionsScrollView scroll;
-
     @Override
-    protected boolean useSimpleActionBar() {
-        return true;
+    protected int titleRes() {
+        return R.string.LumineTabsTitle;
     }
 
     @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    protected SectionsScrollView getScrollViewForSimpleGlass() {
-        return scroll;
-    }
-
-    @Override
-    public View createView(Context context) {
-        setHasOwnBackground(true);
-        simpleActionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        simpleActionBar.setTitle(LumineStrings.get(R.string.LumineTabsTitle));
-        LumineRestart.menu(this);
-
-        final FrameLayout root = new FrameLayout(context);
-        root.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
-        fragmentView = root;
-
-        final LinearLayout list = new SectionsScrollView.SectionsLinearLayout(context);
-        list.setOrientation(LinearLayout.VERTICAL);
-        scroll = new SectionsScrollView(context, list, resourceProvider);
-        scroll.setVerticalScrollBarEnabled(false);
-        root.addView(scroll, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        scroll.addView(list, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
-
+    protected void build(Context context, LinearLayout list) {
         final LinearLayout card = LumineCards.card(context, list, LumineStrings.get(R.string.LumineTabsTitle));
 
         final FrameLayout host = new FrameLayout(context);
@@ -134,7 +97,6 @@ public class LumineTabsActivity extends BaseFragment {
         LumineCards.toggleRow(context, options, LumineStrings.get(R.string.LumineTabForceChats), null, LumineTabs.forceOpenChats(), LumineTabs::setForceOpenChats);
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineTabForceChatsInfo));
         updateValues();
-        return fragmentView;
     }
 
     private void updateValues() {
