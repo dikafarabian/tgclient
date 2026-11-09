@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import app.lumine.LumineStrings;
+import app.lumine.restart.LumineRestart;
 import app.lumine.push.LuminePushLog;
 import app.lumine.push.PushConfig;
 import app.lumine.push.PushStatus;
@@ -26,7 +27,6 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
-import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
@@ -75,14 +75,7 @@ public class LumineNotificationActivity extends BaseFragment {
         setHasOwnBackground(true);
         simpleActionBar.setBackButtonImage(R.drawable.ic_ab_back);
         simpleActionBar.setTitle(LumineStrings.get(R.string.LumineNotification));
-        simpleActionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-            @Override
-            public void onItemClick(int id) {
-                if (id == -1) {
-                    finishFragment();
-                }
-            }
-        });
+        LumineRestart.menu(this);
 
         final FrameLayout root = new FrameLayout(context);
         root.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));

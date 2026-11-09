@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.core.graphics.ColorUtils;
@@ -41,7 +40,7 @@ import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 
-public class LumineHomePage extends ScrollView {
+public class LumineHomePage extends LinearLayout {
 
     private static final int NEUTRAL = 0;
     private static final int GOOD = 1;
@@ -86,19 +85,17 @@ public class LumineHomePage extends ScrollView {
     public LumineHomePage(Context context, int account, Runnable onNotification, Runnable onGhost) {
         super(context);
         this.account = account;
-        setVerticalScrollBarEnabled(false);
-        setClipToPadding(false);
-
-        LinearLayout list = new LinearLayout(context);
-        list.setOrientation(LinearLayout.VERTICAL);
-        list.setPadding(dp(16), dp(12), dp(16), dp(16));
-        addView(list, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        setOrientation(VERTICAL);
+        setPadding(dp(4), 0, dp(4), dp(4));
+        final LinearLayout list = this;
 
         buildHero(context, list);
+        LumineCards.plain(hero);
 
         LinearLayout tiles = new LinearLayout(context);
         tiles.setOrientation(LinearLayout.HORIZONTAL);
         tiles.setBaselineAligned(false);
+        LumineCards.plain(tiles);
         list.addView(tiles, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         notificationTile = new LumineTonalCard(context, LumineMd3.TILE_RADIUS_DP, 0);
@@ -173,6 +170,7 @@ public class LumineHomePage extends ScrollView {
         ghostTile.addView(ghostContent, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
         LinearLayout.LayoutParams ghostParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         ghostParams.topMargin = dp(LumineMd3.GAP_DP);
+        LumineCards.plain(ghostTile);
         list.addView(ghostTile, ghostParams);
 
         refresh();

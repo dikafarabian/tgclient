@@ -53,6 +53,10 @@ final class LumineCards {
     private LumineCards() {
     }
 
+    static void plain(View view) {
+        view.setTag(PLAIN);
+    }
+
     static boolean segmented() {
         return LumineListItems.enabled();
     }

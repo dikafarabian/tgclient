@@ -20,6 +20,8 @@ public class LumineComingSoonPage extends FrameLayout {
 
     public LumineComingSoonPage(Context context) {
         super(context);
+        setMinimumHeight(dp(360));
+        LumineCards.plain(this);
 
         LinearLayout box = new LinearLayout(context);
         box.setOrientation(LinearLayout.VERTICAL);

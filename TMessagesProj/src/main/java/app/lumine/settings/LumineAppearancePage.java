@@ -12,7 +12,6 @@ import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import app.lumine.LumineStrings;
 import app.lumine.md3.LumineMd3;
@@ -22,7 +21,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.SeekBarView;
 import org.telegram.ui.Components.Switch;
 
-public class LumineAppearancePage extends ScrollView {
+public class LumineAppearancePage extends LinearLayout {
 
     private final Switch switchToggle;
     private final Switch sliderToggle;
@@ -31,13 +30,9 @@ public class LumineAppearancePage extends ScrollView {
 
     public LumineAppearancePage(Context context, BaseFragment fragment) {
         super(context);
-        setVerticalScrollBarEnabled(false);
-        setClipToPadding(false);
-
-        LinearLayout list = new LinearLayout(context);
-        list.setOrientation(LinearLayout.VERTICAL);
-        list.setPadding(dp(12), dp(12), dp(12), dp(12));
-        addView(list, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        setOrientation(VERTICAL);
+        setPadding(0, 0, 0, 0);
+        final LinearLayout list = this;
 
         LinearLayout interfaceCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineInterface));
         LumineIconRow.add(context, interfaceCard, R.drawable.lumine_drawer, LumineStrings.get(R.string.LumineDrawerTitle), null, v -> fragment.presentFragment(new LumineDrawerActivity()));
@@ -70,6 +65,7 @@ public class LumineAppearancePage extends ScrollView {
             wrap.addView(sliderPreview, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dp(30)));
             LumineCards.add(card, wrap);
         } else {
+            LumineCards.plain(sliderPreview);
             LinearLayout.LayoutParams previewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(30));
             previewParams.topMargin = dp(4);
             previewParams.bottomMargin = dp(8);

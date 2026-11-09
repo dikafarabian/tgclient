@@ -8,12 +8,10 @@ import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.content.Context;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import app.lumine.LumineStrings;
 import app.lumine.push.PushConfig;
 import app.lumine.push.PushStatus;
-import app.lumine.restart.LumineRestart;
 import app.lumine.stealth.LumineStealth;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -21,19 +19,15 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 
-public class LumineGeneralPage extends ScrollView {
+public class LumineGeneralPage extends LinearLayout {
 
     private final LumineCards.Row notificationRow;
 
     public LumineGeneralPage(Context context, BaseFragment fragment) {
         super(context);
-        setVerticalScrollBarEnabled(false);
-        setClipToPadding(false);
-
-        LinearLayout list = new LinearLayout(context);
-        list.setOrientation(LinearLayout.VERTICAL);
-        list.setPadding(dp(12), dp(12), dp(12), dp(12));
-        addView(list, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        setOrientation(VERTICAL);
+        setPadding(0, 0, 0, 0);
+        final LinearLayout list = this;
 
         LinearLayout card = LumineCards.card(context, list, null);
         notificationRow = LumineCards.row(context, card, LumineStrings.get(R.string.LumineNotification), v -> fragment.presentFragment(new LumineNotificationActivity()));
@@ -63,9 +57,6 @@ public class LumineGeneralPage extends ScrollView {
             builder.show();
         });
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineShowIdAndDcInfo));
-
-        LinearLayout restart = LumineCards.card(context, list, null);
-        LumineCards.row(context, restart, LumineStrings.get(R.string.LumineRestartApp), v -> LumineRestart.confirm(fragment));
 
         refresh();
     }

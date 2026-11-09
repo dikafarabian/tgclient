@@ -15,10 +15,10 @@ import android.widget.ScrollView;
 import androidx.annotation.Nullable;
 
 import app.lumine.LumineStrings;
+import app.lumine.restart.LumineRestart;
 import app.lumine.saving.LumineSaving;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;
-import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
@@ -51,14 +51,7 @@ public class LumineSavingActivity extends BaseFragment {
         setHasOwnBackground(true);
         simpleActionBar.setBackButtonImage(R.drawable.ic_ab_back);
         simpleActionBar.setTitle(LumineStrings.get(R.string.LumineSaving));
-        simpleActionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-            @Override
-            public void onItemClick(int id) {
-                if (id == -1) {
-                    finishFragment();
-                }
-            }
-        });
+        LumineRestart.menu(this);
 
         final FrameLayout root = new FrameLayout(context);
         root.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
