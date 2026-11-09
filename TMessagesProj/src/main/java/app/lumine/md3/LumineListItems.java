@@ -17,6 +17,10 @@ public final class LumineListItems {
         return LumineMd3.listEnabled();
     }
 
+    public static boolean keepsLegacySections(boolean drawsBackground) {
+        return drawsBackground && enabled();
+    }
+
     public static int rowHeight(int stockDp) {
         return stockDp == 50 && enabled() ? 56 : stockDp;
     }

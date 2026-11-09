@@ -3425,6 +3425,8 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
         }
         if (bitmapSectionsItemDecoration != null) {
             bitmapSectionsItemDecoration.setDrawBackground(drawBackground);
+        }
+        if (bitmapSectionsItemDecoration != null || (sectionsItemDecoration != null && drawBackground)) {
             hideIfEmpty = false;
             if (emptyView != null) {
                 setVisibility(VISIBLE);
@@ -3462,7 +3464,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
         if (isSectionView == null || isViewTypeSection == null || drawSectionBackground == null) {
             return;
         }
-        if (!legacySections) {
+        if (!legacySections && !app.lumine.md3.LumineListItems.keepsLegacySections(bitmapSectionsDrawBackground)) {
             bitmapSectionsItemDecoration = new BitmapSectionsItemDecoration(
                     this,
                     isSectionView,
@@ -3638,7 +3640,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
         @Override
         public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull State state) {
             if (parent instanceof RecyclerListView) {
-                ((RecyclerListView) parent).drawSectionsBackgrounds(c);
+                final RecyclerListView list = (RecyclerListView) parent;
+                if (list.bitmapSectionsDrawBackground) {
+                    sectionBackgroundPaint.setColor(list.getSectionsBackgroundColorForDecoration());
+                    c.drawRect(0, 0, list.getWidth(), list.getHeight(), sectionBackgroundPaint);
+                }
+                list.drawSectionsBackgrounds(c);
             }
         }
 

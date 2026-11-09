@@ -136,6 +136,7 @@ MARKERS=(
 "$J/org/telegram/ui/Components/UniversalAdapter.java|viewType == VIEW_TYPE_ANIMATED_HEADER) && app.lumine.md3.LumineListItems.enabled()"
 "$J/org/telegram/ui/Components/RecyclerListView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/UniversalRecyclerView.java|app.lumine.md3.LumineListItems"
+"$J/org/telegram/ui/Components/RecyclerListView.java|LumineListItems.keepsLegacySections"
 "$J/org/telegram/ui/Components/RecyclerListView.java|isSegmentedHeader"
 "$J/org/telegram/ui/Components/RecyclerListView.java|view instanceof HeaderCell ? 1 : 0"
 "$J/org/telegram/ui/SettingsActivity.java|app.lumine.md3.LumineListItems.tonalBackground"
