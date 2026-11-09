@@ -25,7 +25,16 @@ public class LumineChatActivity extends LumineSubPage {
 
     @Override
     protected void build(Context context, LinearLayout list) {
-        final LinearLayout card = LumineCards.card(context, list, LumineStrings.get(R.string.LumineChatHeaderInput));
+        final LinearLayout inputCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineChatHeaderInput));
+        LumineCards.toggleRow(context, inputCard, LumineStrings.get(R.string.LumineChatIosInput), null, LumineChatConfig.getIosInput(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setIosInput(enabled);
+            }
+        });
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatIosInputInfo));
+
+        final LinearLayout card = LumineCards.card(context, list, null);
         LumineCards.toggleRow(context, card, LumineStrings.get(R.string.LumineChatHideFade), null, LumineChatConfig.getHideFade(), new LumineCards.OnToggle() {
             @Override
             public void onToggle(boolean enabled) {
