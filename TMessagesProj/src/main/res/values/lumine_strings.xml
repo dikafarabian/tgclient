@@ -79,6 +79,11 @@
     <string name="LumineTabsTitle">Customize Bottom Tabs</string>
     <string name="LumineChatTitle">Chat Interface</string>
     <string name="LumineChatHeaderInput">Header and input</string>
+    <string name="LumineChatActionButton">Action button style</string>
+    <string name="LumineChatActionButtonInfo">Colors of the send button in the chat input. Reopen a chat to see the change.</string>
+    <string name="LumineChatStyleAccent">Accent</string>
+    <string name="LumineChatStyleNeutral">Neutral</string>
+    <string name="LumineChatStyleWhite">White</string>
     <string name="LumineChatHideFade">Hide fade views</string>
     <string name="LumineChatHideFadeInfo">Removes the fade drawn behind the header, the input and the bottom tabs. Reopen a screen to see the change.</string>
     <string name="LumineTabTitles">Tab Titles</string>

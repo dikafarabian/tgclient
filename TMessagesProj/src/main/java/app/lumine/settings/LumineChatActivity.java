@@ -7,10 +7,14 @@ package app.lumine.settings;
 
 import android.content.Context;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import app.lumine.LumineStrings;
+import app.lumine.chat.LumineActionButton;
 import app.lumine.chat.LumineChatConfig;
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
+import org.telegram.ui.ActionBar.AlertDialog;
 
 public class LumineChatActivity extends LumineSubPage {
 
@@ -29,5 +33,41 @@ public class LumineChatActivity extends LumineSubPage {
             }
         });
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatHideFadeInfo));
+
+        final LinearLayout input = LumineCards.card(context, list, null);
+        final LumineCards.Row styleRow = LumineCards.row(context, input, LumineStrings.get(R.string.LumineChatActionButton), v -> showStyleDialog());
+        styleValue = styleRow.value;
+        LumineCards.setValue(styleValue, styleName(LumineChatConfig.getActionButtonStyle()), 0);
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatActionButtonInfo));
+    }
+
+    private TextView styleValue;
+
+    private String styleName(int style) {
+        if (style == LumineActionButton.NEUTRAL) {
+            return LumineStrings.get(R.string.LumineChatStyleNeutral);
+        } else if (style == LumineActionButton.WHITE) {
+            return LumineStrings.get(R.string.LumineChatStyleWhite);
+        }
+        return LumineStrings.get(R.string.LumineChatStyleAccent);
+    }
+
+    private void showStyleDialog() {
+        if (getParentActivity() == null) {
+            return;
+        }
+        final int[] styles = {LumineActionButton.ACCENT, LumineActionButton.NEUTRAL, LumineActionButton.WHITE};
+        final CharSequence[] names = new CharSequence[styles.length];
+        for (int a = 0; a < styles.length; a++) {
+            names[a] = styleName(styles[a]);
+        }
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+        builder.setTitle(LumineStrings.get(R.string.LumineChatActionButton));
+        builder.setItems(names, (dialog, which) -> {
+            LumineChatConfig.setActionButtonStyle(styles[which]);
+            LumineCards.setValue(styleValue, styleName(styles[which]), 0);
+        });
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+        showDialog(builder.create());
     }
 }
