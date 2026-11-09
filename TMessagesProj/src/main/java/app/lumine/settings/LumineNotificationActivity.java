@@ -9,15 +9,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
 import app.lumine.LumineStrings;
-import app.lumine.restart.LumineRestart;
 import app.lumine.push.LuminePushLog;
 import app.lumine.push.PushConfig;
 import app.lumine.push.PushStatus;
@@ -28,12 +23,8 @@ import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.AlertDialog;
-import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.SectionsScrollView;
 
-public class LumineNotificationActivity extends BaseFragment {
+public class LumineNotificationActivity extends LumineSubPage {
 
     private static final long REFRESH_MS = 2000;
 
@@ -50,42 +41,13 @@ public class LumineNotificationActivity extends BaseFragment {
     private LumineCards.Row lastPushRow;
     private LumineCards.Row lastErrorRow;
 
-    private SectionsScrollView scroll;
-
     @Override
-    protected boolean useSimpleActionBar() {
-        return true;
+    protected int titleRes() {
+        return R.string.LumineNotification;
     }
 
     @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    protected SectionsScrollView getScrollViewForSimpleGlass() {
-        return scroll;
-    }
-
-    @Override
-    public View createView(Context context) {
-        setHasOwnBackground(true);
-        simpleActionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        simpleActionBar.setTitle(LumineStrings.get(R.string.LumineNotification));
-        LumineRestart.menu(this);
-
-        final FrameLayout root = new FrameLayout(context);
-        root.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
-        fragmentView = root;
-
-        LinearLayout list = new SectionsScrollView.SectionsLinearLayout(context);
-        list.setOrientation(LinearLayout.VERTICAL);
-        scroll = new SectionsScrollView(context, list, resourceProvider);
-        scroll.setVerticalScrollBarEnabled(false);
-        root.addView(scroll, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        scroll.addView(list, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
-
+    protected void build(Context context, LinearLayout list) {
         LinearLayout card = LumineCards.card(context, list, LumineStrings.get(R.string.LumineNotification));
         serviceRow = LumineCards.row(context, card, LumineStrings.get(R.string.LuminePushService), v -> showServiceDialog());
         stateRow = LumineCards.row(context, card, LumineStrings.get(R.string.LumineState), v -> copyReport());
@@ -100,7 +62,6 @@ public class LumineNotificationActivity extends BaseFragment {
         lastErrorRow = LumineCards.row(context, detailsCard, LumineStrings.get(R.string.LumineLastError), null);
 
         refresh();
-        return fragmentView;
     }
 
     private void refresh() {
