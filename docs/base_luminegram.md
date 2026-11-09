@@ -2,9 +2,11 @@
 
 Branch `base-luminegram` of `dikafarabian/tgclient`. General rules (working style, git conventions, sandbox facts) are in `tgclient_project.md`; this document only covers what is specific to this base.
 
-Last checked against the tree: 2026-11-09 (head `819a9fdf` before this edit). This is the fresh base: it starts from official Telegram for Android, not from another fork. `base-nagramxf` stays in the repo as a reference to read features from; features are ported by hand, never merged.
+Last checked against the tree: 2026-11-09 (head `7f62bdee` before this edit). This is the fresh base: it starts from official Telegram for Android, not from another fork. `base-nagramxf` stays in the repo as a reference to read features from; features are ported by hand, never merged. How every feature is built on upstream (hooks, layers, language): section 11. The Chat Interface port (restarted after a dropped commit): section 12.
 
 Verification state (layers as in section 8 of `tgclient_project.md`):
+- Kotlin foundation (2026-11-09): commit `088dd62f` applied the Kotlin plugin to the library and added the inert `LumineChatConfig.kt`; CI run 122 on `48f6e56` (a descendant of it) was green (3 jobs, 11m 37s), so Kotlin compiles in the library. Not seen on a device (nothing uses it yet).
+- Chat Interface page (commit `c39c6421`, dropped by the owner, see the dropped commit note in section 9): it broke CI and the cause was not traced; nothing of it is in the tree except `LumineChatConfig.kt`. The port restarts from section 12.
 - Sections engine routing (section 4.2), confirmed on the owner device, dark theme. Screenshots 2026-11-09 11:16 (build with `48f6e56f`): segmented rows with headers outside the cards in main Settings, Account, Chat Settings and Contacts; the square band behind the headers was still there in Chat Settings. Screenshots 16:06 (canary build `819a9fd`, includes `5e050048` and `b9a59965`): the band is gone in Chat Settings, Privacy and Security is segmented with its headers outside the cards, luminegram Home unchanged. Not confirmed: the profile after `b9a59965` (not in either set), light theme and custom themes, the Color theme group lock.
 - First real sync with upstream (13.1.1 to 13.2.1, 2026-11-09), confirmed on the owner device (canary arm64-v8a, build `0a11c68`, version line `13.2.1 (7291)`): the build runs; FCM works (token 142 chars, `account 0 registered: true`, five `push received` after the app was swiped from recents, Firebase config present, no `token failed`); text formatting in chat; Ghost Mode, Material 3 switch, slider and list style, the Settings icons and the luminegram row; photo, video, voice note, stories, animated stickers and calls (owner reports "aman", no screenshots for the last two groups). Not checked: Force Stop, Doze and reboot for push; battery optimization was still on (`battery unrestricted: false`); `push connection: false` in the report was not compared with a report from before the merge; phone number login through the new `firebase-pnv`.
 - Built by CI and confirmed by the owner on a device: a canary APK (arm64-v8a) builds, installs and runs, and the Telegram card arrives with the new format (owner screenshot, 2026-11-07, build `65b3ba2`). The commit hash in the card is monospace (owner confirmed).
@@ -22,8 +24,8 @@ Verification state (layers as in section 8 of `tgclient_project.md`):
 - Sync point: `7be672ea` "update to 13.2.1 (7291)", 2026-11-07, merged on 2026-11-09 (merge `7f353c38`, fix `0a11c684`). Previous sync point: `3de37c8cf` (13.1.1 / 7237). 13.2.0 (7280) was skipped: upstream released both on the same day and 13.2.1 was the tip of `master`.
 - Upstream history is kept in full (about 650 commits; the official repo is small because releases land as one commit "update to X.Y.Z (code)" plus merged pull requests). The merge-base is real, so a plain `git merge` works.
 - App: name `luminegram` (lowercase), package `com.lumine.gram`. API ID/hash come from CI secrets (never in the repo). Brand: sparkle logo, black sparkle on a white circle (colors differ from `base-nagramxf`, which used white on `#FA456C`).
-- Own commits on top of upstream: 97 non-merge commits at head `0a11c684` (`git rev-list --count --no-merges upstream/master..HEAD`; upstream commits reachable through the merge are not counted).
-- Language: Java only. There are no Kotlin sources in `TMessagesProj` and the Kotlin plugin is not applied there (only `buildSrc` and the root classpath use Kotlin). Adding Kotlin to the module is a build change of its own; do it only when a feature needs it.
+- Own commits on top of upstream: count them with `git rev-list --count --no-merges upstream/master..HEAD` (97 at `0a11c684`, more since; upstream commits reachable through the merge are not counted).
+- Language: Java core with Kotlin allowed for our own files. Upstream app code has no Kotlin. Since `088dd62f` the Kotlin plugin is applied in `TMessagesProj` (`kotlin-android`, `jvmTarget` 1.8 to match the Java 8 compile options; the Kotlin Gradle plugin 2.1.0 was already on the root classpath) and Kotlin sources live in `TMessagesProj/src/main/kotlin`. Which language to use where: section 11.
 
 ## 2. Structure of the upstream project (read from the tree, 2026-11-07)
 
@@ -56,6 +58,7 @@ Source of truth: `git diff --name-status 3de37c8cf HEAD` and `bash scripts/layer
 | `scripts/layer-check.sh` | marker check (section 3.3) |
 | `scripts/sync-audit.sh` | post-merge audit against the upstream range: changed hook files, sections engine tokens, removed imports (section 4, step 7) |
 | `docs/base_luminegram.md` | this document (snapshot; the project copy is the one the owner uploads to the Claude project) |
+| `TMessagesProj/src/main/kotlin/app/lumine/chat/LumineChatConfig.kt` | Kotlin, our own. The Chat Interface options stored in `LumineConfig` (`@JvmStatic` properties, so a Java hook calls `LumineChatConfig.getX()`). Inert: nothing reads it yet. See section 12. |
 
 New own code goes in the package `app.lumine.<feature>`, new resources get the prefix `lumine_`, new strings go in a file of ours (not in upstream's `strings.xml`), and each feature needs one settings entry and a toggle in `LumineConfig`.
 
@@ -89,6 +92,7 @@ Every row is a place where a merge can conflict.
 | Material 3 slider (draw hook at the start of `onDraw`, after `thumbX` is read; returns false and stock drawing runs for two sided, buffered, minimum, divided-step and timestamp sliders; stepped sliders with separators, such as Message corners, are drawn after the step snap; thumb, touch and value mapping untouched) | `org/telegram/ui/Components/SeekBarView.java` | `app.lumine.md3.LumineSliderDraw.draw` |
 | Material 3 list items (row heights, no dividers or shadow height, segmented section drawing, headers drawn without a card, inverted radii fix) | `ui/Cells/TextCell.java`, `TextCheckCell.java`, `TextDetailSettingsCell.java`, `TextSettingsCell.java`, `ui/Components/UniversalAdapter.java`, `RecyclerListView.java`, `UniversalRecyclerView.java`, `ui/ActionBar/Theme.java`, `messenger/AndroidUtilities.java` | `app.lumine.md3.LumineListItems`, `isSegmentedHeader`, `LumineListItems.tonalBackground` (tonal circle icons in the `SettingsActivity` cell) |
 | Sections engine choice (all settings style lists follow our segmented path while List items is on; the choice is recomputed in every setter, so call order does not matter; the page background is filled for lists that ask `setSectionsDrawBackground`; headers lose their own background and get the page color under them) | `org/telegram/ui/Components/RecyclerListView.java`, `app/lumine/md3/LumineListItems.java` | `LumineListItems.forcesLegacy`, `useSegmentedSections() && isSegmentedHeader(child)` |
+| Kotlin plugin in the library and its JVM target | `TMessagesProj/build.gradle` | `apply plugin: 'kotlin-android'`, `JvmTarget.JVM_1_8` |
 | Removed upstream secrets | `TMessagesProj/config/release.keystore`, five `google-services.json` | `layer-check.sh` fails if any keystore or `google-services.json` is tracked |
 
 `IntroActivity.java` still imports `ThemeColors` (now unused); leave it, removing it only adds a conflict surface.
@@ -150,6 +154,8 @@ Branding left over from upstream (order is my suggestion; item 1 was checked and
 5. Text that names Telegram products or the app ("Telegram for Android" in Settings, Premium, Stars, Business, Help links, `Page1Title` and other intro texts) was left alone on purpose.
 6. FCM: works (owner, 2026-11-08). Client hooks are in section 3.2 (push provider selection and diagnostics). The service account JSON is uploaded at my.telegram.org (Push credentials) and the CI secret `GOOGLE_SERVICES_JSON` holds the whole `google-services.json` of the same Firebase project (`lumine-gram`, package `com.lumine.gram`). Open: UnifiedPush has a constant but no UI entry and no provider (it falls back to the inert in-app provider); MicroG is the same Google provider as FCM, so the two choices behave the same until MicroG-specific handling exists. Switching the service shows a restart hint; whether a restart is actually required was not tested.
 7. Plugin flavor and Python plugins: not applicable on this base.
+8. Chat Interface port from `base-nagramxf`: section 12.
+
 
 ## 7. Gotchas learned on this base
 
@@ -163,6 +169,10 @@ Branding left over from upstream (order is my suggestion; item 1 was checked and
 - The wordmark vectors are generated: `fontTools` reads `assets/fonts/rmediumitalic.ttf`, positions the glyphs of `luminegram`, flips Y and fits them into the original viewport (249x57 and 269x61), keeping the aspect ratio. Regenerating is cheap; the font file is part of the upstream tree.
 - The launcher icon art is generated too: sparkle path `M12 3Q12.8 11.2 21 12Q12.8 12.8 12 21Q11.2 12.8 3 12Q11.2 11.2 12 3Z` plus the small one `M18 3Q18.3 5.7 21 6Q18.3 6.3 18 9Q17.7 6.3 15 6Q17.7 5.7 18 3Z`, scaled 58/24 and shifted 25 on a 108 viewport (adaptive), 60% of the circle width in the PNGs.
 - The intro page is OpenGL: textures `intro_tg_plane` (plane) and a sphere bitmap drawn in `IntroActivity`, composed by native code. A texture replacement keeps the same canvas size on purpose.
+- Kotlin in the sandbox (2026-11-09): `kotlinc` 2.1.0 can be downloaded from `github.com/JetBrains/kotlin/releases/download/v2.1.0/kotlin-compiler-2.1.0.zip` and unzipped under `/tmp`. Without the Android SDK it only checks syntax and the Java interop of a file that has no Android types (`LumineChatConfig.kt` was compiled against a stub of `LumineConfig`, and a Java probe calling `getChatPill()` and `setIosInput()` compiled). A file that extends an Android class reports `overrides nothing`, which is noise there. Java checks run with `java -m jdk.compiler/com.sun.tools.javac.Main` (there is no `javac` binary).
+- Kotlin and `dp`: `AndroidUtilities.dp` takes a float, so Kotlin needs `dp(12f)`; Java converts int literals silently, Kotlin does not.
+- The language bytes GitHub shows for Telegram forks are misleading: the 3.7 MB of Kotlin in `DrKLO/Telegram` is test data and build tooling, not app code (section 11).
+
 
 
 ## 8. Material 3 redesign (phases 1 to 5 written; 1 to 3 seen on the device)
@@ -184,7 +194,7 @@ Phases, one commit each, every phase reported as "not built" until CI shows othe
 1. Foundation `LumineMd3` plus `LumineTonalCard`. Written, no visible change.
 2. `LumineSwitchDraw` (hook in `Switch`; size and fit confirmed on the device, theme colors not seen yet) and `LumineSliderDraw` (hook in `SeekBarView`, written, not built; geometry from `SeekBarView` style 2 in `base-nagramxf`, colors from the slider's own theme colors, no press animation and no hover ripple), one commit each. Until the Appearance row exists (phase 5) the switch toggle defaults to on, so the look can be tested; the toggle moves to Appearance later. The 52x32dp design is scaled to the view the caller lays out (37x20dp in `TextCheckCell`, so about 32x20dp), no measure hook; the thumb press growth and the thumb ripple are not drawn.
 3. Home: hero card and tile grid with the reference sizes (done, seen on the device). Hero: luminegram icon, name, version `13.1.1 (7237)`, chips for build type and commit hash (monospace), tonal in the normal state and error container for a problem. Tiles: Notification (bell, push service, State; opens the Notification page) and Account.
-4. `LumineTabBar` behavior only (see the navbar decision above): label and filled icon only on the selected tab, tonal capsule, 250 ms; geometry untouched. Next step. The current bar draws a label under every tab.
+4. `LumineTabBar` behavior only (see the navbar decision above): label and filled icon only on the selected tab, tonal capsule, 250 ms; geometry untouched. Done, see the status update below and the verification list.
 5. Appearance tab (now a placeholder) gets the Material Design 3 row with previews and the toggles.
 6. List style (minimal, global), smart pill, specs list with Copy Report, General and Notification pages restyled.
 
@@ -197,7 +207,7 @@ Reference check (2026-11-08): compared with `exteraless/exteraless` at `c83765c`
 ## 9. Rules for this base and the Stealth plan (2026-11-08)
 
 Rules (owner decision, do not repeat the mistakes):
-1. Never use `base-nagramxf` as a reference, a source of numbers or a source of code unless the owner asks. Its structure has too many layers and is convoluted, and it carries many bugs and glitches; that is why this base was started from zero. Reference sources are the upstream repositories only: `exteraless/exteraless` (pinned at `c83765c` for the Stealth work), `midori01/KernelSU` (design of the Home cards and the bar) and `DrKLO/Telegram`. A number that comes from another source must be re-measured on the upstream repository before it is quoted.
+1. Never use `base-nagramxf` as a reference, a source of numbers or a source of code unless the owner asks. Its structure has too many layers and is convoluted, and it carries many bugs and glitches; that is why this base was started from zero. Reference sources are the upstream repositories only: `exteraless/exteraless` (pinned at `c83765c` for the Stealth work), `midori01/KernelSU` (design of the Home cards and the bar) and `DrKLO/Telegram`. A number that comes from another source must be re-measured on the upstream repository before it is quoted. Exception recorded 2026-11-09: the owner asked to adapt the Chat Interface page from `base-nagramxf`; its code is read for behavior and options only, every number is re-measured on stock, and everything is rewritten on our structure (nothing is copied).
 2. Target: clean, native, direct code. Few layers, no copied config frameworks (`NekoConfig`, `NaConfig`, `ConfigItem`): settings go straight into `LumineConfig`, logic in `app.lumine.<feature>`, one small hook in the upstream file.
 3. Where the owner says "imitate exteraless exactly", the visible behavior, row order and options follow exteraless; names, strings and branding stay ours (no Ayu or Extera naming).
 4. Mistake log: on 2026-11-08 the size of the AyuGram engine was first quoted from `base-nagramxf` (63 files, 640 KB). The exteraless figure is 35 files, 282 KB (`com/radolyn/ayugram`: database, dao 5, entities 9, messages 5, proprietary 2, ui 3, utils 7, 2 at the top).
@@ -230,7 +240,7 @@ Customize Bottom Tabs preview (2026-11-08, written, not built): `LumineTabsActiv
 
 Restart and title fix (2026-11-09, written and pushed, not built): `77566e7b` fixes the chat list title that stayed shifted after the drawer was turned off. Cause (read from code, not reproduced): `updateDrawerButton` hid the back button with `setBackButtonDrawable(null)`, then `checkUi_itemBackButtonVisibility` made it `VISIBLE` again through `FragmentFloatingButton.setAnimatedVisibility`, and `ActionBar.onLayout` keeps the title at 72dp while the back button is not `GONE`. Fix: that function keeps a button without a drawable `GONE` (marker `backButton.getDrawable() == null`). `5b94036d` adds `app/lumine/restart/`: `LumineRestart` (`hint(fragment)`, `restart(context)`) and `LumineRestartActivity` (helper in the `:lumine_restart` process, registered in the manifest of `TMessagesProj_App`, kills the main pid and starts `LaunchActivity`). `LumineCrashLog.isCrashProcess()` also matches `:lumine_restart`, so the existing guard in `ApplicationLoader.onCreate` skips the heavy init there (no new upstream hook). The push service dialog now uses the hint instead of a Toast. `90bf4564` adds a "Restart app" row in a card at the bottom of the General page: it opens a confirm dialog (`LumineRestart.confirm`, buttons Cancel and "Restart now") and then restarts. The restart lint in `layer-check.sh` strips the allowed tokens (`R.string.LumineRestart*`, `LumineRestart.x(`, the import, `<string name="LumineRestart*">` lines) and fails on any `Restart` left; tested with a stray Toast and a stray string. Forum topics opening full screen was not a bug: Settings, Power Saving, "Side menu in topics" was off (`LiteMode.FLAG_CHAT_FORUM_TWOCOLUMN`, absent from `PRESET_LOW`).
 
-## 9. Customize Bottom Tabs (Interface section, 2026-11-08)
+## 9b. Customize Bottom Tabs (Interface section, 2026-11-08)
 
 Commits `780ef97` (Tab Titles, Display Mode and Always search rows on the Customize Bottom Tabs page, `GlassTabView.setTitleVisible` and `setIcon`), `2ef3d08` (search button beside the bar) and `16f04dd` (Display Mode: show, hide, floating). All in `LumineTabs` (keys `tabs_titles`, `tabs_search`, `tabs_display`, `tabs_force_chats`).
 - Search button: `MainTabsActivity.searchButton` (56dp glass circle, tap = `TabFragmentDelegate.onSearchButtonClicked`, long press = Saved Messages). Always search in chats sends the tap to `DialogsActivity` even from another tab. Only `DialogsActivity` implements `hasSearch`, so on Contacts and other tabs the tap goes to Chats search. The header search item hides while the button is on (`DialogsActivity.checkUi_itemSearchVisibility`).
@@ -267,3 +277,49 @@ Rules:
 - Tab pages (General, Appearance, Stealth, Home, hosted by `LumineSettingsActivity`) are views, not fragments, so they use `LumineCards` but not `LumineSubPage`.
 
 Status (2026-11-09): written, syntax checked and layer checked, not built, not seen on a device. The five pages above were moved onto `LumineSubPage` in one commit each (`Saving` first, it was the base's first user); the spacing under the info text and the shared numbers are separate commits.
+
+## 11. Strategy: how we build on upstream (2026-11-09)
+
+Goal (owner): luminegram is official Telegram for Android plus our own changes, updated from upstream on every release, and every change we want (a new feature, a change of stock behavior, a stock feature we dislike) must run natively, without bugs that come from a bad structure or from too many layers. This is why the base was restarted from official Telegram. The owner feels that the layers of the earlier bases (`base-nagramxf`, exteraless, entinygram) made bugs hard to fix; this is a feeling and the cause was never investigated. What was measured: `base-nagramxf` keeps its settings in a config framework (`NekoConfig`, `ConfigItem`, `NaConfig`), edits upstream files in many places, and keeps part of its Kotlin inside `src/main/java`.
+
+Rules (owner decision 2026-11-09, "play it safe"):
+1. Upstream files are touched only by a hook of one line that calls our code. If a feature needs a large edit inside an upstream file (compact chat pill, iOS input field), say so and agree before writing it.
+2. Every feature lives in `app.lumine.<feature>`; settings go straight into `LumineConfig` (no config framework, no second storage).
+3. Every hook has a marker in `scripts/layer-check.sh`. A merge from upstream is not done until `layer OK`.
+4. A feature taken from another client is written again on top of the current stock code. Hooks written for an older upstream version cannot be assumed to fit (the nagramxf blur hooks target 13.1.1 code that 13.2.1 removed).
+5. Every change of behavior has a toggle that is off by default, so an untouched app looks like Telegram.
+6. New pages follow the recipe of section 10 (`LumineSubPage`, `LumineCards`, numbers in `LumineListItems` and `LumineMd3`); a page never styles anything by hand.
+7. Language: hooks in upstream files are always Java, one line. Our own code may be Kotlin or Java, picked by risk. Kotlin gives null safety and shorter code; Java can be checked much further in the sandbox (syntax plus symbol probes), Kotlin only for syntax, so Kotlin costs more CI rounds. Default: Kotlin for self-contained files (config, helpers), Java for code that extends or calls many Telegram classes, which includes pages on `LumineSubPage` until a Kotlin page has been built green once. Existing Java files are converted only when they are changed anyway, never in bulk. A helper used from both languages is made `public`; relying on the same package is a stopgap (open: `LumineCards` and `LumineIconRow` are package-private).
+8. One feature per commit, `canary` before `release`, and reports always split by layer (patch, build, artifact, runtime). A change stays "not built" until a CI run shows otherwise. A commit that breaks CI is not stacked on: read the log first, then fix or drop it (as with `c39c6421`).
+
+Language survey (2026-11-09, file lists from the GitHub API, app code only, tests, `buildSrc` and `jni` excluded; the closed-source exteraGram could not be checked). Java files / Kotlin files: DrKLO/Telegram 2311 / 0, Nagram 2443 / 81, Cherrygram 2349 / 51, Forkgram 2313 / 35, exteraless 2795 / 57, OctoGram 3078 / 11, Telegram-X 1084 / 56. NekoX and AyuGram4A have no Kotlin files. Result: the long-lived forks are 95 to 100 percent Java in app code and use Kotlin only for a small number of their own files; none converted upstream files. An earlier statement in this session, that many Telegram client developers use Kotlin, was wrong; the data does not support it.
+
+## 12. Chat Interface port from `base-nagramxf` (restarted 2026-11-09)
+
+Owner request: make the Chat Interface page of `base-nagramxf` (Appearance, Interface card) native here. Its preview card is excluded; the owner wants an own preview style, after all options work. Sources read in `base-nagramxf`: `TMessagesProj/src/main/kotlin/app/lumine/ios/` (`IosStyleSettingsActivity.kt` 239 lines, `IosStyleConfig.kt`, `IosStyleHelper.kt`, `UnreadBackBadgeHelper.kt`; `IosChatPreview.kt` excluded) and `app/lumine/chats/` (`ActionButtonStyle` 46 lines, `InputTextAnimation` 316, `AttachSwapDrawable` 113, `StickerTime` 111, the last two are not on the page).
+
+Page content: Header and input: compact chat pill, avatar in the menu slot, avatar on the right, chat title marquee, unread badge on the back button (with an iOS style variant), iOS message input field, hide fade views, avatar sender (show, hide, hold), input text animations with 5 strengths, action button style (accent, neutral, white). Blur and glass: glare (stroke), disable avatar blur, blur intensity, liquid glass intensity, liquid glass tint.
+
+Footprint of each part in `base-nagramxf` (read from code, not built): the compact pill is a large block in `ActionBar` (about lines 2480 to 2830, 51 uses of `countLayout`) plus 9 hooks in `ChatAvatarContainer`; iOS input is the largest (151 lines mentioning iOS and about 15 methods in `ChatActivityEnterView`, about 11 places in `ChatActivity`, plus `ChatActivityEnterViewAnimatedIconView`); input animation 316 lines plus 3 hooks in `EditTextEffects`; action button style 4 hooks; hide fade 8 sites; avatar sender 3 hooks; avatar blur 5 sites in `ProfileActivity`, `ProfileGalleryBlurView`, `ProfileMusicView`.
+
+Findings that change the plan:
+- Stock 13.2.1 rewrote blur3: `BlurredBackgroundDrawableRenderNode` is gone; there are `org/telegram/utils/glass` (`GlassEngine`, `GlassSettings`), `LiteMode.FLAG_LIQUID_GLASS`, `GlassRim`, `StrokeDrawable`. The nagramxf blur, liquid glass and stroke hooks cannot be ported; that part is designed again on the new engine, and stock already has a liquid glass toggle in Lite Mode.
+- Stock already has `ActionBar.centerTitleAndGlass` (set by `BaseFragmentSimpleGlass`) and a glass title. The compact pill is an addition on top of it; read that code before touching `ActionBar`.
+- Stock has no unread counter on the back button (`countLayout` absent); it is written from scratch.
+- nagramxf options depend on `NekoConfig` and `NaConfig` keys (`unreadBadgeOnBackButton`, `iOSMessageInputField`, `strokeOnViews`, `disableAvatarBlur`, `centerActionBarTitle`); here they become our own keys. `centerActionBarTitle` also centers titles of other screens; decide separately whether we want that.
+- Not on the page and not ported: sticker time on the side (`StickerTime`, 6 hooks in `ChatMessageCell`).
+
+Our config (`LumineChatConfig`, keys `LumineChat*` in `lumine_config`, in the tree and inert): chatPill (on), chatPillAvatarSlot (on), chatPillAvatarRight (off), chatTitleMarquee (on), unreadBadge (on), unreadBadgeIos (on), iosInput (off), hideFade (off), avatarSender (0 show, 1 hide, 2 hold), avatarSenderHidden (off), inputAnimation (off), inputAnimationStrength (2, range 0 to 4), actionButtonStyle (0, range 0 to 2). The defaults of the pill and the badge follow nagramxf and are not final: rule 5 of section 11 says new behavior is off by default, so decide before wiring them.
+
+History: `c39c6421` added the page (Kotlin, in `app.lumine.settings` to reach the package-private `LumineCards`), a row in the Interface card of `LumineAppearancePage` and the Hide fade hooks. It was written before `LumineSubPage` existed, was never built green, and was dropped by the owner. Hide fade sites found in stock 13.2.1 (read from code, to be redone as one-line `if (LumineChatConfig.getHideFade()) return;` before the drawing): `DialogsActivityTopBubblesFadeView.onDraw`, `ShareAlert` bottom fade view `draw`, `ChatActivityFadeView.onDraw`, `ChatInputViewsContainer` fade view `dispatchDraw` (it only draws `backgroundWithFadeDrawable`, not the input bubble), `ChatAttachAlert` bottom fade `draw` and the gradient protection `onDraw`, and `MainTabsActivity.checkUi_fadeView` (condition `tabletLayout || hideFade` sets the alpha to 0, so the view goes GONE). The nagramxf touch hook on `tabsViewWrapper` was not taken. Unknown: whether stock has another fade in the chat header that these sites miss.
+
+Plan, one commit each, every step "not built" until CI is green:
+1. The page on `LumineSubPage` and its row in the Interface card of Appearance, with Hide fade views as its first option (an empty page proves nothing). Before writing, read the CI log of the dropped commit if the owner sends it, so the same cause is not repeated.
+2. Action button style, avatar sender.
+3. Input text animation.
+4. Unread badge.
+5. Title marquee.
+6. Compact pill with avatar slots (large `ActionBar` work; agree first).
+7. iOS input field (largest; agree first).
+8. Blur and glass on the new stock engine (design first).
+9. Own preview style (owner's design, after all options work).
