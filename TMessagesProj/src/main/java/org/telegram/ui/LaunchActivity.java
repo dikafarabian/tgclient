@@ -9573,4 +9573,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             return AndroidUtilities.fixedDispatchApplyWindowInsets(insets, this);
         }
     }
+
+    @Override
+    public android.content.res.Resources getResources() {
+        return app.lumine.icons.LumineIconResources.wrap(super.getResources());
+    }
 }
