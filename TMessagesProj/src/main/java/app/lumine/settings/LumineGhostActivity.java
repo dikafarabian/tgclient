@@ -4,29 +4,18 @@
  */
 package app.lumine.settings;
 
-import static org.telegram.messenger.AndroidUtilities.dp;
-
 import android.content.Context;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-
-import androidx.annotation.Nullable;
 
 import app.lumine.LumineStrings;
-import app.lumine.restart.LumineRestart;
 import app.lumine.ghost.LumineGhost;
 import app.lumine.ghost.LumineGhostRequests;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;
-import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.SectionsScrollView;
 import org.telegram.ui.Components.Switch;
 
-public class LumineGhostActivity extends BaseFragment {
+public class LumineGhostActivity extends LumineSubPage {
 
     private static final int[] LABELS = {
             R.string.LumineGhostNoRead,
@@ -40,42 +29,14 @@ public class LumineGhostActivity extends BaseFragment {
     private LumineCards.Row countRow;
     private final Switch[] toggles = new Switch[LumineGhost.COUNT];
     private final View[] rows = new View[LumineGhost.COUNT];
-    private SectionsScrollView scroll;
 
     @Override
-    protected boolean useSimpleActionBar() {
-        return true;
+    protected int titleRes() {
+        return R.string.LumineGhostMode;
     }
 
     @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    protected SectionsScrollView getScrollViewForSimpleGlass() {
-        return scroll;
-    }
-
-    @Override
-    public View createView(Context context) {
-        setHasOwnBackground(true);
-        simpleActionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        simpleActionBar.setTitle(LumineStrings.get(R.string.LumineGhostMode));
-        LumineRestart.menu(this);
-
-        FrameLayout root = new FrameLayout(context);
-        root.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
-        fragmentView = root;
-
-        LinearLayout list = new SectionsScrollView.SectionsLinearLayout(context);
-        list.setOrientation(LinearLayout.VERTICAL);
-        scroll = new SectionsScrollView(context, list, resourceProvider);
-        scroll.setVerticalScrollBarEnabled(false);
-        root.addView(scroll, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        scroll.addView(list, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
-
+    protected void build(Context context, LinearLayout list) {
         LinearLayout main = LumineCards.card(context, list, null);
         master = LumineCards.toggleRow(context, main, LumineStrings.get(R.string.LumineGhostMode), null, LumineGhost.active(), this::onMaster);
         countRow = LumineCards.row(context, main, LumineStrings.get(R.string.LumineGhostActiveFeatures), null);
@@ -99,7 +60,6 @@ public class LumineGhostActivity extends BaseFragment {
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineGhostMarkReadAfterSendInfo));
 
         refresh();
-        return fragmentView;
     }
 
     private void onMaster(boolean enabled) {
