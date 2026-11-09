@@ -2665,6 +2665,7 @@ public class ChatActivityEnterView extends FrameLayout implements
 
         parentActivity = context;
         parentFragment = fragment;
+        iosLayoutMode = app.lumine.chat.ios.LumineIosInput.active(fragment);
         if (fragment != null) {
             recordingGuid = parentFragment.getClassGuid();
         }
@@ -15995,5 +15996,11 @@ public class ChatActivityEnterView extends FrameLayout implements
         InputFilter[] newFilters = Arrays.copyOf(oldFilters, oldFilters.length + 1);
         newFilters[oldFilters.length] = noNewLinesFilter;
         editText.setFilters(newFilters);
+    }
+
+    private boolean iosLayoutMode;
+
+    public boolean isIOSInputStyle() {
+        return iosLayoutMode;
     }
 }
