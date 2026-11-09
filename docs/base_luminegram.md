@@ -2,9 +2,10 @@
 
 Branch `base-luminegram` of `dikafarabian/tgclient`. General rules (working style, git conventions, sandbox facts) are in `tgclient_project.md`; this document only covers what is specific to this base.
 
-Last checked against the tree: 2026-11-07 (head `f8b231d0` before this edit). This is the fresh base: it starts from official Telegram for Android, not from another fork. `base-nagramxf` stays in the repo as a reference to read features from; features are ported by hand, never merged.
+Last checked against the tree: 2026-11-09 (head `0a11c684` before this edit). This is the fresh base: it starts from official Telegram for Android, not from another fork. `base-nagramxf` stays in the repo as a reference to read features from; features are ported by hand, never merged.
 
 Verification state (layers as in section 8 of `tgclient_project.md`):
+- First real sync with upstream (13.1.1 to 13.2.1, 2026-11-09), confirmed on the owner device (canary arm64-v8a, build `0a11c68`, version line `13.2.1 (7291)`): the build runs; FCM works (token 142 chars, `account 0 registered: true`, five `push received` after the app was swiped from recents, Firebase config present, no `token failed`); text formatting in chat; Ghost Mode, Material 3 switch, slider and list style, the Settings icons and the luminegram row; photo, video, voice note, stories, animated stickers and calls (owner reports "aman", no screenshots for the last two groups). Not checked: Force Stop, Doze and reboot for push; battery optimization was still on (`battery unrestricted: false`); `push connection: false` in the report was not compared with a report from before the merge; phone number login through the new `firebase-pnv`.
 - Built by CI and confirmed by the owner on a device: a canary APK (arm64-v8a) builds, installs and runs, and the Telegram card arrives with the new format (owner screenshot, 2026-11-07, build `65b3ba2`). The commit hash in the card is monospace (owner confirmed).
 - Built by CI, owner reported "berhasil" without per-feature detail: the later commits (version text with commit hash, app name, launcher icons, wordmark, intro). Treat these as unconfirmed on the device until the owner sends screenshots: launcher icon shape on the owner's launcher, themed (monochrome) icon, the `luminegram` wordmark on login / chat list / stories row, intro page animation with the sparkle (the old plane used to fly over the sphere), intro sphere on the light theme (white sphere on white background), the version line in Settings.
 - Built by CI and confirmed on the owner device (screenshots 2026-11-08, builds `f8b231d` and `cfdfd3c`, canary arm64-v8a): the luminegram settings page with the floating tab bar, the General tab layout, the Home cards, the reworked Home push card on FCM (Service FCM, Status Ready in green, Last push time, no Error row) and the General "Push status" row after the fix (`FCM · today at 01:01`, before the fix `FCM · no token`). Confirmed in a later session (build `cfdfd3c`): the row in the main Settings, the push service dialog and the In-app Home card (Service In-app service, State Running). Not yet confirmed: the Notification page, the Home card opening it, the General row, and the Details card.
@@ -17,10 +18,10 @@ Verification state (layers as in section 8 of `tgclient_project.md`):
 ## 1. Identity
 
 - Upstream: https://github.com/DrKLO/Telegram, branch `master` (official Telegram for Android). Remote name `upstream`. License GPL-3.0 (the repo is public; distributing an APK means the source must stay open).
-- Sync point: `3de37c8cf` "update to 13.1.1 (7237)", 2026-10-25. Upstream had nothing newer on 2026-11-07 (`git ls-remote` returned the same sha).
+- Sync point: `7be672ea` "update to 13.2.1 (7291)", 2026-11-07, merged on 2026-11-09 (merge `7f353c38`, fix `0a11c684`). Previous sync point: `3de37c8cf` (13.1.1 / 7237). 13.2.0 (7280) was skipped: upstream released both on the same day and 13.2.1 was the tip of `master`.
 - Upstream history is kept in full (about 650 commits; the official repo is small because releases land as one commit "update to X.Y.Z (code)" plus merged pull requests). The merge-base is real, so a plain `git merge` works.
 - App: name `luminegram` (lowercase), package `com.lumine.gram`. API ID/hash come from CI secrets (never in the repo). Brand: sparkle logo, black sparkle on a white circle (colors differ from `base-nagramxf`, which used white on `#FA456C`).
-- Own commits on top of upstream: 34 at head `f8b231d0` (20 at `77bb7854` plus 14 after it; `git rev-list --count upstream/master..HEAD`).
+- Own commits on top of upstream: 97 non-merge commits at head `0a11c684` (`git rev-list --count --no-merges upstream/master..HEAD`; upstream commits reachable through the merge are not counted).
 - Language: Java only. There are no Kotlin sources in `TMessagesProj` and the Kotlin plugin is not applied there (only `buildSrc` and the root classpath use Kotlin). Adding Kotlin to the module is a build change of its own; do it only when a feature needs it.
 
 ## 2. Structure of the upstream project (read from the tree, 2026-11-07)
@@ -105,6 +106,14 @@ Procedure:
 6. Record the new sync point at the top of this document.
 
 If upstream ever rewrites its history, use the tree-delta method described in `base_nagramxf.md` section 2.
+
+### 4.1 First real sync (13.1.1 to 13.2.1, 2026-11-09)
+
+- Merge of `7be672ea` into the branch: 3 text conflicts, all two independent edits: `Theme.java` (our `key_divider` hook kept, upstream split `getColor` into `getColorFromTable`), `RecyclerListView.java` (upstream wrapper `drawSectionBackgroundRect` plus our `useSegmentedSections()` flag on `SectionsDrawer.draw`), `UniversalAdapter.java` (our header guard and upstream `getSectionsDrawBackground` guard, both kept). `layer-check.sh` printed `layer OK` after the merge.
+- First CI run failed in `compileReleaseJavaWithJavac`: `SettingsActivity.java:1457 cannot find symbol class Rect`. Upstream removed `import android.graphics.Rect` and our tonal circle icon code still used it; git saw no conflict because the lines were far apart. Fixed in `0a11c684` by restoring the import. The native step (prisma and twidget built from source) had passed before javac failed, and the next build succeeded.
+- Lesson: a clean merge does not mean a clean compile. After a sync, scan for imports that upstream removed and our code still uses (diff the `import` lines of every file changed on both sides), then rely on CI for the rest.
+- Upstream build changes seen in this sync: Firebase moved to BoM `34.19.0` with `firebase-pnv` added, Google Services plugin `4.5.0`, Crashlytics plugin `3.0.8`, prisma built from source via CMake (`add_subdirectory(prisma)`, `twidget`). NDK stayed `27.2.12479018`. Push hooks files (`GcmPushListenerService`, `PushListenerController`) were not touched upstream.
+- A shallow clone cannot deepen here (`fatal: error in object: unshallow`): use a full single-branch clone for a merge.
 
 ## 5. CI
 
