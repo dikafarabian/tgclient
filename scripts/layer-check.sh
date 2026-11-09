@@ -142,6 +142,8 @@ MARKERS=(
 "$J/org/telegram/ui/Components/UniversalRecyclerView.java|app.lumine.md3.LumineListItems"
 "$J/org/telegram/ui/Components/RecyclerListView.java|LumineListItems.forcesLegacy"
 "$J/org/telegram/ui/Components/RecyclerListView.java|useSegmentedSections() && isSegmentedHeader(child)"
+"$J/org/telegram/ui/Components/RecyclerListView.java|LumineListItems.INNER_RADIUS_DP"
+"$J/org/telegram/ui/Components/RecyclerListView.java|LumineListItems.GAP_DP"
 "$J/org/telegram/ui/Components/RecyclerListView.java|isSegmentedHeader"
 "$J/org/telegram/ui/Components/RecyclerListView.java|view instanceof HeaderCell ? 1 : 0"
 "$J/org/telegram/ui/SettingsActivity.java|app.lumine.md3.LumineListItems.tonalBackground"

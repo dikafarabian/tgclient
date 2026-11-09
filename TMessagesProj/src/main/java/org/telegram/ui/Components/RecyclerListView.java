@@ -3661,7 +3661,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                         if (!first && this.parent.useSegmentedSections()
                                 && this.parent.isViewTypeSection != null
                                 && this.parent.isViewTypeSection.run(adapter.getItemViewType(position - 1))) {
-                            outRect.top += dp(2);
+                            outRect.top += dp(app.lumine.md3.LumineListItems.GAP_DP);
                         }
                     }
                 }
@@ -3701,7 +3701,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
     }
 
     private float segmentInnerRadius() {
-        return Math.min(sectionRadius, dp(4));
+        return Math.min(sectionRadius, dp(app.lumine.md3.LumineListItems.INNER_RADIUS_DP));
     }
 
     private boolean hasSegmentedSectionNeighbor(View child, int delta) {

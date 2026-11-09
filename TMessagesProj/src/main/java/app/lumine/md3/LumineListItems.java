@@ -10,6 +10,12 @@ import androidx.core.graphics.ColorUtils;
 
 public final class LumineListItems {
 
+    public static final int OUTER_RADIUS_DP = 16;
+    public static final int INNER_RADIUS_DP = 4;
+    public static final int GAP_DP = 2;
+    public static final int ROW_DP = 56;
+    public static final int DETAIL_ROW_DP = 72;
+
     private LumineListItems() {
     }
 
@@ -22,11 +28,11 @@ public final class LumineListItems {
     }
 
     public static int rowHeight(int stockDp) {
-        return stockDp == 50 && enabled() ? 56 : stockDp;
+        return stockDp == 50 && enabled() ? ROW_DP : stockDp;
     }
 
     public static int detailRowHeight(int stockDp) {
-        return stockDp == 64 && enabled() ? 72 : stockDp;
+        return stockDp == 64 && enabled() ? DETAIL_ROW_DP : stockDp;
     }
 
     public static int tonalBackground(int top, int bottom) {

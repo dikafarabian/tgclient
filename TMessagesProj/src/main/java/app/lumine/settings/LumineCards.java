@@ -45,10 +45,10 @@ final class LumineCards {
 
     private static final Object SEGMENT = new Mark();
     private static final Object PLAIN = new Mark();
-    private static final int OUTER_RADIUS_DP = 16;
-    private static final int INNER_RADIUS_DP = 4;
-    private static final int SEGMENT_GAP_DP = 2;
-    private static final int SEGMENT_HEIGHT_DP = 56;
+    private static final int OUTER_RADIUS_DP = LumineListItems.OUTER_RADIUS_DP;
+    private static final int INNER_RADIUS_DP = LumineListItems.INNER_RADIUS_DP;
+    private static final int SEGMENT_GAP_DP = LumineListItems.GAP_DP;
+    private static final int SEGMENT_HEIGHT_DP = LumineListItems.ROW_DP;
     private static final int SECTION_GAP_DP = 12;
     private static final int INFO_TOP_DP = 6;
     private static final int INFO_BOTTOM_DP = 8;
