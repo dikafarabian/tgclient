@@ -16,6 +16,7 @@ import app.lumine.md3.LumineListItems;
 import app.lumine.push.PushStatus;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.Switch;
 
 final class LumineCards {
@@ -30,7 +31,20 @@ final class LumineCards {
         }
     }
 
-    private static final Object SEGMENT = new Object();
+    private static final class Mark {
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Integer && (Integer) other == RecyclerListView.TAG_NOT_SECTION;
+        }
+
+        @Override
+        public int hashCode() {
+            return RecyclerListView.TAG_NOT_SECTION;
+        }
+    }
+
+    private static final Object SEGMENT = new Mark();
+    private static final Object PLAIN = new Mark();
     private static final int OUTER_RADIUS_DP = 16;
     private static final int INNER_RADIUS_DP = 4;
     private static final int SEGMENT_GAP_DP = 2;
@@ -45,6 +59,7 @@ final class LumineCards {
 
     static void add(LinearLayout card, View view) {
         if (!segmented()) {
+            view.setTag(PLAIN);
             card.addView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             return;
         }
@@ -100,6 +115,7 @@ final class LumineCards {
             header.setTypeface(AndroidUtilities.bold());
             header.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
             header.setText(title);
+            header.setTag(PLAIN);
             if (segmented) {
                 header.setPadding(dp(16), dp(4), dp(16), dp(8));
             }
@@ -211,6 +227,7 @@ final class LumineCards {
         info.setTextSize(13);
         info.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
         info.setText(text);
+        info.setTag(PLAIN);
         info.setPadding(dp(8), 0, dp(8), 0);
         parent.addView(info, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
     }
