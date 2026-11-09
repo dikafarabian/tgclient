@@ -1335,6 +1335,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
             @Override
             public void draw(@NonNull Canvas canvas) {
                 super.draw(canvas);
+                if (app.lumine.chat.LumineChatConfig.getHideFade()) return;
                 fadeDrawable.setBounds(0, getMeasuredHeight() - systemInsets.bottom - dp(72), getMeasuredWidth(), getMeasuredHeight());
                 fadeDrawable.draw(canvas);
             }

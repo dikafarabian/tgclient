@@ -1133,7 +1133,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         if (isBottomBarHidden()) {
             alpha = 0f;
         }
-        if (tabletLayout) {
+        if (tabletLayout || app.lumine.chat.LumineChatConfig.getHideFade()) {
             alpha = 0.0f;
         }
 

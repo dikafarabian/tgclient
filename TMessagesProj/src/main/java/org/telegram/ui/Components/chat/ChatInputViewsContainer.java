@@ -56,7 +56,7 @@ public class ChatInputViewsContainer extends FrameLayout implements Theme.Colora
         fadeView = new View(context) {
             @Override
             protected void dispatchDraw(@NonNull Canvas canvas) {
-                if (backgroundWithFadeDrawable != null) {
+                if (backgroundWithFadeDrawable != null && !app.lumine.chat.LumineChatConfig.getHideFade()) {
                     backgroundWithFadeDrawable.draw(canvas);
                 }
                 super.dispatchDraw(canvas);

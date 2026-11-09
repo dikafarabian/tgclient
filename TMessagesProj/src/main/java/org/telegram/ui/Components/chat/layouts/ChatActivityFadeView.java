@@ -165,6 +165,7 @@ public class ChatActivityFadeView extends View implements Theme.Colorable {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
+        if (app.lumine.chat.LumineChatConfig.getHideFade()) return;
         if (Theme.isCompactMode(resourcesProvider)) {
             drawCompactFades(canvas);
         } else {

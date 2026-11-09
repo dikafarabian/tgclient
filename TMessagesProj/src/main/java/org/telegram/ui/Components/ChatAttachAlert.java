@@ -2720,6 +2720,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             @Override
             public void draw(@NonNull Canvas canvas) {
                 super.draw(canvas);
+                if (app.lumine.chat.LumineChatConfig.getHideFade()) return;
                 bottomFadeDrawable.draw(canvas);
             }
         };
@@ -7371,6 +7372,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
         @Override
         protected void onDraw(@NonNull Canvas canvas) {
+            if (app.lumine.chat.LumineChatConfig.getHideFade()) return;
             gradientProtectionDrawable.setColor(Theme.multAlpha(Theme.getColor(bgKeyColor, resourcesProvider), 0.5f));
             gradientProtectionDrawable.draw(canvas);
             gradientProtectionDrawable2.setColor(Theme.multAlpha(Theme.getColor(bgKeyColor, resourcesProvider), 0.95f));
