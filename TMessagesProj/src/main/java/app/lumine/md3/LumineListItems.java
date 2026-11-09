@@ -17,8 +17,8 @@ public final class LumineListItems {
         return LumineMd3.listEnabled();
     }
 
-    public static boolean keepsLegacySections(boolean drawsBackground) {
-        return drawsBackground && enabled();
+    public static boolean forcesLegacy(boolean explicitBitmap) {
+        return enabled() && !explicitBitmap;
     }
 
     public static int rowHeight(int stockDp) {

@@ -3286,7 +3286,8 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
     public void setCaptureSectionsDecoratorAllowed(boolean allowed) {
         canCaptureSectionsDecorator = allowed;
         if (allowed) {
-            setLegacySections(false);
+            applyLegacySections(false);
+            refreshSectionsDecoration();
         }
     }
 
@@ -3400,6 +3401,27 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
     }
 
     public void setLegacySections(boolean legacySections) {
+        explicitBitmapSections = !legacySections;
+        applyLegacySections(legacySections);
+        refreshSectionsDecoration();
+    }
+
+    private boolean explicitBitmapSections;
+
+    private boolean wantsBitmapSections() {
+        return !legacySections && !app.lumine.md3.LumineListItems.forcesLegacy(explicitBitmapSections);
+    }
+
+    private void refreshSectionsDecoration() {
+        if (isSectionView == null || wantsBitmapSections() == (bitmapSectionsItemDecoration != null)) {
+            return;
+        }
+        installSectionsDecoration();
+        invalidateItemDecorations();
+        invalidate();
+    }
+
+    private void applyLegacySections(boolean legacySections) {
         if (this.legacySections == legacySections) {
             return;
         }
@@ -3420,8 +3442,8 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
         }
         bitmapSectionsDrawBackground = drawBackground;
         if (drawBackground) {
-            // only this decoration draws it
-            setLegacySections(false);
+            applyLegacySections(false);
+            refreshSectionsDecoration();
         }
         if (bitmapSectionsItemDecoration != null) {
             bitmapSectionsItemDecoration.setDrawBackground(drawBackground);
@@ -3464,7 +3486,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
         if (isSectionView == null || isViewTypeSection == null || drawSectionBackground == null) {
             return;
         }
-        if (!legacySections && !app.lumine.md3.LumineListItems.keepsLegacySections(bitmapSectionsDrawBackground)) {
+        if (wantsBitmapSections()) {
             bitmapSectionsItemDecoration = new BitmapSectionsItemDecoration(
                     this,
                     isSectionView,
