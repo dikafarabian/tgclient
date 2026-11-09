@@ -18,7 +18,7 @@ public final class LumineListItems {
     }
 
     public static boolean forcesLegacy(boolean explicitBitmap) {
-        return enabled() && !explicitBitmap;
+        return enabled();
     }
 
     public static int rowHeight(int stockDp) {
