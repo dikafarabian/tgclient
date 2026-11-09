@@ -60,6 +60,7 @@ Source of truth: `git diff --name-status 3de37c8cf HEAD` and `bash scripts/layer
 | `scripts/sync-audit.sh` | post-merge audit against the upstream range: changed hook files, sections engine tokens, removed imports (section 4, step 7) |
 | `docs/base_luminegram.md` | this document (snapshot; the project copy is the one the owner uploads to the Claude project) |
 | `TMessagesProj/src/main/kotlin/app/lumine/chat/LumineChatConfig.kt` | Kotlin, our own. The Chat Interface options stored in `LumineConfig` (`@JvmStatic` properties, so a Java hook calls `LumineChatConfig.getX()`). Inert: nothing reads it yet. See section 12. |
+| `TMessagesProj/src/main/java/app/lumine/icons/*.java` | Icon pack engine (section 13). `LumineIconConfig` (keys `LumineIconPacks*` in `lumine_config`, master switch off by default, ordered list of active pack ids, index 0 wins), `LumineIconStorage` (packs in `files/lumine_icon_packs/<id>/metadata.json`, install from a `.icons` zip with size, entry count, path and ratio limits), `LumineIconPack`, `LumineIconError`, `LumineIconManager` (name to pack map with the exteraGram aliases, bitmap cache, blacklist, original size read from the stock application resources), `LumineIconResources` (Resources wrapper, re-created when assets, configuration or metrics change). |
 
 New own code goes in the package `app.lumine.<feature>`, new resources get the prefix `lumine_`, new strings go in a file of ours (not in upstream's `strings.xml`), and each feature needs one settings entry and a toggle in `LumineConfig`.
 
@@ -93,6 +94,7 @@ Every row is a place where a merge can conflict.
 | Material 3 slider (draw hook at the start of `onDraw`, after `thumbX` is read; returns false and stock drawing runs for two sided, buffered, minimum, divided-step and timestamp sliders; stepped sliders with separators, such as Message corners, are drawn after the step snap; thumb, touch and value mapping untouched) | `org/telegram/ui/Components/SeekBarView.java` | `app.lumine.md3.LumineSliderDraw.draw` |
 | Material 3 list items (row heights, no dividers or shadow height, segmented section drawing, headers drawn without a card, inverted radii fix) | `ui/Cells/TextCell.java`, `TextCheckCell.java`, `TextDetailSettingsCell.java`, `TextSettingsCell.java`, `ui/Components/UniversalAdapter.java`, `RecyclerListView.java`, `UniversalRecyclerView.java`, `ui/ActionBar/Theme.java`, `messenger/AndroidUtilities.java` | `app.lumine.md3.LumineListItems`, `isSegmentedHeader`, `LumineListItems.tonalBackground` (tonal circle icons in the `SettingsActivity` cell) |
 | Sections engine choice (all settings style lists follow our segmented path while List items is on; the choice is recomputed in every setter, so call order does not matter; the page background is filled for lists that ask `setSectionsDrawBackground`; headers lose their own background and get the page color under them) | `org/telegram/ui/Components/RecyclerListView.java`, `app/lumine/md3/LumineListItems.java` | `LumineListItems.forcesLegacy`, `useSegmentedSections() && isSegmentedHeader(child)` |
+| Icon packs: Resources wrapper for the main activity (one added method at the end of the class, kind a, no stock line edited) | `ui/LaunchActivity.java` | `app.lumine.icons.LumineIconResources.wrap` |
 | Kotlin plugin in the library and its JVM target | `TMessagesProj/build.gradle` | `apply plugin: 'kotlin-android'`, `JvmTarget.JVM_1_8` |
 | Removed upstream secrets | `TMessagesProj/config/release.keystore`, five `google-services.json` | `layer-check.sh` fails if any keystore or `google-services.json` is tracked |
 
@@ -340,3 +342,19 @@ Plan, one commit each, every step "not built" until CI is green:
 7. iOS input field (largest; agree first).
 8. Blur and glass on the new stock engine (design first).
 9. Own preview style (owner's design, after all options work).
+
+## 13. Icon Packs port from exteraless (started 2026-11-10)
+
+Owner request: full port of exteraless Icon Packs, option "Icon Packs" in the Interface card of Appearance. Reference: `exteraless/exteraless` pinned at `c83765c` (`app.exteraless.icons`, `tw.nekomimi.nekogram.ui.icons.IconsResources`, `IconPacksConfig.kt`). Every commit of this port names exteraless in its message. Both projects are GPL-3.0.
+
+How it works upstream (read from code): `LaunchActivity.getResources()` returns a `Resources` subclass; each `getDrawable` asks the manager for a replacement by resource name, then falls back to stock. A pack is a folder with `metadata.json` (`packId`, `packName`, `author`, `version`, `icons` name to relative file) and image files, shipped as a `.icons` zip. Only the activity resources are wrapped, so code that uses the application context keeps stock icons.
+
+Differences from exteraless, on purpose: settings in `LumineConfig` instead of `ConfigItem`; master switch off by default; the original icon size comes from the stock application resources (exteraless prewarm used a 24dp fallback when no wrapper was at hand, which cached wrong sized bitmaps); exteraGram alias names are mapped into the owner map, so a pack that says `ic_ab_search` replaces our `outline_header_search` (all nine alias targets exist in this tree, `ic_ab_search` does not); SVG files are skipped until a decision on the `androidsvg` dependency (not in this base).
+
+Stages, one commit each:
+1. Engine and hook. Done: `9756b322`, syntax checked, probe shows no missing symbol on `org.telegram` or `app.lumine`, layer OK (120 markers), negative test of the marker run. Not built, not seen on a device, install path not exercised (it needs Android classes). Inert: no UI yet.
+2. Icon Packs page (install, enable, order, delete, preview sheet) and the row in the Interface card of Appearance.
+3. Editor and picker for single icons (`saveCustomIcon`, system icon list).
+4. Notification icon from the active pack (`ContentProvider`, manifest entry).
+5. Built-in Solar and Remix sets (about 1.1k mappings in `BaseIconPacks` plus drawables; Solar is CC BY 4.0 and Remix is Apache 2.0, both need attribution; every mapping must be re-checked against 13.2.1 names).
+Later: prewarm of the cache, SVG packs, sharing a pack as a file.
