@@ -2731,6 +2731,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         };
         frameLayout.setClipChildren(false);
         textFieldContainer.addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 0, 0, DEFAULT_HEIGHT, 0));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.frameInsets(frameLayout, parentFragment);
 
         emojiButton = new ChatActivityEnterViewAnimatedIconView(context) {
             @Override
@@ -2788,6 +2789,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
         });
         messageEditTextContainer.addView(emojiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 2, 0, 0, 0));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.emojiToRight(emojiButton);
         setEmojiButtonImage(false, false);
 
         deleteRichDraftButton = new ImageView(context);
@@ -2827,6 +2829,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             attachLayout.setEnabled(false);
             attachLayout.setClipChildren(false);
             messageEditTextContainer.addView(attachLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT, 0, 0, DEFAULT_HEIGHT, 0));
+            if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.attachLayoutToRight(attachLayout);
 
             if (chatMode != ChatActivity.MODE_WELCOME_MESSAGES) {
                 notifyButton = new ImageView(context);
@@ -2873,6 +2876,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             attachButton.setImageResource(R.drawable.msg_input_attach2);
             ThemeBind.selectorBackground(attachButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
             messageEditTextContainer.addView(attachButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
+            if (isIOSInputStyle()) attachBubble = app.lumine.chat.ios.LumineIosInput.moveAttach(context, messageEditTextContainer, textFieldContainer, attachButton, resourcesProvider);
             attachButton.setOnClickListener(v -> {
                 if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress() || attachLayoutPaddingAlpha == 0f) {
                     return;
@@ -3034,6 +3038,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         sendButtonContainer.setClipChildren(false);
         sendButtonContainer.setClipToPadding(false);
         textFieldContainer.addView(sendButtonContainer, LayoutHelper.createFrame(100, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosLayout.install(this, parentFragment, attachBubble, sendButtonContainer, emojiButton);
 
         audioVideoButtonContainer = new FrameLayout(context) {
 
@@ -15028,6 +15033,10 @@ public class ChatActivityEnterView extends FrameLayout implements
 
     private void updateAttachButtonTranslationX() {
         if (attachButton == null) return;
+        if (isIOSInputStyle()) {
+            attachButton.setTranslationX(0);
+            return;
+        }
         attachButton.setTranslationX(attachLayoutPaddingTranslationX + attachLayoutTranslationX + (sendButton != null ? (
             -Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT + 12)) * sendButton.getAlpha()
         ) : 0));
@@ -15999,6 +16008,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     private boolean iosLayoutMode;
+    private FrameLayout attachBubble;
 
     public boolean isIOSInputStyle() {
         return iosLayoutMode;

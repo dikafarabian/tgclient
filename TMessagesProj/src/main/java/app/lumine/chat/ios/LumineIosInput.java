@@ -7,10 +7,24 @@
  */
 package app.lumine.chat.ios;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+
 import app.lumine.chat.LumineChatConfig;
 import org.telegram.messenger.ChatObject;
+import org.telegram.messenger.R;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
+import org.telegram.ui.Components.ChatActivityEnterView;
+import org.telegram.ui.Components.LayoutHelper;
 
 public final class LumineIosInput {
 
@@ -27,5 +41,54 @@ public final class LumineIosInput {
         }
         final boolean broadcast = (chat instanceof TLRPC.TL_channel || chat instanceof TLRPC.TL_channelForbidden) && !chat.megagroup && !chat.gigagroup;
         return !broadcast || ChatObject.hasAdminRights(chat);
+    }
+
+    public static int containerLeftInset(ChatActivity fragment) {
+        if (fragment == null) {
+            return 0;
+        }
+        final TLRPC.User user = fragment.getCurrentUser();
+        if (user != null && !user.bot || fragment.getChatMode() == ChatActivity.MODE_WELCOME_MESSAGES) {
+            return 15;
+        }
+        if (user != null && user.bot) {
+            return 8;
+        }
+        if (fragment.getCurrentChat() == null) {
+            return 0;
+        }
+        return 15;
+    }
+
+    public static void frameInsets(FrameLayout frame, ChatActivity fragment) {
+        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) frame.getLayoutParams();
+        lp.leftMargin = dp(containerLeftInset(fragment));
+        lp.rightMargin = dp(48);
+        frame.setLayoutParams(lp);
+    }
+
+    public static void emojiToRight(View emojiButton) {
+        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) emojiButton.getLayoutParams();
+        lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+        lp.leftMargin = 0;
+        lp.rightMargin = dp(3);
+        emojiButton.setLayoutParams(lp);
+    }
+
+    public static void attachLayoutToRight(View attachLayout) {
+        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) attachLayout.getLayoutParams();
+        lp.rightMargin = dp(2);
+        attachLayout.setLayoutParams(lp);
+    }
+
+    public static FrameLayout moveAttach(Context context, FrameLayout from, FrameLayout to, ImageView attachButton, Theme.ResourcesProvider resourcesProvider) {
+        from.removeView(attachButton);
+        attachButton.setImageResource(R.drawable.lumine_input_attach);
+        attachButton.setBackground(null);
+        attachButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+        final FrameLayout bubble = new FrameLayout(context);
+        bubble.addView(attachButton, LayoutHelper.createFrame(38, 38, Gravity.CENTER));
+        to.addView(bubble, LayoutHelper.createFrame(ChatActivityEnterView.DEFAULT_HEIGHT, ChatActivityEnterView.DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 0));
+        return bubble;
     }
 }
