@@ -25,6 +25,7 @@ OWN_FILES=(
 "$J/app/lumine/push/PushStatus.java"
 "$J/app/lumine/push/PushSwitcher.java"
 "$J/app/lumine/settings/LumineCards.java"
+"$J/app/lumine/settings/LumineSubPage.java"
 "$J/app/lumine/settings/LumineGeneralPage.java"
 "$J/app/lumine/settings/LumineAppearancePage.java"
 "$J/app/lumine/settings/LumineNotificationActivity.java"
