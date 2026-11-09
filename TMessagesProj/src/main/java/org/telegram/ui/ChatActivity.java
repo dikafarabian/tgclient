@@ -4571,6 +4571,11 @@ public class ChatActivity extends BaseFragment implements
             glassBackgroundDrawableFactory.create(chatInputViewsContainer, blurredBackgroundColorProvider));
         chatInputViewsContainer.setUnderKeyboardBackgroundDrawable(
             glassBackgroundDrawableFactoryFrosted.create(chatInputViewsContainer, blurredBackgroundColorProvider));
+        if (app.lumine.chat.LumineChatConfig.getIosInput()) {
+            chatInputViewsContainer.sideBubbles.setDrawables(
+                glassBackgroundDrawableFactory.create(chatInputViewsContainer, blurredBackgroundColorProvider),
+                glassBackgroundDrawableFactory.create(chatInputViewsContainer, blurredBackgroundColorProvider));
+        }
 
 
         chatInputBubbleContainer = chatInputViewsContainer.getInputIslandBubbleContainer();

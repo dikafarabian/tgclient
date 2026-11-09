@@ -74,6 +74,7 @@ public class ChatInputViewsContainer extends FrameLayout implements Theme.Colora
 
 
 
+    public final app.lumine.chat.ios.LumineSideBubbles sideBubbles = new app.lumine.chat.ios.LumineSideBubbles(this);
     public boolean drawInputBackground = true;
     public BlurredBackgroundDrawable blurredBackgroundDrawable;
     private BlurredBackgroundDrawable underKeyboardBackgroundDrawable;
@@ -100,6 +101,7 @@ public class ChatInputViewsContainer extends FrameLayout implements Theme.Colora
         if (underKeyboardBackgroundDrawable != null) {
             underKeyboardBackgroundDrawable.updateColors();
         }
+        sideBubbles.updateColors();
         invalidate();
     }
 
@@ -278,6 +280,8 @@ public class ChatInputViewsContainer extends FrameLayout implements Theme.Colora
         blurredBackgroundDrawable.setBounds(tmpRect);
         if (drawInputBackground)
             blurredBackgroundDrawable.draw(canvas);
+
+        sideBubbles.draw(canvas, blurTop + (int) bubbleInputTranlationY + inputBubbleHeightRound);
 
         if (needDrawInAppKeyboard) {
             underKeyboardBackgroundDrawable.draw(canvas);
