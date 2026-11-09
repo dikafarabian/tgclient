@@ -49,6 +49,9 @@ final class LumineCards {
     private static final int INNER_RADIUS_DP = 4;
     private static final int SEGMENT_GAP_DP = 2;
     private static final int SEGMENT_HEIGHT_DP = 56;
+    private static final int SECTION_GAP_DP = 12;
+    private static final int INFO_TOP_DP = 6;
+    private static final int INFO_BOTTOM_DP = 8;
 
     private LumineCards() {
     }
@@ -127,7 +130,7 @@ final class LumineCards {
         }
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.bottomMargin = dp(12);
+        params.topMargin = parent.getChildCount() == 0 ? 0 : dp(SECTION_GAP_DP);
         parent.addView(card, params);
         return card;
     }
@@ -232,7 +235,9 @@ final class LumineCards {
         info.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
         info.setText(text);
         info.setTag(PLAIN);
-        info.setPadding(dp(8), 0, dp(8), 0);
-        parent.addView(info, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        info.setPadding(dp(8), 0, dp(8), dp(INFO_BOTTOM_DP));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.topMargin = dp(INFO_TOP_DP);
+        parent.addView(info, params);
     }
 }

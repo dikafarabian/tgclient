@@ -33,8 +33,6 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.SectionsScrollView;
 
-import static org.telegram.messenger.AndroidUtilities.dp;
-
 public class LumineNotificationActivity extends BaseFragment {
 
     private static final long REFRESH_MS = 2000;
@@ -100,7 +98,6 @@ public class LumineNotificationActivity extends BaseFragment {
         registrationRow = LumineCards.row(context, detailsCard, LumineStrings.get(R.string.LumineServerRegistration), null);
         lastPushRow = LumineCards.row(context, detailsCard, LumineStrings.get(R.string.LumineLastPush), null);
         lastErrorRow = LumineCards.row(context, detailsCard, LumineStrings.get(R.string.LumineLastError), null);
-        ((LinearLayout.LayoutParams) detailsCard.getLayoutParams()).topMargin = dp(16);
 
         refresh();
         return fragmentView;
