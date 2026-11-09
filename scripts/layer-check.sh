@@ -36,6 +36,7 @@ OWN_FILES=(
 "$J/app/lumine/md3/LumineListItems.java"
 "$J/app/lumine/tabs/LumineTabs.java"
 "$J/app/lumine/settings/LumineTabsActivity.java"
+"$J/app/lumine/settings/LumineChatActivity.java"
 "$J/app/lumine/settings/LumineIconRow.java"
 "$J/app/lumine/stealth/LumineStealth.java"
 "$J/app/lumine/stealth/LumineIdDc.java"

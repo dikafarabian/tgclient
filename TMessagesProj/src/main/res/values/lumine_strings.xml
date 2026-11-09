@@ -77,6 +77,10 @@
     <string name="LumineIdTypeBotApi">Bot API</string>
     <string name="LumineInterface">Interface</string>
     <string name="LumineTabsTitle">Customize Bottom Tabs</string>
+    <string name="LumineChatTitle">Chat Interface</string>
+    <string name="LumineChatHeaderInput">Header and input</string>
+    <string name="LumineChatHideFade">Hide fade views</string>
+    <string name="LumineChatHideFadeInfo">Removes the fade drawn behind the header, the input and the bottom tabs. Reopen a screen to see the change.</string>
     <string name="LumineTabTitles">Tab Titles</string>
     <string name="LumineTabDisplayMode">Display Mode</string>
     <string name="LumineTabShow">Show</string>
