@@ -2717,6 +2717,15 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
     @Override
     public boolean drawChild(Canvas canvas, View child, long drawingTime) {
         if (sectionsItemDecoration != null && !ignoreClipChild) {
+            if (useSegmentedSections() && isSegmentedHeader(child)) {
+                if (child.getBackground() != null) {
+                    child.setBackground(null);
+                }
+                if (bitmapSectionsDrawBackground) {
+                    sectionBackgroundPaint.setColor(getSectionsBackgroundColorForDecoration());
+                    canvas.drawRect(child.getX(), child.getY(), child.getX() + child.getWidth(), child.getY() + child.getHeight(), sectionBackgroundPaint);
+                }
+            }
             canvas.save();
             clipChild(canvas, child);
             boolean r = super.drawChild(canvas, child, drawingTime);
