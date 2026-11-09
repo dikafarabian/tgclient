@@ -51,6 +51,8 @@ OWN_FILES=(
 "$J/app/lumine/ghost/LumineGhostStory.java"
 "$J/app/lumine/crash/LumineCrashLog.java"
 "$J/app/lumine/crash/LumineCrashActivity.java"
+"$J/app/lumine/restart/LumineRestart.java"
+"$J/app/lumine/restart/LumineRestartActivity.java"
 "$J/app/lumine/settings/LumineGhostActivity.java"
 "$J/app/lumine/settings/LumineStealthPage.java"
 "$APP/src/main/res/raw/lumine_keep.xml"
@@ -118,6 +120,7 @@ MARKERS=(
 "$J/app/lumine/settings/LumineAppearancePage.java|new LumineDrawerActivity()"
 "$J/org/telegram/messenger/ApplicationLoader.java|LumineCrashLog.isCrashProcess"
 "TMessagesProj/src/main/AndroidManifest.xml|app.lumine.crash.LumineCrashActivity"
+"$APP/src/main/AndroidManifest.xml|app.lumine.restart.LumineRestartActivity"
 "$J/org/telegram/ui/Stories/StoryViewer.java|LumineGhostStory.shouldAsk"
 "$J/org/telegram/ui/Stories/StoryViewer.java|releaseStoryGhostSession"
 "$J/org/telegram/messenger/ApplicationLoader.java|BuildVars.BUILD_COMMIT"
@@ -194,6 +197,9 @@ for m in "${ABSENT[@]}"; do
   f="${m%%|*}"; k="${m#*|}"
   if [ -f "$f" ] && grep -qF -- "$k" "$f"; then echo "UNEXPECTED [$f] $k"; fail=1; fi
 done
+
+leak="$(grep -rn 'Restart' "$J/app/lumine" "$R/values/lumine_strings.xml" 2>/dev/null | grep -v "$J/app/lumine/restart/" | grep -v 'LumineRestart\.' | grep -v 'import app.lumine.restart.LumineRestart;' | grep -vE 'name="LumineRestart(Needed|Now)"' || true)"
+if [ -n "$leak" ]; then echo "RESTART TEXT OUTSIDE LumineRestart (use LumineRestart.hint):"; echo "$leak"; fail=1; fi
 
 tracked="$(git ls-files | grep -E "$FORBIDDEN_TRACKED" || true)"
 if [ -n "$tracked" ]; then echo "TRACKED SECRET FILES:"; echo "$tracked"; fail=1; fi

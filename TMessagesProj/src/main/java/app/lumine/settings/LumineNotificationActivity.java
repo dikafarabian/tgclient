@@ -18,6 +18,7 @@ import app.lumine.push.LuminePushLog;
 import app.lumine.push.PushConfig;
 import app.lumine.push.PushStatus;
 import app.lumine.push.PushSwitcher;
+import app.lumine.restart.LumineRestart;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.LocaleController;
@@ -153,7 +154,7 @@ public class LumineNotificationActivity extends BaseFragment {
             }
             PushSwitcher.apply(types[which]);
             refresh();
-            Toast.makeText(getParentActivity(), LumineStrings.get(R.string.LuminePushRestartHint), Toast.LENGTH_LONG).show();
+            LumineRestart.hint(this);
         });
         builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
         showDialog(builder.create());

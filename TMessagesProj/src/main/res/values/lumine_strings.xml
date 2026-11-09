@@ -58,7 +58,8 @@
     <string name="LumineBatteryOn">Enabled</string>
     <string name="LumineBatteryOff">Disabled</string>
     <string name="LumineBatteryUnavailable">Battery settings are unavailable on this device</string>
-    <string name="LuminePushRestartHint">Restart the app to apply the push service</string>
+    <string name="LumineRestartNeeded">Restart the app to apply this setting.</string>
+    <string name="LumineRestartNow">Restart now</string>
     <string name="LuminePushInfo">Tap State to copy diagnostics. If battery optimization is enabled, Android may delay or drop pushes while the app is in the background.</string>
     <string name="LumineMd3Title">Material Design 3</string>
     <string name="LumineMd3Switches">Switches</string>

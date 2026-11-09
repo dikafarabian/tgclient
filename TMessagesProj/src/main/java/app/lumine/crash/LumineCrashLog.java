@@ -29,6 +29,7 @@ public final class LumineCrashLog {
 
     static final String EXTRA_REPORT = "report";
     private static final String CRASH_PROCESS_SUFFIX = ":lumine_crash";
+    private static final String RESTART_PROCESS_SUFFIX = ":lumine_restart";
     private static final String FILE_NAME = "lumine_last_crash.txt";
     private static final int MAX_LENGTH = 48 * 1024;
 
@@ -45,7 +46,8 @@ public final class LumineCrashLog {
             while (end < length && buffer[end] != 0) {
                 end++;
             }
-            return new String(buffer, 0, end, StandardCharsets.UTF_8).endsWith(CRASH_PROCESS_SUFFIX);
+            final String name = new String(buffer, 0, end, StandardCharsets.UTF_8);
+            return name.endsWith(CRASH_PROCESS_SUFFIX) || name.endsWith(RESTART_PROCESS_SUFFIX);
         } catch (Throwable ignore) {
             return false;
         }
