@@ -118,4 +118,27 @@
     <string name="LumineDrawerGhostDisable">Disable Ghost Mode</string>
     <string name="LumineDrawerGhostEnabled">Ghost Mode enabled</string>
     <string name="LumineDrawerGhostDisabled">Ghost Mode disabled</string>
+    <string name="LumineSaving">Message saving</string>
+    <string name="LumineSavingSectionSaving">Saving</string>
+    <string name="LumineSavingDeleted">Save deleted messages</string>
+    <string name="LumineSavingEdits">Save edit history</string>
+    <string name="LumineSavingArchived">Save in archived chats</string>
+    <string name="LumineSavingMedia">Save media</string>
+    <string name="LumineSavingMediaInfo">Keep the files of messages that were deleted, per chat type.</string>
+    <string name="LumineSavingMediaPrivateChats">Media in private chats</string>
+    <string name="LumineSavingMediaPublicChannels">Media in public channels</string>
+    <string name="LumineSavingMediaPrivateChannels">Media in private channels</string>
+    <string name="LumineSavingMediaPublicGroups">Media in public groups</string>
+    <string name="LumineSavingMediaPrivateGroups">Media in private groups</string>
+    <string name="LumineSavingSectionIn">Save deleted messages in</string>
+    <string name="LumineSavingInPrivate">Private chats</string>
+    <string name="LumineSavingInGroups">Groups</string>
+    <string name="LumineSavingInChannels">Channels</string>
+    <string name="LumineSavingBotUser">Messages from bots</string>
+    <string name="LumineSavingBotChat">Chats with bots</string>
+    <string name="LumineSavingSectionPresence">Presence</string>
+    <string name="LumineSavingLastSeen">Save last seen locally</string>
+    <string name="LumineSavingReadDate">Save read date</string>
+    <string name="LumineSavingReadDateInfo">Remember when your messages were read, in chats where that is visible.</string>
+    <string name="LumineSavingInert">These options only store your choice for now. Saving starts with a later update.</string>
 </resources>

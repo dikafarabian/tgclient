@@ -12,12 +12,14 @@ import android.widget.ScrollView;
 
 import app.lumine.LumineStrings;
 import app.lumine.ghost.LumineGhost;
+import app.lumine.saving.LumineSaving;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.BaseFragment;
 
 public class LumineStealthPage extends ScrollView {
 
     private final LumineCards.Row ghostRow;
+    private final LumineCards.Row savingRow;
 
     public LumineStealthPage(Context context, BaseFragment fragment) {
         super(context);
@@ -35,10 +37,14 @@ public class LumineStealthPage extends ScrollView {
                 LumineGhost.askBeforeStory(), LumineGhost::setAskBeforeStory);
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineGhostAskStoryInfo));
 
+        LinearLayout saving = LumineCards.card(context, list, LumineStrings.get(R.string.LumineSavingSectionSaving));
+        savingRow = LumineCards.row(context, saving, LumineStrings.get(R.string.LumineSaving), v -> fragment.presentFragment(new LumineSavingActivity()));
+
         refresh();
     }
 
     public void refresh() {
         LumineCards.setValue(ghostRow.value, LumineGhost.selectedCount() + "/" + LumineGhost.COUNT, 0);
+        LumineCards.setValue(savingRow.value, LumineSaving.enabledCount() + "/4", 0);
     }
 }
