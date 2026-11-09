@@ -13858,6 +13858,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (actionBar == null) {
             return;
         }
+        final ImageView backButton = actionBar.getBackButton();
+        if (backButton != null && backButton.getDrawable() == null) {
+            backButton.setVisibility(View.GONE);
+            return;
+        }
 
         final float factor1 = 1f - animatorSearchVisible.getFloatValue();
         final float factor2 = 1f - getRightSlidingProgress();

@@ -114,6 +114,7 @@ MARKERS=(
 "$J/org/telegram/ui/DialogsActivity.java|updateDrawerButton"
 "$J/org/telegram/ui/DialogsActivity.java|drawerContainer().toggleDrawer"
 "$J/org/telegram/ui/DialogsActivity.java|shouldUseDrawerActionBarLayout"
+"$J/org/telegram/ui/DialogsActivity.java|backButton.getDrawable() == null"
 "$J/app/lumine/settings/LumineAppearancePage.java|new LumineDrawerActivity()"
 "$J/org/telegram/messenger/ApplicationLoader.java|LumineCrashLog.isCrashProcess"
 "TMessagesProj/src/main/AndroidManifest.xml|app.lumine.crash.LumineCrashActivity"
