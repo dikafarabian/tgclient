@@ -3297,6 +3297,7 @@ public class ChatActivityEnterView extends FrameLayout implements
 
                     final float r = dpf2(19);
                     paint.setColor(getThemedColor(Theme.key_chat_messagePanelSend));
+                    if (isIOSInputStyle()) paint.setColor(0);
                     final float margin = dpf2(3);
                     final float height = dpf2(38);
                     final float width = dpf2(38);
@@ -3494,7 +3495,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         cameraOutline = getResources().getDrawable(R.drawable.input_video).mutate();
         ThemeBind.drawableColorFilter(this, cameraOutline, Theme.key_glass_defaultIcon, resourcesProvider, PorterDuff.Mode.MULTIPLY);
 
-        audioVideoSendButton = new ChatActivityEnterViewAnimatedIconView(context, 24) {
+        audioVideoSendButton = new ChatActivityEnterViewAnimatedIconView(context, isIOSInputStyle() ? 32 : 24) {
             private final Rect tmpRectF = new Rect();
             @Override
             public void draw(@NonNull Canvas canvas) {
@@ -4516,6 +4517,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         });
         senderSelectView.setVisibility(GONE);
         messageEditTextContainer.addView(senderSelectView, LayoutHelper.createFrame(36, 36, Gravity.BOTTOM | Gravity.LEFT, 4.66f, 4, 4.66f, 4));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.leftMargin(senderSelectView, 44.66f);
     }
 
     private void createBotCommandsMenuButton() {
@@ -4553,6 +4555,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
         });
         messageEditTextContainer.addView(botCommandsMenuButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 32, Gravity.BOTTOM | Gravity.LEFT, 8, 6, 8, 6));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.leftMargin(botCommandsMenuButton, 46.66f);
         AndroidUtilities.updateViewVisibilityAnimated(botCommandsMenuButton, false, 1f, false);
         botCommandsMenuButton.setExpanded(true, false);
     }
@@ -6681,7 +6684,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         audioVideoButtonContainer.setAlpha(audioVideoButtonContainerForbidden ? 0.5f : 1.0f);
         audioVideoButtonContainer.invalidate();
         audioVideoSendButton.setColorFilter(new PorterDuffColorFilter(audioVideoButtonContainerForbidden ?
-            getThemedColor(Theme.key_glass_defaultIcon) : Color.WHITE, PorterDuff.Mode.SRC_IN));
+            getThemedColor(Theme.key_glass_defaultIcon) : isIOSInputStyle() ? getThemedColor(Theme.key_actionBarActionModeDefaultIcon) : Color.WHITE, PorterDuff.Mode.SRC_IN));
         audioVideoSendButton.invalidate();
         updateFieldHint(false);
         boolean currentModeVideo = isInVideoMode;
@@ -8065,10 +8068,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                         if (hasScheduled) {
                             createScheduledButton();
                         }
-                        if (sideButtons != null) {
+                        if (sideButtons != null && !isIOSInputStyle()) {
                             sideButtons.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_ATTACH, false, true);
                         }
-                        if (attachButton != null) {
+                        if (attachButton != null && !isIOSInputStyle()) {
                             animators.add(ObjectAnimator.ofFloat(attachButton, View.ALPHA, attachButtonAlpha = 0.0f));
                             animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_X, 0.5f));
                             animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_Y, 0.5f));
@@ -8199,10 +8202,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                         }
                         updateFieldRight(0);
 
-                        if (sideButtons != null) {
+                        if (sideButtons != null && !isIOSInputStyle()) {
                             sideButtons.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_ATTACH, false, false);
                         }
-                        if (attachButton != null) {
+                        if (attachButton != null && !isIOSInputStyle()) {
                             attachButton.setAlpha(attachButtonAlpha = 0.0f);
                             attachButton.setScaleX(0.5f);
                             attachButton.setScaleY(0.5f);
@@ -8236,7 +8239,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             } else {
                 color = getThemedColor(Theme.key_chat_messagePanelSend);
             }
-            boolean captionNearAttach = isCaptionNearAttach();
+            boolean captionNearAttach = !isIOSInputStyle() && isCaptionNearAttach();
             // a recording (paused too) has its own panel in the input: the attach button is neither in it nor over it
             final boolean recordShown = recordInterfaceState != 0 || audioToSend != null || videoToSendMessageObject != null;
             final boolean attachInInput = !captionNearAttach && !recordShown;
@@ -8269,14 +8272,14 @@ public class ChatActivityEnterView extends FrameLayout implements
                             attachButtonAnimator.cancel();
                             attachButtonAnimator = null;
                         }
-                        if (sideButtons != null) {
+                        if (sideButtons != null && !isIOSInputStyle()) {
                             sideButtons.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_ATTACH, captionNearAttach && !recordShown, true);
                             if (attachButton != null) {
                                 animators.add(ObjectAnimator.ofFloat(attachButton, View.ALPHA, attachButtonAlpha = attachInInput ? 1.0f : 0.0f));
                                 animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_X, attachInInput ? 1.0f : 0.5f));
                                 animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_Y, attachInInput ? 1.0f : 0.5f));
                             }
-                        } else if (attachButton != null) {
+                        } else if (attachButton != null && !isIOSInputStyle()) {
                             animators.add(ObjectAnimator.ofFloat(attachButton, View.ALPHA, attachButtonAlpha = 0.0f));
                             animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_X, 0.5f));
                             animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_Y, 0.5f));
@@ -8436,14 +8439,14 @@ public class ChatActivityEnterView extends FrameLayout implements
                         }
                         updateFieldRight(0);
 
-                        if (sideButtons != null) {
+                        if (sideButtons != null && !isIOSInputStyle()) {
                             sideButtons.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_ATTACH, captionNearAttach && !recordShown, true);
                             if (attachButton != null) {
                                 attachButton.setAlpha(attachButtonAlpha = attachInInput ? 1.0f : 0.0f);
                                 attachButton.setScaleX(attachInInput ? 1.0f : 0.5f);
                                 attachButton.setScaleY(attachInInput ? 1.0f : 0.5f);
                             }
-                        } else if (attachButton != null) {
+                        } else if (attachButton != null && !isIOSInputStyle()) {
                             attachButton.setAlpha(attachButtonAlpha = 0.0f);
                             attachButton.setScaleX(0.5f);
                             attachButton.setScaleY(0.5f);
@@ -8462,7 +8465,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     }
                 }
             } else {
-                if (sideButtons != null) {
+                if (sideButtons != null && !isIOSInputStyle()) {
                     sideButtons.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_ATTACH, captionNearAttach && !recordShown, true);
                     if (attachButton != null) {
                         if (attachButtonAnimator != null) {
@@ -10531,7 +10534,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             botKeyboardView.updateColors();
         }
         // emojiButton / deleteRichDraftButton / sendOutlineView icon colors are ThemeBind bindings
-        final int audioVideoColor = audioVideoButtonContainerForbidden ? getThemedColor(Theme.key_glass_defaultIcon) : Color.WHITE;
+        final int audioVideoColor = audioVideoButtonContainerForbidden ? getThemedColor(Theme.key_glass_defaultIcon) : isIOSInputStyle() ? getThemedColor(Theme.key_actionBarActionModeDefaultIcon) : Color.WHITE;
         if (audioVideoSendButton != null && (!audioVideoColorApplied || audioVideoColor != lastAudioVideoColor)) {
             audioVideoColorApplied = true;
             lastAudioVideoColor = audioVideoColor;

@@ -142,6 +142,8 @@ MARKERS=(
 "$J/org/telegram/ui/Components/chat/ChatInputViewsContainer.java|sideBubbles.draw"
 "$J/org/telegram/ui/Components/chat/ChatInputViewsContainer.java|sideBubbles.updateColors"
 "$J/org/telegram/ui/ChatActivity.java|sideBubbles.setDrawables"
+"$J/org/telegram/ui/ChatActivity.java|chatActivityEnterView.isIOSInputStyle() && bottomViewsVisibilityController"
+"$J/org/telegram/ui/Components/ChatActivityEnterView.java|LumineIosInput.leftMargin"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|public boolean isIOSInputStyle()"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|LumineActionButton.background"
 "$J/org/telegram/ui/LaunchActivity.java|app.lumine.icons.LumineIconResources.wrap"

@@ -67,6 +67,12 @@ public final class LumineIosInput {
         frame.setLayoutParams(lp);
     }
 
+    public static void leftMargin(View view, float marginDp) {
+        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) view.getLayoutParams();
+        lp.leftMargin = dp(marginDp);
+        view.setLayoutParams(lp);
+    }
+
     public static void emojiToRight(View emojiButton) {
         final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) emojiButton.getLayoutParams();
         lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
