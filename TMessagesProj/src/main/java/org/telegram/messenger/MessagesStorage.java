@@ -15495,7 +15495,8 @@ public class MessagesStorage extends BaseController {
         executeInStorageQueue(() -> updateDialogsWithDeletedMessagesInternal(dialogId, channelId, messages, additionalDialogsToUpdate));
     }
 
-    public ArrayList<Long> markMessagesAsDeleted(long dialogId, ArrayList<Integer> messages, boolean useQueue, boolean deleteFiles, int mode, int topicId) {
+    public ArrayList<Long> markMessagesAsDeleted(long dialogId, ArrayList<Integer> messages, boolean useQueue, boolean deleteFilesOrig, int mode, int topicId) {
+        final boolean deleteFiles = deleteFilesOrig && !app.lumine.saving.LumineSaveCapture.keepsMedia(currentAccount, dialogId);
         if (messages.isEmpty()) {
             return null;
         }
@@ -16488,6 +16489,7 @@ public class MessagesStorage extends BaseController {
                                     if (oldMessage.out && !message.out) {
                                         message.out = oldMessage.out;
                                     }
+                                    app.lumine.saving.LumineSaveCapture.onEdited(currentAccount, MessageObject.getDialogId(message), oldMessage, message, sameMedia);
                                     if (!sameMedia) {
                                         addFilesToDelete(oldMessage, filesToDelete, idsToDelete, namesToDelete, false);
                                     }

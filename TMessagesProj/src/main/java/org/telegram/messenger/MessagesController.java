@@ -21323,6 +21323,7 @@ public class MessagesController extends BaseController implements NotificationCe
             }
         }
         if (deletedMessages != null) {
+            app.lumine.saving.LumineSaveCapture.onServerDeleted(currentAccount, deletedMessages.clone());
             for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                 long key = deletedMessages.keyAt(a);
                 ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
