@@ -6,6 +6,7 @@ package app.lumine.saving;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
@@ -27,6 +28,23 @@ import java.util.Locale;
 public final class LumineSaveCapture {
 
     private LumineSaveCapture() {
+    }
+
+    public static long countDeleted() {
+        return count(LumineSaveDb.DELETED);
+    }
+
+    public static long countEdited() {
+        return count(LumineSaveDb.EDITED);
+    }
+
+    private static long count(String table) {
+        try {
+            return DatabaseUtils.queryNumEntries(LumineSaveDb.get().getReadableDatabase(), table);
+        } catch (Exception e) {
+            FileLog.e("counting saved messages failed", e);
+            return 0;
+        }
     }
 
     public static boolean keepsMedia(int account, long dialogId) {

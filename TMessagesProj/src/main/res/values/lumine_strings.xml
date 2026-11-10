@@ -179,4 +179,8 @@
     <string name="LumineIconErrCompression">The archive looks unsafe and was refused.</string>
     <string name="LumineIconErrStorage">Could not store the pack on this device.</string>
     <string name="LumineIconErrUnknown">Could not install the pack.</string>
+    <string name="LumineSavingViewInfo">Messages are saved on this device. Viewing them comes with a later update.</string>
+    <string name="LumineSavingStored">Saved on this device</string>
+    <string name="LumineSavingStoredDeleted">Deleted messages</string>
+    <string name="LumineSavingStoredEdited">Edit revisions</string>
 </resources>

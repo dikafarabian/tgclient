@@ -8,6 +8,7 @@ import android.content.Context;
 import android.widget.LinearLayout;
 
 import app.lumine.LumineStrings;
+import app.lumine.saving.LumineSaveCapture;
 import app.lumine.saving.LumineSaving;
 import org.telegram.messenger.R;
 
@@ -65,6 +66,12 @@ public class LumineSavingActivity extends LumineSubPage {
         LumineCards.toggleRow(context, presence, LumineStrings.get(R.string.LumineSavingLastSeen), null, LumineSaving.lastSeen(), LumineSaving::setLastSeen);
         LumineCards.toggleRow(context, presence, LumineStrings.get(R.string.LumineSavingReadDate), null, LumineSaving.readDate(), LumineSaving::setReadDate);
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineSavingReadDateInfo));
-        LumineCards.info(context, list, LumineStrings.get(R.string.LumineSavingInert));
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineSavingViewInfo));
+
+        final LinearLayout stored = LumineCards.card(context, list, LumineStrings.get(R.string.LumineSavingStored));
+        final LumineCards.Row deletedRow = LumineCards.row(context, stored, LumineStrings.get(R.string.LumineSavingStoredDeleted), null);
+        LumineCards.setValue(deletedRow.value, String.valueOf(LumineSaveCapture.countDeleted()), 0);
+        final LumineCards.Row editedRow = LumineCards.row(context, stored, LumineStrings.get(R.string.LumineSavingStoredEdited), null);
+        LumineCards.setValue(editedRow.value, String.valueOf(LumineSaveCapture.countEdited()), 0);
     }
 }
