@@ -24,6 +24,10 @@ public final class LumineSaving {
     private static final String BOT_CHAT = "LumineSaveBotChat";
     private static final String LAST_SEEN = "LumineSaveLastSeen";
     private static final String READ_DATE = "LumineSaveReadDate";
+    private static final String DELETED_MODE = "LumineSaveDeletedMode";
+    private static final String EDITED_MODE = "LumineSaveEditedMode";
+    private static final String EXCLUDED_DELETED = "LumineSaveExclDeleted_";
+    private static final String EXCLUDED_EDITED = "LumineSaveExclEdited_";
 
     private LumineSaving() {
     }
@@ -154,6 +158,38 @@ public final class LumineSaving {
 
     public static void setReadDate(boolean value) {
         LumineConfig.setBoolean(READ_DATE, value);
+    }
+
+    public static int deletedMode() {
+        return LumineConfig.getInt(DELETED_MODE, 0);
+    }
+
+    public static void setDeletedMode(int value) {
+        LumineConfig.setInt(DELETED_MODE, value);
+    }
+
+    public static int editedMode() {
+        return LumineConfig.getInt(EDITED_MODE, 0);
+    }
+
+    public static void setEditedMode(int value) {
+        LumineConfig.setInt(EDITED_MODE, value);
+    }
+
+    public static boolean excludedDeleted(long id) {
+        return LumineConfig.getBoolean(EXCLUDED_DELETED + Math.abs(id), false);
+    }
+
+    public static void setExcludedDeleted(long id, boolean value) {
+        LumineConfig.setBoolean(EXCLUDED_DELETED + Math.abs(id), value);
+    }
+
+    public static boolean excludedEdited(long id) {
+        return LumineConfig.getBoolean(EXCLUDED_EDITED + Math.abs(id), false);
+    }
+
+    public static void setExcludedEdited(long id, boolean value) {
+        LumineConfig.setBoolean(EXCLUDED_EDITED + Math.abs(id), value);
     }
 
     public static int enabledCount() {
