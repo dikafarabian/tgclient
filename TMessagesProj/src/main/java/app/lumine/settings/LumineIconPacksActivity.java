@@ -14,8 +14,10 @@ import android.view.inputmethod.EditorInfo;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import app.lumine.LumineStrings;
+import app.lumine.icons.LumineIconBase;
 import app.lumine.icons.LumineIconConfig;
 import app.lumine.icons.LumineIconError;
 import app.lumine.icons.LumineIconManager;
@@ -53,6 +55,12 @@ public class LumineIconPacksActivity extends LumineSubPage {
 
     @Override
     protected void build(Context context, LinearLayout list) {
+        LinearLayout builtin = LumineCards.card(context, list, LumineStrings.get(R.string.LumineIconBaseTitle));
+        final LumineCards.Row setRow = LumineCards.row(context, builtin, LumineStrings.get(R.string.LumineIconBaseRow), v -> showSetDialog());
+        setValue = setRow.value;
+        LumineCards.setValue(setValue, setName(LumineIconConfig.baseSet()), 0);
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineIconBaseInfo));
+
         LinearLayout main = LumineCards.card(context, list, LumineStrings.get(R.string.LumineIconPacksTitle));
         LumineCards.toggleRow(context, main, LumineStrings.get(R.string.LumineIconPacksEnable), null, LumineIconConfig.enabled(), enabled -> {
             LumineIconConfig.setEnabled(enabled);
@@ -72,6 +80,37 @@ public class LumineIconPacksActivity extends LumineSubPage {
         LumineIconRow.add(context, installed, R.drawable.msg_add, LumineStrings.get(R.string.LumineIconPacksInstall), null, v -> pick());
         LumineIconRow.add(context, installed, R.drawable.msg_edit, LumineStrings.get(R.string.LumineIconPacksCreate), null, v -> showCreateDialog());
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineIconPacksHint));
+    }
+
+    private TextView setValue;
+
+    private static String setName(int set) {
+        if (set == LumineIconBase.SOLAR) {
+            return LumineStrings.get(R.string.LumineIconBaseSolar);
+        } else if (set == LumineIconBase.REMIX) {
+            return LumineStrings.get(R.string.LumineIconBaseRemix);
+        }
+        return LumineStrings.get(R.string.LumineIconBaseDefault);
+    }
+
+    private void showSetDialog() {
+        if (getParentActivity() == null) {
+            return;
+        }
+        final int[] sets = {LumineIconBase.DEFAULT, LumineIconBase.SOLAR, LumineIconBase.REMIX};
+        final CharSequence[] names = new CharSequence[sets.length];
+        for (int a = 0; a < sets.length; a++) {
+            names[a] = setName(sets[a]);
+        }
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+        builder.setTitle(LumineStrings.get(R.string.LumineIconBaseRow));
+        builder.setItems(names, (dialog, which) -> {
+            LumineIconConfig.setBaseSet(sets[which]);
+            LumineCards.setValue(setValue, setName(sets[which]), 0);
+            LumineRestart.hint(this);
+        });
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+        showDialog(builder.create());
     }
 
     private static List<LumineIconPack> sorted(List<LumineIconPack> all) {

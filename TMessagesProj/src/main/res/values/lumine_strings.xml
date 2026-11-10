@@ -199,4 +199,10 @@
     <string name="LumineIconPickerReset">Reset to original</string>
     <string name="LumineIconPickerSaved">Icon replaced. Reopen the screen to see it.</string>
     <string name="LumineIconPickerResetDone">Icon reset. Reopen the screen to see it.</string>
+    <string name="LumineIconBaseTitle">Built-in icons</string>
+    <string name="LumineIconBaseRow">Icon set</string>
+    <string name="LumineIconBaseDefault">Default</string>
+    <string name="LumineIconBaseSolar">Solar</string>
+    <string name="LumineIconBaseRemix">Remix</string>
+    <string name="LumineIconBaseInfo">Replaces the stock icons with a full set. Solar by 480 Design (CC BY 4.0), Remix Icon by Remix Design (Apache 2.0). Icon packs you turn on win over the set.</string>
 </resources>
