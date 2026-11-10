@@ -183,4 +183,20 @@
     <string name="LumineSavingStored">Saved on this device</string>
     <string name="LumineSavingStoredDeleted">Deleted messages</string>
     <string name="LumineSavingStoredEdited">Edit revisions</string>
+    <string name="LumineIconPacksCreate">Create icon pack</string>
+    <string name="LumineIconPackEdit">Edit icons</string>
+    <string name="LumineIconPackEditStarted">Editing is on. Open any screen and tap the edit button to change its icons. Press and hold the button to finish.</string>
+    <string name="LumineIconPackName">Pack name</string>
+    <string name="LumineIconPackAuthor">Author (optional)</string>
+    <string name="LumineIconPackVersion">Version</string>
+    <string name="LumineIconPackCreateAction">Create</string>
+    <string name="LumineIconPackNameEmpty">The pack name cannot be empty.</string>
+    <string name="LumineIconPackCreated">Icon pack created</string>
+    <string name="LumineIconPickerHint">Tap an icon to replace or reset it. Replaced icons are blue.</string>
+    <string name="LumineIconPickerEmpty">No icons were seen on this screen yet. Close this and open or reopen the screen.</string>
+    <string name="LumineIconPickerFinish">Finish editing</string>
+    <string name="LumineIconPickerChoose">Choose image</string>
+    <string name="LumineIconPickerReset">Reset to original</string>
+    <string name="LumineIconPickerSaved">Icon replaced. Reopen the screen to see it.</string>
+    <string name="LumineIconPickerResetDone">Icon reset. Reopen the screen to see it.</string>
 </resources>

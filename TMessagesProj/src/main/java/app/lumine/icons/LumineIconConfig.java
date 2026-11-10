@@ -18,6 +18,7 @@ public final class LumineIconConfig {
     private static final String KEY_NOTIFICATION = "LumineIconPacksNotification";
 
     private static volatile Boolean enabledCache;
+    private static volatile String editingPackId;
 
     private LumineIconConfig() {
     }
@@ -101,5 +102,13 @@ public final class LumineIconConfig {
         ids.remove(index);
         ids.add(target, packId);
         setActivePackIds(ids);
+    }
+
+    public static String editingPackId() {
+        return editingPackId;
+    }
+
+    public static void setEditingPackId(String packId) {
+        editingPackId = packId;
     }
 }

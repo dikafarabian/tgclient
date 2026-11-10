@@ -8,13 +8,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.InputType;
+import android.view.Gravity;
+import android.view.inputmethod.EditorInfo;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import app.lumine.LumineStrings;
 import app.lumine.icons.LumineIconConfig;
 import app.lumine.icons.LumineIconError;
 import app.lumine.icons.LumineIconManager;
+import app.lumine.icons.LumineIconObserver;
+import app.lumine.icons.LumineIconPicker;
 import app.lumine.icons.LumineIconPack;
 import app.lumine.icons.LumineIconStorage;
 import app.lumine.restart.LumineRestart;
@@ -27,6 +33,8 @@ import org.telegram.messenger.Utilities;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.OutlineEditText;
 import org.telegram.ui.Components.Switch;
 
 import java.io.File;
@@ -62,6 +70,7 @@ public class LumineIconPacksActivity extends LumineSubPage {
             addPackRow(context, installed, pack);
         }
         LumineIconRow.add(context, installed, R.drawable.msg_add, LumineStrings.get(R.string.LumineIconPacksInstall), null, v -> pick());
+        LumineIconRow.add(context, installed, R.drawable.msg_edit, LumineStrings.get(R.string.LumineIconPacksCreate), null, v -> showCreateDialog());
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineIconPacksHint));
     }
 
@@ -113,6 +122,8 @@ public class LumineIconPacksActivity extends LumineSubPage {
             items.add(LumineStrings.get(R.string.LumineIconPackMoveDown));
             actions.add(1);
         }
+        items.add(LumineStrings.get(R.string.LumineIconPackEdit));
+        actions.add(3);
         items.add(LocaleController.getString(R.string.Delete));
         actions.add(2);
         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
@@ -120,6 +131,10 @@ public class LumineIconPacksActivity extends LumineSubPage {
             int action = actions.get(which);
             if (action == 2) {
                 confirmDelete(pack);
+                return;
+            }
+            if (action == 3) {
+                startEditing(pack);
                 return;
             }
             LumineIconConfig.movePack(pack.getId(), action == 0 ? -1 : 1);
@@ -148,6 +163,68 @@ public class LumineIconPacksActivity extends LumineSubPage {
         if (button != null) {
             ((android.widget.TextView) button).setTextColor(Theme.getColor(Theme.key_text_RedBold));
         }
+    }
+
+    private void startEditing(LumineIconPack pack) {
+        if (!LumineIconConfig.enabled()) {
+            LumineIconConfig.setEnabled(true);
+        }
+        if (!LumineIconConfig.isPackActive(pack.getId())) {
+            LumineIconConfig.togglePack(pack.getId());
+        }
+        LumineIconManager.get().reload();
+        LumineIconObserver.clear();
+        LumineIconConfig.setEditingPackId(pack.getId());
+        rebuild(200);
+        BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LumineStrings.get(R.string.LumineIconPackEditStarted)).show();
+    }
+
+    private void showCreateDialog() {
+        if (getParentActivity() == null) {
+            return;
+        }
+        Context context = getParentActivity();
+        FrameLayout fields = new FrameLayout(context);
+        OutlineEditText name = field(context, LumineStrings.get(R.string.LumineIconPackName), "", EditorInfo.IME_ACTION_NEXT);
+        OutlineEditText author = field(context, LumineStrings.get(R.string.LumineIconPackAuthor), "", EditorInfo.IME_ACTION_NEXT);
+        OutlineEditText version = field(context, LumineStrings.get(R.string.LumineIconPackVersion), "1.0", EditorInfo.IME_ACTION_DONE);
+        fields.addView(name, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 58f, Gravity.LEFT | Gravity.TOP, 0f, 0f, 0f, 0f));
+        fields.addView(author, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 58f, Gravity.LEFT | Gravity.TOP, 0f, 68f, 0f, 0f));
+        fields.addView(version, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 58f, Gravity.LEFT | Gravity.TOP, 0f, 136f, 0f, 0f));
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(LumineStrings.get(R.string.LumineIconPacksCreate));
+        builder.setView(fields, AndroidUtilities.dp(204));
+        builder.setPositiveButton(LumineStrings.get(R.string.LumineIconPackCreateAction), (dialog, which) -> {
+            final String packName = name.getEditText().getText().toString().trim();
+            final String packAuthor = author.getEditText().getText().toString().trim();
+            final String packVersion = version.getEditText().getText().toString().trim();
+            if (packName.isEmpty()) {
+                BulletinFactory.of(this).createErrorBulletin(LumineStrings.get(R.string.LumineIconPackNameEmpty)).show();
+                return;
+            }
+            Utilities.globalQueue.postRunnable(() -> {
+                LumineIconPack created = LumineIconManager.get().createPack(packName, packAuthor, packVersion.isEmpty() ? "1.0" : packVersion);
+                AndroidUtilities.runOnUIThread(() -> {
+                    if (created == null) {
+                        BulletinFactory.of(this).createErrorBulletin(LumineStrings.get(R.string.LumineIconErrStorage)).show();
+                        return;
+                    }
+                    rebuild(0);
+                    BulletinFactory.of(this).createSimpleBulletin(R.raw.done, LumineStrings.get(R.string.LumineIconPackCreated)).show();
+                });
+            });
+        });
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+        showDialog(builder.create());
+    }
+
+    private static OutlineEditText field(Context context, String hint, String text, int ime) {
+        OutlineEditText field = new OutlineEditText(context);
+        field.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        field.getEditText().setImeOptions(ime);
+        field.setHint(hint);
+        field.getEditText().setText(text);
+        return field;
     }
 
     private void pick() {

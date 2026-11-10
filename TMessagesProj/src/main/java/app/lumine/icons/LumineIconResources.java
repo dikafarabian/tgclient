@@ -65,6 +65,9 @@ public final class LumineIconResources extends Resources {
     @Nullable
     @Override
     public Drawable getDrawableForDensity(int id, int density, @Nullable Theme theme) {
+        if (LumineIconConfig.editingPackId() != null) {
+            LumineIconObserver.log(id);
+        }
         Drawable replacement = LumineIconManager.get().drawable(id, density, theme);
         return replacement != null ? replacement : super.getDrawableForDensity(id, density, theme);
     }
