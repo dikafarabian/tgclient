@@ -48,6 +48,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
     }
 
     public void setState(State state, boolean animate) {
+        if (app.lumine.icons.LumineIconStatic.apply(this, state)) { currentState = state; return; }
         if (animate && state == currentState) {
             return;
         }

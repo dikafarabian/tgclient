@@ -182,6 +182,20 @@ public final class LumineIconManager {
         }
     }
 
+    public boolean replaces(int resId) {
+        if (resId == 0) {
+            return false;
+        }
+        if (LumineIconConfig.enabled()) {
+            ensureInitialized();
+            String name = resourceName(resId);
+            if (name != null && sources.containsKey(name)) {
+                return true;
+            }
+        }
+        return LumineIconBase.mapped(resId) != 0;
+    }
+
     public boolean hasReplacements() {
         return !sources.isEmpty();
     }
