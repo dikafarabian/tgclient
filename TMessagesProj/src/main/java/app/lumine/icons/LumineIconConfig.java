@@ -16,9 +16,11 @@ public final class LumineIconConfig {
     private static final String KEY_ENABLED = "LumineIconPacksEnabled";
     private static final String KEY_ACTIVE = "LumineIconPacksActive";
     private static final String KEY_NOTIFICATION = "LumineIconPacksNotification";
+    private static final String KEY_BASE = "LumineIconBaseSet";
 
     private static volatile Boolean enabledCache;
     private static volatile String editingPackId;
+    private static volatile int baseSetCache = -1;
 
     private LumineIconConfig() {
     }
@@ -110,5 +112,21 @@ public final class LumineIconConfig {
 
     public static void setEditingPackId(String packId) {
         editingPackId = packId;
+    }
+
+    public static int baseSet() {
+        int cached = baseSetCache;
+        if (cached < 0) {
+            cached = Math.max(0, Math.min(2, LumineConfig.getInt(KEY_BASE, 0)));
+            baseSetCache = cached;
+        }
+        return cached;
+    }
+
+    public static void setBaseSet(int value) {
+        int clamped = Math.max(0, Math.min(2, value));
+        baseSetCache = clamped;
+        LumineConfig.setInt(KEY_BASE, clamped);
+        LumineIconBase.invalidate();
     }
 }

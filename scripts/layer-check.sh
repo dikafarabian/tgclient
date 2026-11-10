@@ -48,6 +48,7 @@ OWN_FILES=(
 "$J/app/lumine/icons/LumineIconManager.java"
 "$J/app/lumine/icons/LumineIconResources.java"
 "$J/app/lumine/icons/LumineIconPickActivity.java"
+"$J/app/lumine/icons/LumineIconBase.java"
 "$J/app/lumine/icons/LumineIconObserver.java"
 "$J/app/lumine/icons/LumineIconPicker.java"
 "$J/app/lumine/settings/LumineIconPacksActivity.java"

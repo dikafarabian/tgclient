@@ -23,7 +23,7 @@ public final class LumineIconResources extends Resources {
     private static DisplayMetrics currentMetrics;
 
     public static Resources wrap(Resources base) {
-        if (!LumineIconConfig.enabled()) {
+        if (!LumineIconConfig.enabled() && LumineIconConfig.baseSet() == LumineIconBase.DEFAULT) {
             return base;
         }
         synchronized (LumineIconResources.class) {
@@ -69,6 +69,16 @@ public final class LumineIconResources extends Resources {
             LumineIconObserver.log(id);
         }
         Drawable replacement = LumineIconManager.get().drawable(id, density, theme);
-        return replacement != null ? replacement : super.getDrawableForDensity(id, density, theme);
+        if (replacement != null) {
+            return replacement;
+        }
+        int mapped = LumineIconBase.mapped(id);
+        if (mapped != 0) {
+            try {
+                return super.getDrawableForDensity(mapped, density, theme);
+            } catch (Throwable ignore) {
+            }
+        }
+        return super.getDrawableForDensity(id, density, theme);
     }
 }
