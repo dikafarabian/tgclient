@@ -248,6 +248,125 @@ public final class LumineIconManager {
         }
     }
 
+    public int resourceId(String name) {
+        if (name == null) {
+            return 0;
+        }
+        int id = lookupId(name);
+        if (id != 0) {
+            return id;
+        }
+        String alias = ALIASES.get(name);
+        return alias == null ? 0 : lookupId(alias);
+    }
+
+    private static int lookupId(String name) {
+        try {
+            Resources app = ApplicationLoader.applicationContext.getResources();
+            return app.getIdentifier(name, "drawable", ApplicationLoader.applicationContext.getPackageName());
+        } catch (Throwable t) {
+            return 0;
+        }
+    }
+
+    public static String newPackId(String name) {
+        StringBuilder slug = new StringBuilder();
+        for (int i = 0; i < name.length() && slug.length() < 24; i++) {
+            char c = Character.toLowerCase(name.charAt(i));
+            if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
+                slug.append(c);
+            } else if (slug.length() > 0 && slug.charAt(slug.length() - 1) != '_') {
+                slug.append('_');
+            }
+        }
+        String base = slug.length() == 0 ? "pack" : slug.toString();
+        String id = base + "_" + Long.toString(System.currentTimeMillis(), 36);
+        while (LumineIconStorage.find(id) != null) {
+            id = base + "_" + Long.toString(System.nanoTime(), 36);
+        }
+        return id;
+    }
+
+    @Nullable
+    public LumineIconPack createPack(String name, String author, String version) {
+        String id = newPackId(name);
+        File dir = new File(LumineIconStorage.directory(), id);
+        LumineIconPack pack = new LumineIconPack(id, name, author, version, Collections.emptyMap(), dir);
+        if (!LumineIconStorage.saveMetadata(pack)) {
+            return null;
+        }
+        return LumineIconStorage.find(id);
+    }
+
+    public boolean saveIcon(String packId, int resId, File source) {
+        LumineIconPack pack = LumineIconStorage.find(packId);
+        String name = resourceName(resId);
+        if (pack == null || name == null || source == null || !source.isFile() || isBlacklisted(name)) {
+            return false;
+        }
+        try {
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(source.getAbsolutePath(), bounds);
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0 || (long) bounds.outWidth * bounds.outHeight > 100_000_000L) {
+                return false;
+            }
+            String extension = "image/webp".equals(bounds.outMimeType) ? "webp" : "image/jpeg".equals(bounds.outMimeType) ? "jpg" : "png";
+            File dir = new File(LumineIconStorage.directory(), pack.getId());
+            dir.mkdirs();
+            File destination = new File(dir, name + "." + extension);
+            try (java.io.InputStream in = new java.io.FileInputStream(source); java.io.OutputStream out = new java.io.FileOutputStream(destination)) {
+                byte[] buffer = new byte[8192];
+                int read;
+                while ((read = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, read);
+                }
+            }
+            String previous = pack.getIcons().get(name);
+            Map<String, String> icons = new java.util.LinkedHashMap<>(pack.getIcons());
+            icons.put(name, destination.getName());
+            LumineIconPack updated = new LumineIconPack(pack.getId(), pack.getName(), pack.getAuthor(), pack.getVersion(), icons, pack.getLocation());
+            if (!LumineIconStorage.saveMetadata(updated)) {
+                return false;
+            }
+            if (previous != null && !previous.equals(destination.getName())) {
+                File old = LumineIconStorage.resolve(pack, previous);
+                if (old != null) {
+                    old.delete();
+                }
+            }
+            reloadNow();
+            return true;
+        } catch (Throwable t) {
+            FileLog.e("lumine icons: cannot save icon", t);
+            return false;
+        }
+    }
+
+    public boolean resetIcon(String packId, int resId) {
+        LumineIconPack pack = LumineIconStorage.find(packId);
+        String name = resourceName(resId);
+        if (pack == null || name == null) {
+            return false;
+        }
+        String relative = pack.getIcons().get(name);
+        if (relative == null) {
+            return false;
+        }
+        File file = LumineIconStorage.resolve(pack, relative);
+        Map<String, String> icons = new java.util.LinkedHashMap<>(pack.getIcons());
+        icons.remove(name);
+        LumineIconPack updated = new LumineIconPack(pack.getId(), pack.getName(), pack.getAuthor(), pack.getVersion(), icons, pack.getLocation());
+        if (!LumineIconStorage.saveMetadata(updated)) {
+            return false;
+        }
+        if (file != null) {
+            file.delete();
+        }
+        reloadNow();
+        return true;
+    }
+
     @Nullable
     public String resourceName(int resId) {
         String cached = names.get(resId);

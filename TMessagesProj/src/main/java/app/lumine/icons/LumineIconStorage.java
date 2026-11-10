@@ -132,6 +132,30 @@ public final class LumineIconStorage {
         invalidate();
     }
 
+    public static boolean saveMetadata(LumineIconPack pack) {
+        if (pack == null || !isValidPackId(pack.getId())) {
+            return false;
+        }
+        try {
+            File dir = new File(directory(), pack.getId());
+            dir.mkdirs();
+            File tmp = new File(dir, METADATA_NAME + ".tmp");
+            try (OutputStream os = new FileOutputStream(tmp)) {
+                os.write(pack.toJson().toString(4).getBytes("UTF-8"));
+            }
+            File target = new File(dir, METADATA_NAME);
+            target.delete();
+            if (!tmp.renameTo(target)) {
+                return false;
+            }
+            invalidate();
+            return true;
+        } catch (Exception e) {
+            FileLog.e("lumine icons: cannot save metadata", e);
+            return false;
+        }
+    }
+
     public static File resolve(LumineIconPack pack, String relative) {
         if (pack == null || relative == null || relative.isEmpty()) {
             return null;
