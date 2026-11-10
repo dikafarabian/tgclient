@@ -47394,6 +47394,9 @@ public class ChatActivity extends BaseFragment implements
                     view.setVisibility(visibility);
                 }
             }
+            if (containerId == MESSAGE_INPUT_CONTAINER && chatActivityEnterView != null) {
+                chatActivityEnterView.setBubblesProgress(alpha);
+            }
         }
     }
 

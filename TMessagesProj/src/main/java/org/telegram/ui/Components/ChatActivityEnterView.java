@@ -3038,7 +3038,6 @@ public class ChatActivityEnterView extends FrameLayout implements
         sendButtonContainer.setClipChildren(false);
         sendButtonContainer.setClipToPadding(false);
         textFieldContainer.addView(sendButtonContainer, LayoutHelper.createFrame(100, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
-        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosLayout.install(this, parentFragment, attachBubble, sendButtonContainer, emojiButton);
 
         audioVideoButtonContainer = new FrameLayout(context) {
 
@@ -8871,6 +8870,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 suggestButton.setTranslationX(shownSendButton ? -Math.max(0, sendButton.width() - dp(64)) : dp(42));
             }
         }
+        updateSideBubbles();
     }
 
     private void setSlowModeButtonVisible(boolean visible) {
@@ -8910,7 +8910,9 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (doneButton != null && doneButton.getVisibility() == VISIBLE) {
             layoutParams.rightMargin = Math.max(layoutParams.rightMargin, Math.max(0, doneButton.width() - dp(DEFAULT_HEIGHT)));
         }
-        if (oldRightMargin != layoutParams.rightMargin) {
+        if (isIOSInputStyle()) {
+            updateIOSEmojiButtonLayout();
+        } else if (oldRightMargin != layoutParams.rightMargin) {
             messageEditText.setLayoutParams(layoutParams);
         }
         if (recordedAudioPanel != null) {
@@ -8918,6 +8920,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             layoutParams2.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
             recordedAudioPanel.setLayoutParams(layoutParams2);
         }
+        updateSideBubbles();
     }
 
     public void startMessageTransition() {
@@ -12895,6 +12898,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 animatingContentType = POPUP_CONTENT_BOT_KEYBOARD;
                 MessagesController.getMainSettings(currentAccount).edit().remove("closed_botkeyboard_" + getTopicKeyString()).apply();
             }
+            updateSideBubbles();
             currentPopupContentType = contentType;
 
             if (keyboardHeight <= 0) {
@@ -13086,6 +13090,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 }
                 botKeyboardViewVisible = false;
             }
+            updateSideBubbles();
             if (contentType == POPUP_CONTENT_BOT_KEYBOARD && botButtonsMessageObject != null) {
                 MessagesController.getMainSettings(currentAccount).edit().putInt("closed_botkeyboard_" + getTopicKeyString(), botButtonsMessageObject.getId()).apply();
             }
@@ -16015,5 +16020,49 @@ public class ChatActivityEnterView extends FrameLayout implements
 
     public boolean isIOSInputStyle() {
         return iosLayoutMode;
+    }
+
+    private float bubblesProgress = 1f;
+
+    public void setBubblesProgress(float progress) {
+        if (bubblesProgress == progress) {
+            return;
+        }
+        bubblesProgress = progress;
+        updateSideBubbles();
+    }
+
+    private int getIOSSendBubbleWidth() {
+        int sendWidth = dp(DEFAULT_HEIGHT);
+        final boolean textSendActive = sendButton != null && sendButton.starsPrice <= 0
+            && messageEditText != null && messageEditText.getText() != null
+            && !TextUtils.isEmpty(messageEditText.getText().toString().trim());
+        if (textSendActive) {
+            sendWidth = Math.max(sendWidth, sendButton.width() - dp(12));
+        }
+        if (slowModeButton != null && slowModeButton.getVisibility() == VISIBLE) {
+            sendWidth = Math.max(sendWidth, slowModeButton.getMeasuredWidth());
+        }
+        return sendWidth;
+    }
+
+    private void updateSideBubbles() {
+        if (!isIOSInputStyle() || parentFragment == null) {
+            return;
+        }
+        final boolean recordedPanelShown = recordedAudioPanel != null && recordedAudioPanel.getVisibility() == VISIBLE && !recordingAudioVideo;
+        if (attachButton != null && recordedPanelShown) {
+            attachButton.setAlpha(0.0f);
+        }
+        if (recordingAudioVideo && !recordedPanelShown) {
+            return;
+        }
+        final float progress = recordedPanelShown ? 0f : bubblesProgress;
+        app.lumine.chat.ios.LumineIosInput.updateBubbles(parentFragment.chatInputViewsContainer, attachBubble, sendButtonContainer, emojiButton, messageEditText,
+            botButtonDrawable != null, progress, getIOSSendBubbleWidth(), this::updateSideBubbles);
+    }
+
+    private void updateIOSEmojiButtonLayout() {
+        app.lumine.chat.ios.LumineIosInput.emojiLayout(emojiButton, messageEditText, botButtonDrawable != null, getIOSSendBubbleWidth());
     }
 }

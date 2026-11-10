@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -25,6 +26,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.ChatActivityEnterView;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.chat.ChatInputViewsContainer;
 
 public final class LumineIosInput {
 
@@ -96,5 +98,59 @@ public final class LumineIosInput {
         bubble.addView(attachButton, LayoutHelper.createFrame(38, 38, Gravity.CENTER));
         to.addView(bubble, LayoutHelper.createFrame(ChatActivityEnterView.DEFAULT_HEIGHT, ChatActivityEnterView.DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 0));
         return bubble;
+    }
+
+    private static final int[] bubbleLoc = new int[2];
+    private static final int[] containerLoc = new int[2];
+
+    public static void updateBubbles(ChatInputViewsContainer container, FrameLayout attachBubble, FrameLayout sendContainer, View emojiButton, EditText edit,
+                                     boolean hasBotButton, float progress, int sendWidth, Runnable retry) {
+        if (container == null || attachBubble == null || sendContainer == null || !container.sideBubbles.ready()) {
+            return;
+        }
+        if (progress <= 0f) {
+            container.sideBubbles.setAlpha(0);
+            container.setInputBubbleOffsets(0, 0);
+            return;
+        }
+        if (attachBubble.getWidth() == 0 || sendContainer.getWidth() == 0) {
+            if (!attachBubble.isAttachedToWindow() || attachBubble.isShown()) {
+                attachBubble.post(retry);
+            }
+            return;
+        }
+        final int extra = Math.max(0, sendWidth - dp(ChatActivityEnterView.DEFAULT_HEIGHT));
+        container.setInputBubbleOffsets(Math.round(dp(50) * progress), Math.round((dp(50) + extra) * progress));
+        container.getLocationInWindow(containerLoc);
+        attachBubble.getLocationInWindow(bubbleLoc);
+        final int left = bubbleLoc[0] - containerLoc[0];
+        container.sideBubbles.setLeftBounds(left, left + attachBubble.getWidth());
+        sendContainer.getLocationInWindow(bubbleLoc);
+        final int right = bubbleLoc[0] - containerLoc[0] + sendContainer.getWidth();
+        container.sideBubbles.setRightBounds(right - sendWidth, right);
+        container.sideBubbles.setAlpha((int) (progress * 255));
+        emojiLayout(emojiButton, edit, hasBotButton, sendWidth);
+    }
+
+    public static void emojiLayout(View emojiButton, EditText edit, boolean hasBotButton, int sendWidth) {
+        if (emojiButton == null || edit == null) {
+            return;
+        }
+        final FrameLayout.LayoutParams emojiLp = (FrameLayout.LayoutParams) emojiButton.getLayoutParams();
+        if (emojiLp == null || (emojiLp.gravity & Gravity.RIGHT) != Gravity.RIGHT) {
+            return;
+        }
+        final int extra = Math.max(0, sendWidth - dp(ChatActivityEnterView.DEFAULT_HEIGHT));
+        if (emojiLp.rightMargin != dp(3)) {
+            emojiLp.rightMargin = dp(3);
+            emojiButton.setLayoutParams(emojiLp);
+        }
+        emojiButton.setTranslationX(-extra);
+        final FrameLayout.LayoutParams editLp = (FrameLayout.LayoutParams) edit.getLayoutParams();
+        final int editRight = dp(49) + extra + (hasBotButton ? dp(20) : 0);
+        if (editLp.rightMargin != editRight) {
+            editLp.rightMargin = editRight;
+            edit.setLayoutParams(editLp);
+        }
     }
 }
