@@ -361,3 +361,22 @@ Stages, one commit each:
 4. Notification icon from the active pack (`ContentProvider`, manifest entry).
 5. Built-in Solar and Remix sets (about 1.1k mappings in `BaseIconPacks` plus drawables; Solar is CC BY 4.0 and Remix is Apache 2.0, both need attribution; every mapping must be re-checked against 13.2.1 names).
 Later: prewarm of the cache, SVG packs, sharing a pack as a file.
+
+## 14. iOS input: reference index from upstream NagramXF (2026-11-10)
+
+Owner decision (2026-11-10): for the iOS message input only, the reference is `Keeperorowner/NagramXF` branch `canary`, not `base-nagramxf`. It is the original of the feature and already on 13.2.1 (7291), the same base as ours, so it can be diffed against stock 13.2.1 (`DrKLO/Telegram` at `7be672ea`). Reference only: nothing is copied, every site is written again as an added line after the stock statement (section 11).
+
+Scope in upstream (diff against stock 13.2.1, read 2026-11-10): `ChatActivityEnterView` 64 hunks of iOS code plus a helper block of about 240 lines (`isIOSInputStyle`, `getIOSSendBubbleWidth`, `updateInputBubbles`, `updateBubbleOffsetsAndPositions`, `updateIOSEmojiButtonLayout`, `updateSideBubbles`, `animateIOSSendBubbleWidth`, `animateIOSRecordPanelOut`, `updateScheduledButtonMarginsIOS`); `ChatActivity` 6 hunks; `ChatInputViewsContainer` 3 hunks (our `LumineSideBubbles`); `ChatActivityEnterViewAnimatedIconView` 6 references (other Lottie files for the voice and video switch, not ported). The code search of GitHub found no other file. Some hunks are mixed with Neko features (`useChatAttachMediaMenu`, ghost send); only their iOS part is taken.
+
+Groups (hunk numbers are the order of the diff, not line numbers):
+- Mode and helpers: 04, 05, 64. Ours: `LumineIosInput`, `LumineIosLayout`, `iosLayoutMode`.
+- Field layout: 06, 07, 08, 28, 29 (done in S1b and S2a); 35 reply and edit panel `topView` gets a 50dp left margin; 46 and 55 `updateFieldRight` calls the emoji layout and the edit right margin; 63 emoji margin 5 instead of 7.
+- Row of the attach layout (the bot command button next to the emoji): 09 notify button right margin 30, 21 translation override, 22 scheduled button moves into the attach layout, 23 suggest button margin 35, 24 bot button right margin 30, plus `updateScheduledButtonMarginsIOS` (30 without a bot button, minus 10 with it). Without these the command button sits on top of the emoji button (seen on the device after S1b).
+- Small glass buttons: 11 AI button and 12 expand button, 33dp glass circles (radius 18dp) at top left and top right with 4.66dp margin, icon color `actionBarActionModeDefaultIcon`; 30 to 33 and 59 show them from 3 lines instead of 2. The glass comes from `parentFragment.glassBackgroundDrawableFactory`, which is private in stock.
+- Attach bubble: 10 (bounce 0.1 on press), 36 (icon swap), 37 and 52 (restore delay 750), 54, 56, 57, 38 to 42 (typing animation gates; S2a covered the attach button and side buttons conditions).
+- Right button and send bubble: 16, 18, 19, 20, 02, 03 (slow mode button 34dp), 43, 44 (480 ms), 45, 47, 60, 61 (update triggers for the bubbles).
+- Record and voice: 14, 15, 25, 26, 27, 53 and `animateIOSRecordPanelOut`.
+- Skipped (Neko only): 13, 17, 34 (partly), 48 to 51, 62.
+
+Seen on the device, S1b build (2026-11-10): geometry of field and side circles matches nagramxf; wide island on multi-line (fixed in S2a by the `setOnButtonsTotalWidthChanged` guard, same as upstream); clip icon in the header while typing (stock `onAttachButtonHidden`; upstream does not block it either, owner to decide).
+
