@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import app.lumine.chat.LumineChatConfig;
 import org.telegram.messenger.ChatObject;
@@ -152,5 +153,36 @@ public final class LumineIosInput {
             editLp.rightMargin = editRight;
             edit.setLayoutParams(editLp);
         }
+    }
+
+    public static void linearRightMargin(View view, int marginDp) {
+        final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
+        lp.rightMargin = dp(marginDp);
+        view.setLayoutParams(lp);
+    }
+
+    public static void scheduledToAttachLayout(FrameLayout from, LinearLayout to, View scheduledButton) {
+        if (to == null) {
+            return;
+        }
+        from.removeView(scheduledButton);
+        to.addView(scheduledButton, 0, LayoutHelper.createLinear(ChatActivityEnterView.DEFAULT_HEIGHT, ChatActivityEnterView.DEFAULT_HEIGHT, 0, 0, 30, 0));
+    }
+
+    public static void scheduledMargin(View scheduledButton, boolean botShown) {
+        if (scheduledButton == null || !(scheduledButton.getLayoutParams() instanceof LinearLayout.LayoutParams)) {
+            return;
+        }
+        final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) scheduledButton.getLayoutParams();
+        final int margin = botShown ? -dp(10) : dp(30);
+        if (lp.rightMargin != margin) {
+            lp.rightMargin = margin;
+            scheduledButton.setLayoutParams(lp);
+        }
+    }
+
+    public static void botToEnd(LinearLayout layout, View botButton) {
+        layout.removeView(botButton);
+        layout.addView(botButton, LayoutHelper.createLinear(ChatActivityEnterView.DEFAULT_HEIGHT, ChatActivityEnterView.DEFAULT_HEIGHT, 0, 0, 30, 0));
     }
 }

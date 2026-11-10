@@ -2842,6 +2842,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 ThemeBind.selectorBackground(notifyButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
                 notifyButton.setVisibility(canWriteToChannel && (delegate == null || !delegate.hasScheduledMessages()) ? VISIBLE : GONE);
                 attachLayout.addView(notifyButton, LayoutHelper.createLinear(DEFAULT_HEIGHT, DEFAULT_HEIGHT));
+                if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.linearRightMargin(notifyButton, 30);
                 notifyButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -3761,6 +3762,10 @@ public class ChatActivityEnterView extends FrameLayout implements
             @Override
             public void setTranslationX(float translationX) {
                 innerTranslationX = translationX;
+                if (isIOSInputStyle()) {
+                    super.setTranslationX(innerTranslationX + attachLayoutPaddingTranslationX + attachLayoutTranslationX);
+                    return;
+                }
                 super.setTranslationX(
                     dp(-DEFAULT_HEIGHT) +
                     innerTranslationX + attachLayoutPaddingTranslationX + attachLayoutTranslationX +
@@ -3775,6 +3780,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         scheduledButton.setScaleType(ImageView.ScaleType.CENTER);
         ThemeBind.selectorBackground(scheduledButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
         messageEditTextContainer.addView(scheduledButton, 2, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.scheduledToAttachLayout(messageEditTextContainer, attachLayout, scheduledButton);
         scheduledButton.setOnClickListener(v -> {
             if (delegate != null) {
                 delegate.openScheduledMessages();
@@ -3869,6 +3875,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             textFieldContainer.addView(suggestButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT, 0, 0, 6 + DEFAULT_HEIGHT, 0));
         } else {
             attachLayout.addView(suggestButton, 0, LayoutHelper.createLinear(DEFAULT_HEIGHT, DEFAULT_HEIGHT));
+            if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.linearRightMargin(suggestButton, 35);
         }
         suggestButton.setOnClickListener(v -> {
             if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress() || attachLayoutPaddingAlpha == 0f) {
@@ -3960,6 +3967,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         botButton.setVisibility(GONE);
         AndroidUtilities.updateViewVisibilityAnimated(botButton, false, 0.1f, false);
         attachLayout.addView(botButton, 0, LayoutHelper.createLinear(DEFAULT_HEIGHT, DEFAULT_HEIGHT));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.botToEnd(attachLayout, botButton);
         botButton.setOnClickListener(v -> {
 //            if (hasBotWebView() && botCommandsMenuIsShowing()) {
 //                botWebViewMenuContainer.dismiss(v::callOnClick);
@@ -16059,10 +16067,12 @@ public class ChatActivityEnterView extends FrameLayout implements
         }
         final float progress = recordedPanelShown ? 0f : bubblesProgress;
         app.lumine.chat.ios.LumineIosInput.updateBubbles(parentFragment.chatInputViewsContainer, attachBubble, sendButtonContainer, emojiButton, messageEditText,
-            botButtonDrawable != null, progress, getIOSSendBubbleWidth(), this::updateSideBubbles);
+            botButton != null && botButton.getVisibility() == VISIBLE, progress, getIOSSendBubbleWidth(), this::updateSideBubbles);
     }
 
     private void updateIOSEmojiButtonLayout() {
-        app.lumine.chat.ios.LumineIosInput.emojiLayout(emojiButton, messageEditText, botButtonDrawable != null, getIOSSendBubbleWidth());
+        final boolean botShown = botButton != null && botButton.getVisibility() == VISIBLE;
+        app.lumine.chat.ios.LumineIosInput.scheduledMargin(scheduledButton, botShown);
+        app.lumine.chat.ios.LumineIosInput.emojiLayout(emojiButton, messageEditText, botShown, getIOSSendBubbleWidth());
     }
 }
