@@ -4575,6 +4575,7 @@ public class ChatActivity extends BaseFragment implements
             chatInputViewsContainer.sideBubbles.setDrawables(
                 glassBackgroundDrawableFactory.create(chatInputViewsContainer, blurredBackgroundColorProvider),
                 glassBackgroundDrawableFactory.create(chatInputViewsContainer, blurredBackgroundColorProvider));
+            chatInputViewsContainer.sideBubbles.setGlassMaker(view -> glassBackgroundDrawableFactory.create(view, blurredBackgroundColorProvider));
         }
 
 

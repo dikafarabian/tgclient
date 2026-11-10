@@ -19,7 +19,12 @@ public final class LumineSideBubbles {
 
     public static final int SIZE = 44;
 
+    public interface GlassMaker {
+        BlurredBackgroundDrawable make(View view);
+    }
+
     private final View host;
+    private GlassMaker glassMaker;
     private final Rect leftRect = new Rect();
     private final Rect rightRect = new Rect();
     private BlurredBackgroundDrawable left;
@@ -37,6 +42,14 @@ public final class LumineSideBubbles {
         right = rightDrawable;
         left.setRadius(dp(ChatInputViewsContainer.INPUT_BUBBLE_RADIUS));
         right.setRadius(dp(ChatInputViewsContainer.INPUT_BUBBLE_RADIUS));
+    }
+
+    public void setGlassMaker(GlassMaker maker) {
+        glassMaker = maker;
+    }
+
+    public BlurredBackgroundDrawable createGlass(View view) {
+        return glassMaker == null ? null : glassMaker.make(view);
     }
 
     public boolean ready() {

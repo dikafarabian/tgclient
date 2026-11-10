@@ -27,6 +27,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.ChatActivityEnterView;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
 import org.telegram.ui.Components.chat.ChatInputViewsContainer;
 
 public final class LumineIosInput {
@@ -184,5 +185,22 @@ public final class LumineIosInput {
     public static void botToEnd(LinearLayout layout, View botButton) {
         layout.removeView(botButton);
         layout.addView(botButton, LayoutHelper.createLinear(ChatActivityEnterView.DEFAULT_HEIGHT, ChatActivityEnterView.DEFAULT_HEIGHT, 0, 0, 30, 0));
+    }
+
+    public static void glassButton(View button, ChatActivity fragment, int gravity, float leftDp, float rightDp) {
+        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) button.getLayoutParams();
+        lp.width = dp(33);
+        lp.height = dp(33);
+        lp.gravity = gravity;
+        lp.topMargin = dp(10);
+        lp.leftMargin = dp(leftDp);
+        lp.rightMargin = dp(rightDp);
+        button.setLayoutParams(lp);
+        final ChatInputViewsContainer container = fragment == null ? null : fragment.chatInputViewsContainer;
+        final BlurredBackgroundDrawable glass = container == null ? null : container.sideBubbles.createGlass(button);
+        if (glass != null) {
+            glass.setRadius(dp(18));
+            button.setBackground(glass);
+        }
     }
 }

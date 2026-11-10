@@ -146,6 +146,8 @@ MARKERS=(
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|LumineIosInput.linearRightMargin"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|LumineIosInput.scheduledToAttachLayout"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|LumineIosInput.botToEnd"
+"$J/org/telegram/ui/Components/ChatActivityEnterView.java|LumineIosInput.glassButton"
+"$J/org/telegram/ui/ChatActivity.java|sideBubbles.setGlassMaker"
 "$J/org/telegram/ui/Components/ChatActivityEnterView.java|LumineIosInput.scheduledMargin"
 "$J/org/telegram/ui/ChatActivity.java|chatActivityEnterView.setBubblesProgress(alpha)"
 "$J/org/telegram/ui/Components/chat/ChatInputViewsContainer.java|sideBubbles.draw"
