@@ -8267,11 +8267,14 @@ public class ChatActivity extends BaseFragment implements
         });
 
         replyCloseImageView = new ImageView(context);
-        ThemeBind.colorFilter(replyCloseImageView, Theme.key_glass_defaultIcon, getResourceProvider(), PorterDuff.Mode.MULTIPLY);
+        if (!isIOSInput()) ThemeBind.colorFilter(replyCloseImageView, Theme.key_glass_defaultIcon, getResourceProvider(), PorterDuff.Mode.MULTIPLY);
         replyCloseImageView.setImageResource(R.drawable.input_clear);
         replyCloseImageView.setScaleType(ImageView.ScaleType.CENTER);
-        ThemeBind.selectorBackground(replyCloseImageView, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, AndroidUtilities.dp(19)), null, ThemeBind.of(Theme.key_listSelector), getResourceProvider());
+        if (!isIOSInput()) ThemeBind.selectorBackground(replyCloseImageView, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, AndroidUtilities.dp(19)), null, ThemeBind.of(Theme.key_listSelector), getResourceProvider());
         chatActivityEnterTopView.addView(replyCloseImageView, LayoutHelper.createFrame(52, 46, Gravity.RIGHT | Gravity.TOP, 0, 0.5f, 0, 0));
+        if (isIOSInput()) {
+            app.lumine.chat.ios.LumineIosInput.replyClose(replyCloseImageView, glassBackgroundDrawableFactory.create(replyCloseImageView, blurredBackgroundColorProvider), getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
+        }
         replyCloseImageView.setOnClickListener(v -> {
             messageSuggestionParams = null;
             if (fieldPanelShown == 2) {
@@ -8522,8 +8525,12 @@ public class ChatActivity extends BaseFragment implements
         bottomOverlayStartButton.setOnClickListener(v -> bottomOverlayChatText.callOnClick());
         bottomOverlayStartButton.setPadding(dp(31), 0, dp(31), 0);
         ScaleStateListAnimator.apply(bottomOverlayStartButton, 0.02f, 1.2f);
-        bottomChannelButtonsLayout.getContainer().addView(bottomOverlayStartButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 38, Gravity.CENTER, 3, 3, 3, 3));
-        bottomChannelButtonsLayout.makeViewWrapContent(bottomOverlayStartButton);
+        if (isIOSInput()) {
+            bottomChannelButtonsLayout.getContainer().addView(bottomOverlayStartButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.CENTER, 3, 3, 3, 3));
+        } else {
+            bottomChannelButtonsLayout.getContainer().addView(bottomOverlayStartButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 38, Gravity.CENTER, 3, 3, 3, 3));
+            bottomChannelButtonsLayout.makeViewWrapContent(bottomOverlayStartButton);
+        }
 
         if (currentUser != null && currentUser.bot && currentUser.id != UserObject.VERIFY && !UserObject.isDeleted(currentUser) && !UserObject.isReplyUser(currentUser) && !isInScheduleMode() && chatMode != MODE_PINNED && chatMode != MODE_SAVED && !isReport()) {
             bottomOverlayStartButton.setVisibility(View.VISIBLE);
@@ -43614,6 +43621,9 @@ public class ChatActivity extends BaseFragment implements
 
         themeDescriptions.add(new ThemeDescription(pinnedLineView, 0, null, null, null, selectedBackgroundDelegate, Theme.key_windowBackgroundWhite));
         themeDescriptions.add(new ThemeDescription(pinnedCounterTextView, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_chat_topPanelTitle));
+        if (isIOSInput()) {
+            themeDescriptions.add(new ThemeDescription(replyCloseImageView, ThemeDescription.FLAG_IMAGECOLOR, null, null, null, null, Theme.key_actionBarActionModeDefaultIcon));
+        }
 
 
         themeDescriptions.add(new ThemeDescription(searchCalendarButton, ThemeDescription.FLAG_BACKGROUNDFILTER | ThemeDescription.FLAG_DRAWABLESELECTEDSTATE, null, null, null, null, Theme.key_actionBarActionModeDefaultSelector));
@@ -48325,5 +48335,9 @@ public class ChatActivity extends BaseFragment implements
         keys.add(Theme.key_actionBarDefaultSubtitle);
         keys.add(Theme.key_actionBarDefaultTitle);
         keys.add(Theme.key_actionBarDefaultIcon);
+    }
+
+    private boolean isIOSInput() {
+        return chatActivityEnterView != null && chatActivityEnterView.isIOSInputStyle();
     }
 }

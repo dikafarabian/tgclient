@@ -492,6 +492,15 @@ public class ChatActivityEnterView extends FrameLayout implements
     private static class SlowModeBtn extends FrameLayout {
         private final SimpleTextView textView;
         private final RectF bgRect = new RectF();
+        private boolean iosInputStyle;
+
+        public void setIOSInputStyle(boolean iosInputStyle) {
+            if (this.iosInputStyle != iosInputStyle) {
+                this.iosInputStyle = iosInputStyle;
+                invalidate();
+            }
+        }
+
         private final Paint gradientPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Drawable closeDrawable;
         private boolean isPremiumMode = false;
@@ -547,11 +556,12 @@ public class ChatActivityEnterView extends FrameLayout implements
         protected void onDraw(Canvas canvas) {
             if (isPremiumMode) {
                 canvas.save();
-                int heightRect = dp(26);
-                canvas.translate(dp(5), ((getMeasuredHeight() - heightRect) / 2f));
+                int heightRect = dp(iosInputStyle ? 34 : 26);
+                final float closeTop = iosInputStyle ? (heightRect - closeDrawable.getIntrinsicHeight()) / 2f : dp(5);
+                canvas.translate(dp(iosInputStyle ? 10 : 5), ((getMeasuredHeight() - heightRect) / 2f));
                 bgRect.set(-dp(5), 0f, (float) getMeasuredWidth() - getPaddingEnd(), (float) heightRect);
                 canvas.drawRoundRect(bgRect, heightRect / 2f, heightRect / 2f, gradientPaint);
-                canvas.translate(getMeasuredWidth() - getPaddingEnd() - dp(6) - closeDrawable.getIntrinsicWidth(), dp(5));
+                canvas.translate(getMeasuredWidth() - getPaddingEnd() - dp(6) - closeDrawable.getIntrinsicWidth(), closeTop);
                 closeDrawable.draw(canvas);
                 canvas.restore();
             }
@@ -563,7 +573,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 SimpleTextView simpleTextView = (SimpleTextView) child;
                 canvas.save();
                 canvas.scale(0.8f, 0.8f);
-                canvas.translate(-dp(12), dp(6));
+                canvas.translate(-dp(iosInputStyle ? 4 : 12), dp(6));
                 int oldColor = simpleTextView.getTextPaint().getColor();
                 simpleTextView.getTextPaint().setColor(Color.WHITE);
                 boolean result = super.drawChild(canvas, child, drawingTime);
@@ -2871,11 +2881,40 @@ public class ChatActivityEnterView extends FrameLayout implements
                     if (getAlpha() < 0.5f) return false;
                     return super.dispatchTouchEvent(event);
                 }
+
+                private final ButtonBounce bounce = isIOSInputStyle() ? new ButtonBounce(this) : null;
+
+                @Override
+                protected void onDraw(Canvas canvas) {
+                    if (bounce == null) {
+                        super.onDraw(canvas);
+                        return;
+                    }
+                    final float scale = bounce.getScale(0.1f);
+                    canvas.save();
+                    canvas.scale(scale, scale, getWidth() / 2f, getHeight() / 2f);
+                    super.onDraw(canvas);
+                    canvas.restore();
+                }
+
+                @Override
+                public boolean onTouchEvent(MotionEvent event) {
+                    if (bounce != null) {
+                        if (!isEnabled() || getAlpha() < 0.5f) {
+                            bounce.setPressed(false);
+                        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            bounce.setPressed(true);
+                        } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                            bounce.setPressed(false);
+                        }
+                    }
+                    return super.onTouchEvent(event);
+                }
             };
             attachButton.setScaleType(ImageView.ScaleType.CENTER);
-            ThemeBind.colorFilter(attachButton, Theme.key_glass_defaultIcon, resourcesProvider, PorterDuff.Mode.MULTIPLY);
+            ThemeBind.colorFilter(attachButton, isIOSInputStyle() ? Theme.key_actionBarActionModeDefaultIcon : Theme.key_glass_defaultIcon, resourcesProvider, PorterDuff.Mode.MULTIPLY);
             attachButton.setImageResource(R.drawable.msg_input_attach2);
-            ThemeBind.selectorBackground(attachButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
+            if (!isIOSInputStyle()) ThemeBind.selectorBackground(attachButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
             messageEditTextContainer.addView(attachButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
             if (isIOSInputStyle()) attachBubble = app.lumine.chat.ios.LumineIosInput.moveAttach(context, messageEditTextContainer, textFieldContainer, attachButton, resourcesProvider);
             attachButton.setOnClickListener(v -> {
@@ -3515,7 +3554,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         audioVideoSendButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 //        audioVideoSendButton.setFocusable(true);
 //        audioVideoSendButton.setAccessibilityDelegate(mediaMessageButtonsDelegate);
-        padding = dp(10f);
+        padding = dp(isIOSInputStyle() ? 7.5f : 10f);
         audioVideoSendButton.setPadding(padding, padding, padding, padding);
         audioVideoButtonContainer.addView(audioVideoSendButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT));
 
@@ -3604,6 +3643,7 @@ public class ChatActivityEnterView extends FrameLayout implements
 
         slowModeButton = new SlowModeBtn(context);
         slowModeButton.setTextSize(16);
+        slowModeButton.setIOSInputStyle(isIOSInputStyle());
         slowModeButton.setVisibility(INVISIBLE);
         slowModeButton.setSoundEffectsEnabled(false);
         slowModeButton.setScaleX(0.1f);
@@ -6389,6 +6429,7 @@ public class ChatActivityEnterView extends FrameLayout implements
 
         topView = view;
         addView(topView, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, height, Gravity.TOP | Gravity.LEFT));
+        if (isIOSInputStyle()) app.lumine.chat.ios.LumineIosInput.leftMargin(topView, 50);
         needShowTopView = false;
 
         checkUi_TopViewVisibility();
@@ -14781,7 +14822,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         } else if (senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE) {
             int width = senderSelectView.getLayoutParams().width, height = senderSelectView.getLayoutParams().height;
             senderSelectView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(7) + width;
+            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(isIOSInputStyle() ? 5 : 7) + width;
             if (deleteRichDraftButton != null) {
                 ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(7) + width;
             }

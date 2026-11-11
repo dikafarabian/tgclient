@@ -91,11 +91,21 @@ public final class LumineIosInput {
         attachLayout.setLayoutParams(lp);
     }
 
+    public static void replyClose(ImageView close, BlurredBackgroundDrawable glass, int iconColor) {
+        close.setColorFilter(new PorterDuffColorFilter(iconColor, PorterDuff.Mode.MULTIPLY));
+        glass.setRadius(100f);
+        close.setBackground(glass);
+        final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) close.getLayoutParams();
+        lp.width = dp(33);
+        lp.height = dp(33);
+        lp.rightMargin = dp(4.66f);
+        close.setLayoutParams(lp);
+    }
+
     public static FrameLayout moveAttach(Context context, FrameLayout from, FrameLayout to, ImageView attachButton, Theme.ResourcesProvider resourcesProvider) {
         from.removeView(attachButton);
         attachButton.setImageResource(R.drawable.lumine_input_attach);
         attachButton.setBackground(null);
-        attachButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon, resourcesProvider), PorterDuff.Mode.MULTIPLY));
         final FrameLayout bubble = new FrameLayout(context);
         bubble.addView(attachButton, LayoutHelper.createFrame(38, 38, Gravity.CENTER));
         to.addView(bubble, LayoutHelper.createFrame(ChatActivityEnterView.DEFAULT_HEIGHT, ChatActivityEnterView.DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 0));
