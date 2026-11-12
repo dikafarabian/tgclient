@@ -76,4 +76,9 @@ object LumineChatConfig {
     var actionButtonStyle: Int
         get() = LumineConfig.getInt("LumineChatActionButtonStyle", 0).coerceIn(0, 2)
         set(value) = LumineConfig.setInt("LumineChatActionButtonStyle", value.coerceIn(0, 2))
+
+    @JvmStatic
+    var iosList: Boolean
+        get() = LumineConfig.getBoolean("LumineChatIosList", false)
+        set(value) = LumineConfig.setBoolean("LumineChatIosList", value)
 }

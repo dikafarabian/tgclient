@@ -1069,6 +1069,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
 
     private int getCollapsedHeight() {
         int height = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? heightThreeLines : heightDefault);
+        // lumine: iOS chat list, taller row
+        if (lumineIosList()) {
+            height += dp(app.lumine.chat.ios.LumineIosDialogCell.ROW_EXTRA);
+        }
         if (useSeparator || true) {
             height += 1;
         }
@@ -1287,6 +1291,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         if (isTransitionSupport) {
             return;
         }
+        // lumine: iOS chat list paddings, before any dp(avatarStart) read
+        app.lumine.chat.ios.LumineIosDialogCell.applyStarts(this, lumineIosList());
         if (isDialogCell) {
             boolean needUpdate = updateHelper.update();
             if (!needUpdate && currentDialogFolderId == 0 && currentDialogCommunityId == 0 && encryptedChat == null) {
@@ -3023,6 +3029,34 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 statusDrawableLeft = (int) (typingLeft + x2 + dp(3));
             }
         }
+        // lumine: iOS chat list, larger avatar in the two line layout
+        if (lumineIosList() && !(useForceThreeLines || SharedConfig.useThreeLinesLayout)) {
+            int avatarSize = app.lumine.chat.ios.LumineIosDialogCell.AVATAR_SIZE;
+            if (LocaleController.isRTL) {
+                avatarLeft = getMeasuredWidth() - dp(avatarSize + avatarStart);
+                thumbLeft = avatarLeft - dp(11 + (thumbsCount * (thumbSize + 2) - 2));
+            } else {
+                thumbLeft = avatarLeft + dp(avatarSize + 15);
+            }
+            storyParams.originalAvatarRect.set(avatarLeft, avatarTop, avatarLeft + dp(avatarSize), avatarTop + dp(avatarSize));
+        }
+        // lumine: iOS chat list, row content moves down with the taller row
+        if (lumineIosList()) {
+            int lumineOffset = dp(app.lumine.chat.ios.LumineIosDialogCell.OFFSET);
+            nameLockTop += lumineOffset;
+            timeTop += lumineOffset;
+            checkDrawTop += lumineOffset;
+            errorTop += lumineOffset;
+            pinTop += lumineOffset;
+            countTop += lumineOffset;
+            messageNameTop += lumineOffset;
+            messageTop += lumineOffset;
+            buttonTop += lumineOffset;
+            storyParams.originalAvatarRect.offset(0, lumineOffset);
+            for (int i = 0; i < thumbImage.length; ++i) {
+                thumbImage[i].setImageY(thumbImage[i].getImageY() + lumineOffset);
+            }
+        }
         updateThumbsPosition();
     }
 
@@ -3192,6 +3226,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     }
 
     public boolean isPointInsideAvatar(float x, float y) {
+        // lumine: iOS chat list, larger avatar touch area
+        if (lumineIosList()) {
+            return app.lumine.chat.ios.LumineIosDialogCell.insideAvatar(this, x);
+        }
         if (!LocaleController.isRTL) {
             return x >= 0 && x < dp(60);
         } else {
@@ -4162,6 +4200,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                 nameTop -= dp(isForumCell() ? 8 : 9);
             }
+            // lumine: iOS chat list offset
+            if (lumineIosList()) {
+                nameTop += lumineIosOffset();
+            }
             if (nameLayout != null) {
                 if (nameLayoutEllipsizeByGradient && !nameLayoutFits) {
                     if (nameLayoutEllipsizeLeft && fadePaint == null) {
@@ -4475,6 +4517,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     y -= dp(9);
                 }
+                // lumine: iOS chat list offset
+                if (lumineIosList()) {
+                    y += lumineIosOffset();
+                }
                 if (botVerification != null) {
                     botVerification.setBounds(
                         nameLeft - dp(17 + 2),
@@ -4508,6 +4554,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 float muteY = dp(SharedConfig.useThreeLinesLayout ? 13.5f : 17.5f);
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     muteY -= dp(isForumCell() ? 8 : 9);
+                }
+                // lumine: iOS chat list offset
+                if (lumineIosList()) {
+                    muteY += lumineIosOffset();
                 }
                 setDrawableBounds(Theme.dialogs_muteDrawable, muteX, muteY);
                 setDrawableBounds(Theme.dialogs_unmuteDrawable, muteX, muteY);
@@ -4548,6 +4598,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     y -= dp(9);
                 }
+                // lumine: iOS chat list offset
+                if (lumineIosList()) {
+                    y += lumineIosOffset();
+                }
                 setDrawableBounds(Theme.dialogs_verifiedDrawable, nameMuteLeft - dp(1), y);
                 setDrawableBounds(Theme.dialogs_verifiedCheckDrawable, nameMuteLeft - dp(1), y);
                 Theme.dialogs_verifiedDrawable.draw(canvas);
@@ -4556,6 +4610,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f);
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     y -= dp(9);
+                }
+                // lumine: iOS chat list offset
+                if (lumineIosList()) {
+                    y += lumineIosOffset();
                 }
                 if (emojiStatus != null) {
                     emojiStatusView.setTranslationX(gtx + nameMuteLeft - dp(2));
@@ -4574,13 +4632,17 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                     emojiStatus.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
                 } else {
                     Drawable premiumDrawable = PremiumGradient.getInstance().premiumStarDrawableMini;
-                    setDrawableBounds(premiumDrawable, nameMuteLeft - dp(1), dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f));
+                    setDrawableBounds(premiumDrawable, nameMuteLeft - dp(1), dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f) + lumineIosOffset()); // lumine: iOS chat list offset
                     premiumDrawable.draw(canvas);
                 }
             } else if (drawScam != 0) {
                 int y = dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12 : 15);
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     y -= dp(9);
+                }
+                // lumine: iOS chat list offset
+                if (lumineIosList()) {
+                    y += lumineIosOffset();
                 }
                 setDrawableBounds((drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable), nameMuteLeft, y);
                 (drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable).draw(canvas);
@@ -6592,5 +6654,15 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             }
             invalidate();
         }
+    }
+
+    // lumine: this cell renders the iOS style chat list
+    boolean lumineIosList() {
+        return parentFragment != null && app.lumine.chat.ios.LumineIosDialogCell.usable() && !isTopic && !isForumCell() && !isTransitionSupport;
+    }
+
+    // lumine: vertical shift of the row content in iOS mode
+    int lumineIosOffset() {
+        return lumineIosList() ? dp(app.lumine.chat.ios.LumineIosDialogCell.OFFSET) : 0;
     }
 }

@@ -48,6 +48,15 @@ public class LumineChatActivity extends LumineSubPage {
         styleValue = styleRow.value;
         LumineCards.setValue(styleValue, styleName(LumineChatConfig.getActionButtonStyle()), 0);
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatActionButtonInfo));
+
+        final LinearLayout iosCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineChatIosStyleCard));
+        LumineCards.toggleRow(context, iosCard, LumineStrings.get(R.string.LumineChatIosList), null, LumineChatConfig.getIosList(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setIosList(enabled);
+            }
+        });
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatIosListInfo));
     }
 
     private TextView styleValue;
