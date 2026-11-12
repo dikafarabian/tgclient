@@ -217,4 +217,13 @@
     <string name="LumineChatUnreadBadgeIos">iOS-styled counter</string>
     <string name="LumineChatUnreadBadgeIosInfo">The counter extends the glass back pill instead of sitting on top of the arrow. Reopen a chat to see the change.</string>
     <string name="LumineTabIosBar">iOS-style bottom bar</string>
+    <string name="LumineChatPillBackground">Show pill background</string>
+    <string name="LumineChatPillBackgroundInfo">The glass capsule behind the chat title. Turn it off to let the title and avatar float on the wallpaper. Reopen a chat to see the change.</string>
+    <string name="LumineChatPillSlot">Avatar in the menu slot</string>
+    <string name="LumineChatPillSlotInfo">The avatar takes the place of the menu button on the right. Tap it to open the profile, hold it to open the chat menu. Reopen a chat to see the change.</string>
+    <string name="LumineChatPillSwap">Swap tap and hold</string>
+    <string name="LumineChatPillStatic">Avatar beside the back button</string>
+    <string name="LumineChatPillRight">Avatar on the right</string>
+    <string name="LumineChatPillHideAvatar">Hide avatar</string>
+    <string name="LumineChatPillHideAvatarInfo">Removes the avatar from the chat header. Reopen a chat to see the change.</string>
 </resources>

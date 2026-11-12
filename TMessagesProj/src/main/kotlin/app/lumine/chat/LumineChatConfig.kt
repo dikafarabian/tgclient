@@ -19,8 +19,23 @@ object LumineChatConfig {
 
     @JvmStatic
     var chatPillAvatarSlot: Boolean
-        get() = LumineConfig.getBoolean("LumineChatPillAvatarSlot", true)
+        get() = LumineConfig.getBoolean("LumineChatPillAvatarSlot", false)
         set(value) = LumineConfig.setBoolean("LumineChatPillAvatarSlot", value)
+
+    @JvmStatic
+    var chatPillAvatarSwap: Boolean
+        get() = LumineConfig.getBoolean("LumineChatPillAvatarSwap", false)
+        set(value) = LumineConfig.setBoolean("LumineChatPillAvatarSwap", value)
+
+    @JvmStatic
+    var chatPillAvatarStatic: Boolean
+        get() = LumineConfig.getBoolean("LumineChatPillAvatarStatic", false)
+        set(value) = LumineConfig.setBoolean("LumineChatPillAvatarStatic", value)
+
+    @JvmStatic
+    var chatPillHideAvatar: Boolean
+        get() = LumineConfig.getBoolean("LumineChatPillHideAvatar", false)
+        set(value) = LumineConfig.setBoolean("LumineChatPillHideAvatar", value)
 
     @JvmStatic
     var chatPillAvatarRight: Boolean

@@ -261,6 +261,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             if (avatarImageIsHidden) {
                 avatarImageView.setVisibility(GONE);
             }
+            // lumine: hide chat avatar option
+            if (app.lumine.chat.LumineChatPill.hideAvatar()) {
+                avatarImageView.setVisibility(GONE);
+            }
         }
         avatarImageView.setContentDescription(getString(R.string.AccDescrProfilePicture));
         avatarImageView.setRoundRadius(dp(21));
@@ -778,6 +782,26 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
 
         avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarImageView.getMeasuredWidth(), 1 + viewTop + avatarImageView.getMeasuredHeight());
         int l = leftPadding + (avatarImageView.getVisibility() == VISIBLE ? dp(glassMode ? 49.66f : 55) : dp(glassMode ? 13 : 1)) + rightAvatarPadding;
+        // lumine: avatar placement of the chat header pill
+        lumineAvatarMode = app.lumine.chat.LumineChatPill.avatarMode(this);
+        if (lumineAvatarMode != app.lumine.chat.LumineChatPill.MODE_STOCK && avatarImageView.getVisibility() == VISIBLE) {
+            final int lumineAvatarW = avatarImageView.getMeasuredWidth();
+            final int lumineAvatarLeft;
+            if (lumineAvatarMode == app.lumine.chat.LumineChatPill.MODE_RIGHT) {
+                lumineAvatarLeft = getWidth() - lumineAvatarW - dp(6);
+            } else {
+                setClipChildren(false);
+                final View lumineBar = (View) getParent();
+                if (lumineAvatarMode == app.lumine.chat.LumineChatPill.MODE_SLOT) {
+                    lumineAvatarLeft = lumineBar.getWidth() - getLeft() - dp(app.lumine.chat.LumineChatPill.SLOT_CENTER_DP) - lumineAvatarW / 2;
+                } else {
+                    lumineAvatarLeft = dp(app.lumine.chat.LumineChatPill.STATIC_LEFT_DP) - getLeft();
+                }
+            }
+            avatarImageView.layout(lumineAvatarLeft, 1 + viewTop, lumineAvatarLeft + lumineAvatarW, 1 + viewTop + avatarImageView.getMeasuredHeight());
+            lumineOnContainerMoved();
+            l = leftPadding + dp(glassMode ? 13 : 1) + rightAvatarPadding;
+        }
         SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
         if (getSubtitleTextView().getVisibility() != GONE) {
             titleTextView.layout(l, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), l + titleTextView.getMeasuredWidth(), viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
@@ -1757,11 +1781,36 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         if (subtitleTextView != null) {
             width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables());
         }
-        if (hasVisibleAvatar()) {
+        if (hasVisibleAvatar() && app.lumine.chat.LumineChatPill.avatarInsidePill(this)) { // lumine: slot and static sit outside the pill
             width += dp(52 + 18);
         } else {
             width += dp(34);
         }
         return (int) width;
+    }
+
+    // lumine: avatar placement mode picked by the last layout pass
+    private int lumineAvatarMode = app.lumine.chat.LumineChatPill.MODE_STOCK;
+
+    // lumine: the slot and static avatar hold a fixed screen position while the pill centers under them
+    public void lumineOnContainerMoved() {
+        if (avatarImageView != null && (lumineAvatarMode == app.lumine.chat.LumineChatPill.MODE_SLOT || lumineAvatarMode == app.lumine.chat.LumineChatPill.MODE_STATIC)) {
+            avatarImageView.setTranslationX(-getTranslationX());
+        }
+    }
+
+    // lumine: pill background hidden by option, text and avatar float on the wallpaper
+    public boolean luminePillHidden() {
+        return !app.lumine.chat.LumineChatPill.pillVisible();
+    }
+
+    // lumine: room the static avatar reserves on the left of the pill
+    public int lumineStaticAvatarReserve() {
+        return lumineAvatarMode == app.lumine.chat.LumineChatPill.MODE_STATIC ? dp(app.lumine.chat.LumineChatPill.STATIC_RESERVE_DP) : 0;
+    }
+
+    // lumine: room the menu-slot avatar reserves on the right of the pill
+    public int lumineMenuSlotReserve() {
+        return lumineAvatarMode == app.lumine.chat.LumineChatPill.MODE_SLOT ? dp(app.lumine.chat.LumineChatPill.SLOT_RESERVE_DP) : 0;
     }
 }

@@ -65,6 +65,50 @@ public class LumineChatActivity extends LumineSubPage {
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatIosListInfo));
 
         final LinearLayout headerCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineChatHeaderCard));
+        LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatPillBackground), null, LumineChatConfig.getChatPill(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setChatPill(enabled);
+            }
+        });
+        LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatPillSlot), null, LumineChatConfig.getChatPillAvatarSlot(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setChatPillAvatarSlot(enabled);
+                rebuild(160);
+            }
+        });
+        if (LumineChatConfig.getChatPillAvatarSlot()) {
+            LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatPillSwap), null, LumineChatConfig.getChatPillAvatarSwap(), new LumineCards.OnToggle() {
+                @Override
+                public void onToggle(boolean enabled) {
+                    LumineChatConfig.setChatPillAvatarSwap(enabled);
+                }
+            });
+        } else {
+            LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatPillStatic), null, LumineChatConfig.getChatPillAvatarStatic(), new LumineCards.OnToggle() {
+                @Override
+                public void onToggle(boolean enabled) {
+                    LumineChatConfig.setChatPillAvatarStatic(enabled);
+                    rebuild(160);
+                }
+            });
+            if (!LumineChatConfig.getChatPillAvatarStatic()) {
+                LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatPillRight), null, LumineChatConfig.getChatPillAvatarRight(), new LumineCards.OnToggle() {
+                    @Override
+                    public void onToggle(boolean enabled) {
+                        LumineChatConfig.setChatPillAvatarRight(enabled);
+                    }
+                });
+            }
+        }
+        LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatPillHideAvatar), null, LumineChatConfig.getChatPillHideAvatar(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setChatPillHideAvatar(enabled);
+            }
+        });
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatPillSlotInfo));
         LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatMarquee), null, LumineChatConfig.getChatTitleMarquee(), new LumineCards.OnToggle() {
             @Override
             public void onToggle(boolean enabled) {

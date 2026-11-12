@@ -2492,9 +2492,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                 }
             } else {
                 final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
-                final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+                final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue()) + lumineMenuSlotReserve(); // lumine: menu-slot avatar room
 
-                final int leftDefault = lerp(hasBackButton ? s + p + lumineBackPillExtra() : 0, s + p + (hasBackButton ? lumineBackPillExtra() : 0), chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue()); // lumine: room for the back badge chip
+                final int leftDefault = lerp(hasBackButton ? s + p + lumineBackPillExtra() + lumineStaticAvatarReserve() : 0, s + p + lumineStaticAvatarReserve() + (hasBackButton ? lumineBackPillExtra() : 0), chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue()); // lumine: room for the back badge chip and the static avatar
                 final int rightDefault = getWidth() - rightOffset;
                 final int widthDefault = rightDefault - leftDefault;
                 final int left, right;
@@ -2509,13 +2509,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                             + p + dp(3);
                     chatAvatarContainer.setTranslationX(translationX);
                     chatAvatarContainer.setPivotX((chatAvatarContainer.getMeasuredWidth()) / 2f - translationX );
+                    chatAvatarContainer.lumineOnContainerMoved(); // lumine: slot and static avatars keep their screen position
                 } else {
                     left = leftDefault;
                     right = rightDefault;
                 }
 
                 glassDrawable.setBounds(left, t, right, b);
-                if (!doNotDrawCenterGlass) {
+                if (!doNotDrawCenterGlass && !lumineHideTitlePill()) { // lumine: pill background hidden by option
                     glassDrawable.draw(canvas);
                 }
             }
@@ -2772,5 +2773,20 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
 
     public int lumineBackPillExtra() {
         return lumineBackBadge != null && lumineBackPillMode() ? lumineBackBadge.pillExtra() : 0;
+    }
+
+    // lumine: chat header pill background hidden by option
+    private boolean lumineHideTitlePill() {
+        return chatAvatarContainer != null && chatAvatarContainer.luminePillHidden();
+    }
+
+    // lumine: room the static avatar reserves on the left of the pill
+    private int lumineStaticAvatarReserve() {
+        return chatAvatarContainer == null ? 0 : chatAvatarContainer.lumineStaticAvatarReserve();
+    }
+
+    // lumine: room the menu-slot avatar reserves on the right of the pill
+    private int lumineMenuSlotReserve() {
+        return chatAvatarContainer == null ? 0 : chatAvatarContainer.lumineMenuSlotReserve();
     }
 }

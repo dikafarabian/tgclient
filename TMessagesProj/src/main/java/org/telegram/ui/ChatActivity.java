@@ -4294,6 +4294,8 @@ public class ChatActivity extends BaseFragment implements
             });
             otherIcon.addView(headerItem.getIconView());
             headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
+            // lumine: avatar in the menu slot of the chat header pill
+            app.lumine.chat.LumineChatPill.applyMenuSlot(avatarContainer, headerItem);
 
             if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                 savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
