@@ -7172,9 +7172,14 @@ public class ChatActivityEnterView extends FrameLayout implements
                     attachButtonAnimator.cancel();
                     attachButtonAnimator = null;
                 }
-                animators.add(ObjectAnimator.ofFloat(attachButton, View.ALPHA, attachButtonAlpha = 1.0f));
-                animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_X, 1.0f));
-                animators.add(ObjectAnimator.ofFloat(attachButton, View.SCALE_Y, 1.0f));
+                AnimatorSet attachRestore = new AnimatorSet();
+                attachRestore.playTogether(
+                        ObjectAnimator.ofFloat(attachButton, View.ALPHA, attachButtonAlpha = 1.0f),
+                        ObjectAnimator.ofFloat(attachButton, View.SCALE_X, 1.0f),
+                        ObjectAnimator.ofFloat(attachButton, View.SCALE_Y, 1.0f)
+                );
+                attachRestore.setStartDelay(isIOSInputStyle() ? 750 : 0);
+                animators.add(attachRestore);
             }
             animators.add(ObjectAnimator.ofFloat(messageEditText, View.ALPHA, 1f));
             animators.add(ObjectAnimator.ofFloat(messageEditText, MESSAGE_TEXT_TRANSLATION_X, 0));
@@ -8191,9 +8196,14 @@ public class ChatActivityEnterView extends FrameLayout implements
                     animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_X, 1.0f));
                     animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_Y, 1.0f));
                     animators.add(ObjectAnimator.ofFloat(slowModeButton, View.ALPHA, 1.0f));
+                    final int bubbleWidthBeforeSlowMode = getIOSSendBubbleWidth();
                     setSlowModeButtonVisible(true);
+                    if (isIOSInputStyle()) {
+                        animators.add(animateIOSSendBubbleWidth(bubbleWidthBeforeSlowMode, getIOSSendBubbleWidth()));
+                        bubbleWidthAnimationRunning = true;
+                    }
                     runningAnimation.playTogether(animators);
-                    runningAnimation.setDuration(220);
+                    runningAnimation.setDuration(isIOSInputStyle() ? 480 : 220);
                     runningAnimation.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
                     runningAnimation.addListener(new AnimatorListenerAdapter() {
                         @Override
@@ -8207,6 +8217,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                                 }
                                 runningAnimation = null;
                                 runningAnimationType = 0;
+                                onBubbleWidthAnimationFinished();
                             }
                         }
 
@@ -8214,6 +8225,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                         public void onAnimationCancel(Animator animation) {
                             if (animation.equals(runningAnimation)) {
                                 runningAnimation = null;
+                                bubbleWidthAnimationRunning = false;
                             }
                         }
                     });
@@ -8705,6 +8717,9 @@ public class ChatActivityEnterView extends FrameLayout implements
                     scheduledButton.setTranslationX(0);
                 }
             }
+            if (isIOSInputStyle()) {
+                updateAttachButtonSlowModeState(slowModeTimer > 0 && slowModeTimer != Integer.MAX_VALUE && !isSlowModeIgnored());
+            }
         } else if (
             getSendButtonInternal().getVisibility() == VISIBLE ||
             cancelBotButton.getVisibility() == VISIBLE ||
@@ -8831,8 +8846,13 @@ public class ChatActivityEnterView extends FrameLayout implements
                     animators.add(ObjectAnimator.ofFloat(getSendButtonInternal(), View.ALPHA, 0.0f));
                 }
 
+                if (isIOSInputStyle()) {
+                    animators.add(animateIOSSendBubbleWidth(getIOSSendBubbleWidth(), dp(DEFAULT_HEIGHT)));
+                    bubbleWidthAnimationRunning = true;
+                }
+
                 runningAnimation.playTogether(animators);
-                runningAnimation.setDuration(150);
+                runningAnimation.setDuration(isIOSInputStyle() ? 480 : 150);
                 runningAnimation.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -8844,6 +8864,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                             if (audioVideoButtonContainer != null) {
                                 audioVideoButtonContainer.setVisibility(VISIBLE);
                             }
+                            onBubbleWidthAnimationFinished();
                         }
                     }
 
@@ -8851,6 +8872,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     public void onAnimationCancel(Animator animation) {
                         if (animation.equals(runningAnimation)) {
                             runningAnimation = null;
+                            bubbleWidthAnimationRunning = false;
                         }
                     }
                 });
@@ -9718,7 +9740,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     }
 
                     icons2.setDuration(150);
-                    icons2.setStartDelay(110);
+                    icons2.setStartDelay(isIOSInputStyle() ? 750 : 110);
                     icons2.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -16097,8 +16119,40 @@ public class ChatActivityEnterView extends FrameLayout implements
         return sendWidth;
     }
 
+    private boolean bubbleWidthAnimationRunning;
+
+    private ValueAnimator animateIOSSendBubbleWidth(int fromWidth, int toWidth) {
+        final ValueAnimator animator = ValueAnimator.ofInt(fromWidth, toWidth);
+        animator.addUpdateListener(a -> {
+            if (parentFragment != null) {
+                app.lumine.chat.ios.LumineIosInput.updateBubbles(parentFragment.chatInputViewsContainer, attachBubble, sendButtonContainer, emojiButton, messageEditText,
+                    botButton != null && botButton.getVisibility() == VISIBLE, bubblesProgress, (int) a.getAnimatedValue(), this::updateSideBubbles);
+            }
+        });
+        return animator;
+    }
+
+    private void onBubbleWidthAnimationFinished() {
+        bubbleWidthAnimationRunning = false;
+        updateSideBubbles();
+    }
+
+    private void updateAttachButtonSlowModeState(boolean disabled) {
+        if (attachButton == null) {
+            return;
+        }
+        final float alpha = disabled ? 0.5f : 1.0f;
+        if (attachButtonAnimator != null) {
+            attachButtonAnimator.cancel();
+            attachButtonAnimator = null;
+        }
+        attachButton.setEnabled(!disabled);
+        attachButtonAnimator = attachButton.animate().alpha(attachButtonAlpha = alpha).setDuration(250);
+        attachButtonAnimator.start();
+    }
+
     private void updateSideBubbles() {
-        if (!isIOSInputStyle() || parentFragment == null) {
+        if (!isIOSInputStyle() || parentFragment == null || bubbleWidthAnimationRunning) {
             return;
         }
         final boolean recordedPanelShown = recordedAudioPanel != null && recordedAudioPanel.getVisibility() == VISIBLE && !recordingAudioVideo;
