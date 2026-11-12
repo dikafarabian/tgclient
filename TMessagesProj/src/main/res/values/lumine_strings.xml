@@ -212,5 +212,8 @@
     <string name="LumineChatIosCompactInfo">Less air around the iOS input field: the round buttons move closer to the capsule. Reopen a chat to see the change.</string>
     <string name="LumineChatHeaderCard">Chat header</string>
     <string name="LumineChatMarquee">Chat title auto-scroll</string>
-    <string name="LumineChatMarqueeInfo">Long chat titles run through the header instead of being cut. Reopen a chat to see the change.</string>
+    <string name="LumineChatUnreadBadge">Show unread counter</string>
+    <string name="LumineChatUnreadBadgeInfo">Count of unread chats on the back button of the chat header.</string>
+    <string name="LumineChatUnreadBadgeIos">iOS-styled counter</string>
+    <string name="LumineChatUnreadBadgeIosInfo">The counter extends the glass back pill instead of sitting on top of the arrow. Reopen a chat to see the change.</string>
 </resources>

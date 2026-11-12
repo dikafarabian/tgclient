@@ -532,7 +532,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             canvas.save();
             canvas.clipRect(0, -getTranslationY() + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0), getMeasuredWidth(), getMeasuredHeight());
         }
+        // lumine: unread badge wraps the back button drawing
+        final boolean lumineBadged = lumineBackBadge != null && child == backButtonImageView;
+        if (lumineBadged) lumineBackBadge.beforeBack(canvas);
         boolean result = super.drawChild(canvas, child, drawingTime);
+        if (lumineBadged) lumineBackBadge.afterBack(canvas, child);
         if (supportsHolidayImage && !titleOverlayShown && !LocaleController.isRTL && (child == titleTextView[0] || child == titleTextView[1] || child == titlesContainer && useContainerForTitles)) {
             Drawable drawable = Theme.getCurrentHolidayDrawable();
             if (drawable != null) {
@@ -2490,7 +2494,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                 final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
                 final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
 
-                final int leftDefault = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+                final int leftDefault = lerp(hasBackButton ? s + p + lumineBackPillExtra() : 0, s + p + (hasBackButton ? lumineBackPillExtra() : 0), chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue()); // lumine: room for the back badge chip
                 final int rightDefault = getWidth() - rightOffset;
                 final int widthDefault = rightDefault - leftDefault;
                 final int left, right;
@@ -2517,7 +2521,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
             }
         }
         if (glassDrawableBack != null && hasBackButton) {
-            glassDrawableBack.setBounds(0, t, s + p * 2, b);
+            glassDrawableBack.setBounds(0, t, s + p * 2 + lumineBackPillExtra(), b); // lumine: the badge chip widens the back pill
             glassDrawableBack.draw(canvas);
         }
         if (glassDrawableMenu != null && menuWidth > 0 && !glassOnlyBack && !doNotDrawGlassMenu && !isMenuPillInOverlay()) {
@@ -2757,5 +2761,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
         if (blurredBackground) {
             invalidate();
         }
+    }
+
+    // lumine: unread chats counter on the back button, owned by LumineBackBadge
+    public app.lumine.chat.LumineBackBadge.BackBadge lumineBackBadge;
+
+    public boolean lumineBackPillMode() {
+        return glassDrawableBack != null;
+    }
+
+    public int lumineBackPillExtra() {
+        return lumineBackBadge != null && lumineBackPillMode() ? lumineBackBadge.pillExtra() : 0;
     }
 }

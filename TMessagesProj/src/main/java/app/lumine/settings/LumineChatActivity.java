@@ -71,7 +71,22 @@ public class LumineChatActivity extends LumineSubPage {
                 LumineChatConfig.setChatTitleMarquee(enabled);
             }
         });
-        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatMarqueeInfo));
+        LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatUnreadBadge), null, LumineChatConfig.getUnreadBadge(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setUnreadBadge(enabled);
+                rebuild(160);
+            }
+        });
+        if (LumineChatConfig.getUnreadBadge()) {
+            LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatUnreadBadgeIos), null, LumineChatConfig.getUnreadBadgeIos(), new LumineCards.OnToggle() {
+                @Override
+                public void onToggle(boolean enabled) {
+                    LumineChatConfig.setUnreadBadgeIos(enabled);
+                }
+            });
+        }
+        LumineCards.info(context, list, LumineChatConfig.getUnreadBadge() ? LumineStrings.get(R.string.LumineChatUnreadBadgeIosInfo) : LumineStrings.get(R.string.LumineChatUnreadBadgeInfo));
     }
 
     private TextView styleValue;

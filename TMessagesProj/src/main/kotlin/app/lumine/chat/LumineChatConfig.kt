@@ -34,12 +34,12 @@ object LumineChatConfig {
 
     @JvmStatic
     var unreadBadge: Boolean
-        get() = LumineConfig.getBoolean("LumineChatUnreadBadge", true)
+        get() = LumineConfig.getBoolean("LumineChatUnreadBadge", false)
         set(value) = LumineConfig.setBoolean("LumineChatUnreadBadge", value)
 
     @JvmStatic
     var unreadBadgeIos: Boolean
-        get() = LumineConfig.getBoolean("LumineChatUnreadBadgeIos", true)
+        get() = LumineConfig.getBoolean("LumineChatUnreadBadgeIos", false)
         set(value) = LumineConfig.setBoolean("LumineChatUnreadBadgeIos", value)
 
     @JvmStatic

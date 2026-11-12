@@ -39,6 +39,7 @@ public class BackDrawable extends Drawable {
     private float animationTime = 300.0f;
     private boolean rotated = true;
     private int arrowRotation;
+    public float lumineTail = 1f; // lumine: 0 hides the arrow tail so the back badge chip fits
 
     public float getRotation() {
         return finalRotation;
@@ -122,7 +123,7 @@ public class BackDrawable extends Drawable {
         paint.setColor(ColorUtils.blendARGB(color, rotatedColor, currentRotation));
 
         canvas.save();
-        canvas.translate(getIntrinsicWidth() / 2f, getIntrinsicHeight() / 2f);
+        canvas.translate(getIntrinsicWidth() / 2f + AndroidUtilities.dp(3.25f) * (1f - lumineTail) * (1f - currentRotation), getIntrinsicHeight() / 2f); // lumine: tail slide for the back badge
         if (arrowRotation != 0) {
             canvas.rotate(arrowRotation);
         }
@@ -134,7 +135,8 @@ public class BackDrawable extends Drawable {
             canvas.rotate(135 + currentRotation * (reverseAngle ? -180 : 180));
             rotation = 1.0f;
         }
-        canvas.drawLine(AndroidUtilities.dp(AndroidUtilities.lerp(-6.75f, -8f, rotation)), 0, AndroidUtilities.dp(8) - (paint.getStrokeWidth() / 2f) * (1f - rotation), 0, paint);
+        float lumineX0 = AndroidUtilities.dp(AndroidUtilities.lerp(-6.75f, -8f, rotation));
+        canvas.drawLine(lumineX0, 0, AndroidUtilities.lerp(lumineX0, AndroidUtilities.dp(8) - (paint.getStrokeWidth() / 2f) * (1f - rotation), Math.max(lumineTail, rotation)), 0, paint); // lumine: tail shrinks with the badge
         float startYDiff = AndroidUtilities.dp(-0.25f);
         float endYDiff = AndroidUtilities.dp(AndroidUtilities.lerp(7f, 8f, rotation)) - (paint.getStrokeWidth() / 4f) * (1f - rotation);
         float startXDiff = AndroidUtilities.dp(AndroidUtilities.lerp(-7f - 0.25f, 0f, rotation));

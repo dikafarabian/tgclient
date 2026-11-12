@@ -550,7 +550,7 @@ public class ChatActivity extends BaseFragment implements
     private AlertDialog scheduleNowDialog;
 
     private HintView2 savedMessagesHint;
-	private HintView2 savedMessagesSearchHint;
+        private HintView2 savedMessagesSearchHint;
     private HintView2 savedMessagesTagHint;
     private HintView2 groupEmojiPackHint;
     private HintView2 botMessageHint;
@@ -2881,7 +2881,8 @@ public class ChatActivity extends BaseFragment implements
                 .add(NotificationCenter.didUpdateMessagesViews)
                 .add(NotificationCenter.didUpdatePollResults)
                 .add(NotificationCenter.availableEffectsUpdate)
-                .add(NotificationCenter.starReactionAnonymousUpdate);
+                .add(NotificationCenter.starReactionAnonymousUpdate)
+                .add(NotificationCenter.dialogsUnreadCounterChanged); // lumine: back badge
             if (currentEncryptedChat != null) {
                 observersGroup.add(NotificationCenter.didVerifyMessagesStickers);
             }
@@ -3710,6 +3711,8 @@ public class ChatActivity extends BaseFragment implements
         } else {
             actionBar.setBackButtonDrawable(new BackDrawable(isReport()));
         }
+        // lumine: unread chats counter on the back button
+        app.lumine.chat.LumineBackBadge.refresh(actionBar, currentAccount);
 
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
@@ -8935,14 +8938,14 @@ public class ChatActivity extends BaseFragment implements
                 savedMessagesHint.setJoint(0.5f, 0);
             }
             savedMessagesHint.setCloseButton(true);
-			savedMessagesHint.setOnHiddenListener(() -> {
+                        savedMessagesHint.setOnHiddenListener(() -> {
                 if (searchContainer == null || searchContainer.getVisibility() != View.VISIBLE) {
                     if (savedMessagesSearchHint != null) {
                         savedMessagesSearchHint.show();
                     }
                 }
-			});
-			savedMessagesHint.setDuration(-1);
+                        });
+                        savedMessagesHint.setDuration(-1);
             savedMessagesHint.setPadding(dp(8), 0, dp(8), 0);
             savedMessagesHint.setGlass(glassBackgroundDrawableFactory);
             contentView.addView(savedMessagesHint, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 120, Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, -8, 0, 0));
@@ -8956,9 +8959,9 @@ public class ChatActivity extends BaseFragment implements
                     .setCloseButton(true)
                     .setJointPx(1, -dp(56))
                     .setRounding(8);
-			savedMessagesSearchHint.setText(LocaleController.getString(R.string.SavedTagSearchTooltipHint));
+                        savedMessagesSearchHint.setText(LocaleController.getString(R.string.SavedTagSearchTooltipHint));
             savedMessagesSearchHint.setGlass(glassBackgroundDrawableFactory);
-			contentView.addView(savedMessagesSearchHint, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 120, Gravity.TOP | Gravity.FILL_HORIZONTAL, 16, -8, 16, 0));
+                        contentView.addView(savedMessagesSearchHint, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 120, Gravity.TOP | Gravity.FILL_HORIZONTAL, 16, -8, 16, 0));
 
             if (getUserConfig().isPremium()) {
                 savedMessagesTagHint = new HintView2(context, HintView2.DIRECTION_BOTTOM)
@@ -21344,6 +21347,8 @@ public class ChatActivity extends BaseFragment implements
     public void didReceivedNotification(int id, int account, final Object... args) {
         if (id == NotificationCenter.messagesDidLoad) {
             didReceivedNotification_messagesDidLoad(id, account, args);
+        } else if (id == NotificationCenter.dialogsUnreadCounterChanged) { // lumine: back badge
+            app.lumine.chat.LumineBackBadge.refresh(actionBar, account);
         } else {
             didReceivedNotification2(id, account, args);
             didReceivedNotification3(id, account, args);
@@ -39606,7 +39611,7 @@ public class ChatActivity extends BaseFragment implements
             searchingUserMessages = null;
             searchingChatMessages = null;
             searchingHashtag = null;
-			searchItem.setSearchFieldHint(isSupportedTags() ? LocaleController.getString(R.string.SavedTagSearchHint) : LocaleController.getString(R.string.Search));
+                        searchItem.setSearchFieldHint(isSupportedTags() ? LocaleController.getString(R.string.SavedTagSearchHint) : LocaleController.getString(R.string.Search));
             searchItem.setSearchFieldCaption(null);
             animatorSearchFieldVisibility.setValue(false, true);
             animatorSearchHashtagHistoryVisibility.setValue(false, true);
@@ -39856,7 +39861,7 @@ public class ChatActivity extends BaseFragment implements
                     searchingForUser = false;
                     searchItem.setSearchFieldText("", true);
                 }
-				searchItem.setSearchFieldHint(isSupportedTags() ? LocaleController.getString(R.string.SavedTagSearchHint) : LocaleController.getString(R.string.Search));
+                                searchItem.setSearchFieldHint(isSupportedTags() ? LocaleController.getString(R.string.SavedTagSearchHint) : LocaleController.getString(R.string.Search));
                 searchCalendarButton.setVisibility(View.VISIBLE);
                 if (searchUserButton != null) {
                     searchUserButton.setVisibility(View.VISIBLE);
@@ -39884,9 +39889,9 @@ public class ChatActivity extends BaseFragment implements
         return searchItemListener;
     }
 
-	private boolean isSupportedTags() {
-		return getUserConfig().getClientUserId() == getDialogId() && !getMessagesController().getSavedMessagesController().unsupported && getUserConfig().isPremium();
-	}
+        private boolean isSupportedTags() {
+                return getUserConfig().getClientUserId() == getDialogId() && !getMessagesController().getSavedMessagesController().unsupported && getUserConfig().isPremium();
+        }
 
     private ChatMessageCellDelegate chatMessageCellDelegate;
     private ChatMessageCellDelegate getChatMessageCellDelegate() {
