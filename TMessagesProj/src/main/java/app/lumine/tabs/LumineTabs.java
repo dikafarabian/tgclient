@@ -49,6 +49,7 @@ public final class LumineTabs {
     private static final String KEY_SEARCH = "tabs_search";
     private static final String KEY_DISPLAY = "tabs_display";
     private static final String KEY_FORCE_CHATS = "tabs_force_chats";
+    private static final String KEY_IOS_BAR = "tabs_ios_bar";
     private static final String DEFAULT_ORDER = "CHATS,CONTACTS,SETTINGS,!CALLS,PROFILE";
     private static final String CALLS_ORDER = "CHATS,CONTACTS,!SETTINGS,CALLS,PROFILE";
 
@@ -99,6 +100,14 @@ public final class LumineTabs {
 
     public static void setForceOpenChats(boolean enabled) {
         LumineConfig.setBoolean(KEY_FORCE_CHATS, enabled);
+    }
+
+    public static boolean iosBar() {
+        return LumineConfig.getBoolean(KEY_IOS_BAR, false);
+    }
+
+    public static void setIosBar(boolean enabled) {
+        LumineConfig.setBoolean(KEY_IOS_BAR, enabled);
     }
 
     public static ArrayList<State> getAll() {

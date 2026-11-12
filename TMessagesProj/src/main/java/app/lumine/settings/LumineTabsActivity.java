@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import app.lumine.LumineStrings;
+import app.lumine.restart.LumineRestart;
 import app.lumine.tabs.LumineTabs;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -95,6 +96,10 @@ public class LumineTabsActivity extends LumineSubPage {
         final LumineCards.Row displayRow = LumineCards.row(context, options, LumineStrings.get(R.string.LumineTabDisplayMode), v -> showDisplayDialog());
         displayValue = displayRow.value;
         LumineCards.toggleRow(context, options, LumineStrings.get(R.string.LumineTabForceChats), null, LumineTabs.forceOpenChats(), LumineTabs::setForceOpenChats);
+        LumineCards.toggleRow(context, options, LumineStrings.get(R.string.LumineTabIosBar), null, LumineTabs.iosBar(), enabled -> {
+            LumineTabs.setIosBar(enabled);
+            LumineRestart.hint(this);
+        });
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineTabForceChatsInfo));
         updateValues();
     }

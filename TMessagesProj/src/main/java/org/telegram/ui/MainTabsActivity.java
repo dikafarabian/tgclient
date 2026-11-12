@@ -345,6 +345,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsView.setClipChildren(false);
         tabsView.setPadding(dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(DialogsActivity.MAIN_TABS_MARGIN + 4));
         tabsView.setMaxWidth(dp(328 + DialogsActivity.MAIN_TABS_MARGIN * 2));
+        // lumine: iOS wide bottom bar, inner padding and full width
+        tabsView.setPadding(dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(app.lumine.tabs.LumineTabsIos.innerPaddingDp()), dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(app.lumine.tabs.LumineTabsIos.innerPaddingDp()));
+        app.lumine.tabs.LumineTabsIos.applyTabsLayout(tabsView);
 
         tabs = new GlassTabView[5];
         tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
@@ -400,6 +403,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsViewBackground = iBlur3FactoryGlass.create(tabsView, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
         tabsViewBackground.setRadius(dp(DialogsActivity.MAIN_TABS_HEIGHT / 2f));
         tabsViewBackground.setPadding(dp(DialogsActivity.MAIN_TABS_MARGIN - 0.334f));
+        // lumine: iOS wide bottom bar, taller pill in the same envelope
+        app.lumine.tabs.LumineTabsIos.applyBarBackground(tabsViewBackground);
         tabsView.setBackground(tabsViewBackground);
 
         BlurredBackgroundDrawableViewFactory iBlur3FactoryFade = new BlurredBackgroundDrawableViewFactory(iBlur3SourceColor);
@@ -1018,6 +1023,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         }
 
         tabsViewWrapper.setPadding(systemInsets.left, 0, systemInsets.right, navigationBarHeight);
+        // lumine: iOS wide bottom bar, side inset from the screen edges
+        app.lumine.tabs.LumineTabsIos.applyWrapperPadding(tabsViewWrapper, systemInsets.left, systemInsets.right, navigationBarHeight);
 
         final WindowInsetsCompat consumed = isUpdateLayoutVisible ?
             insets.inset(0, 0, 0, navigationBarHeight) : insets;
@@ -1216,6 +1223,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     }
 
     private boolean searchButtonShown() {
+        // lumine: no floating search button on the iOS wide bottom bar
+        if (app.lumine.tabs.LumineTabsIos.enabled()) {
+            return false;
+        }
         return LumineTabs.searchButton();
     }
 
