@@ -210,4 +210,7 @@
     <string name="LumineChatIosListInfo">Larger avatars and taller rows in the chat list. Reopen the chats screen to see the change.</string>
     <string name="LumineChatIosCompact">Compact mode</string>
     <string name="LumineChatIosCompactInfo">Less air around the iOS input field: the round buttons move closer to the capsule. Reopen a chat to see the change.</string>
+    <string name="LumineChatHeaderCard">Chat header</string>
+    <string name="LumineChatMarquee">Chat title auto-scroll</string>
+    <string name="LumineChatMarqueeInfo">Long chat titles run through the header instead of being cut. Reopen a chat to see the change.</string>
 </resources>

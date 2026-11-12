@@ -63,6 +63,15 @@ public class LumineChatActivity extends LumineSubPage {
             }
         });
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatIosListInfo));
+
+        final LinearLayout headerCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineChatHeaderCard));
+        LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatMarquee), null, LumineChatConfig.getChatTitleMarquee(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setChatTitleMarquee(enabled);
+            }
+        });
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatMarqueeInfo));
     }
 
     private TextView styleValue;

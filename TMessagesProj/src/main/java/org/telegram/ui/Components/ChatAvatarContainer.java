@@ -286,6 +286,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         titleTextView.setLeftDrawableTopPadding(-dp(1.3f));
         titleTextView.setCanHideRightDrawable(false);
         titleTextView.setRightDrawableOutside(true);
+        // lumine: auto-scrolling chat title
+        app.lumine.chat.LumineMarquee.apply(titleTextView);
         titleTextView.setPadding(0, dp(6), 0, dp(12));
         addView(titleTextView);
 
@@ -944,6 +946,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         if (value != null) {
             value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
         }
+        // lumine: auto-scrolling chat title, theme code may reset the flags
+        app.lumine.chat.LumineMarquee.apply(titleTextView);
         titleTextView.setText(value);
         rightDrawableIsScam = false;
         if (scam || fake) {

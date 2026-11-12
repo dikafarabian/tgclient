@@ -29,7 +29,7 @@ object LumineChatConfig {
 
     @JvmStatic
     var chatTitleMarquee: Boolean
-        get() = LumineConfig.getBoolean("LumineChatTitleMarquee", true)
+        get() = LumineConfig.getBoolean("LumineChatTitleMarquee", false)
         set(value) = LumineConfig.setBoolean("LumineChatTitleMarquee", value)
 
     @JvmStatic
