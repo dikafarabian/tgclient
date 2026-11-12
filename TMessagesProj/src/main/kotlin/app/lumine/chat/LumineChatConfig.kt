@@ -101,4 +101,9 @@ object LumineChatConfig {
     var iosCompact: Boolean
         get() = LumineConfig.getBoolean("LumineChatIosCompact", false)
         set(value) = LumineConfig.setBoolean("LumineChatIosCompact", value)
+
+    @JvmStatic
+    var iosMenu: Boolean
+        get() = LumineConfig.getBoolean("LumineChatIosMenu", false)
+        set(value) = LumineConfig.setBoolean("LumineChatIosMenu", value)
 }

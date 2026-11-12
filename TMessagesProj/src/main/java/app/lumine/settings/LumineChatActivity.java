@@ -62,7 +62,13 @@ public class LumineChatActivity extends LumineSubPage {
                 LumineChatConfig.setIosList(enabled);
             }
         });
-        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatIosListInfo));
+        LumineCards.toggleRow(context, iosCard, LumineStrings.get(R.string.LumineChatIosMenu), null, LumineChatConfig.getIosMenu(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setIosMenu(enabled);
+            }
+        });
+        LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatIosMenuInfo));
 
         final LinearLayout headerCard = LumineCards.card(context, list, LumineStrings.get(R.string.LumineChatHeaderCard));
         LumineCards.toggleRow(context, headerCard, LumineStrings.get(R.string.LumineChatPillBackground), null, LumineChatConfig.getChatPill(), new LumineCards.OnToggle() {

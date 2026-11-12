@@ -226,4 +226,6 @@
     <string name="LumineChatPillRight">Avatar on the right</string>
     <string name="LumineChatPillHideAvatar">Hide avatar</string>
     <string name="LumineChatPillHideAvatarInfo">Removes the avatar from the chat header. Reopen a chat to see the change.</string>
+    <string name="LumineChatIosMenu">iOS-style message menu</string>
+    <string name="LumineChatIosMenuInfo">The long-press menu becomes a card beside the message and the chat blurs behind it. Turn it off to get the stock menu back.</string>
 </resources>

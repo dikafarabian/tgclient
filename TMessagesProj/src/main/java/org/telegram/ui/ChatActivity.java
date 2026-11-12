@@ -1054,6 +1054,10 @@ public class ChatActivity extends BaseFragment implements
 
     private final GlassSourceBitmap scrimBlur3SourceBitmap = new GlassSourceBitmap();
     private BlurredBackgroundDrawableViewFactory scrimBlur3Factory = new BlurredBackgroundDrawableViewFactory(scrimBlur3SourceBitmap);
+    // lumine: iOS message menu, scrim shift and clip of the pinned column
+    private float lumineMenuShift;
+    private float lumineMenuClipTop;
+    private boolean lumineMenuColumn;
     private Bitmap scrimBlurBitmap;
     private BitmapShader scrimBlurBitmapShader;
     private Paint scrimBlurBitmapPaint;
@@ -11350,6 +11354,10 @@ public class ChatActivity extends BaseFragment implements
                     setScrimView(null);
                     scrimViewTask = null;
                     scrimViewReaction = null;
+                    // lumine: iOS message menu state reset
+                    lumineMenuShift = 0;
+                    lumineMenuClipTop = 0;
+                    lumineMenuColumn = false;
                     contentView.invalidate();
                     chatListView.invalidate();
                 }
@@ -18613,6 +18621,12 @@ public class ChatActivity extends BaseFragment implements
                     }
                 } else {
                     float listTop = chatListView.getY() + chatListViewPaddingTop - chatListViewPaddingVisibleOffset - AndroidUtilities.dp(4);
+                    // lumine: iOS message menu, shift the pinned post with the column
+                    final int lumineScrimSave = canvas.save();
+                    if (lumineMenuClipTop > 0) {
+                        canvas.clipRect(0, lumineMenuClipTop * Utilities.clamp(scrimViewProgress, 1f, 0f), getMeasuredWidth(), getMeasuredHeight());
+                    }
+                    canvas.translate(0, lumineMenuShift * Utilities.clamp(scrimViewProgress, 1f, 0f));
                     MessageObject.GroupedMessages scrimGroup;
                     if (scrimView instanceof ChatMessageCell) {
                         scrimGroup = ((ChatMessageCell) scrimView).getCurrentMessagesGroup();
@@ -18709,6 +18723,11 @@ public class ChatActivity extends BaseFragment implements
                         }
                         viewClipTop += clipTop;
                         viewClipBottom -= clipBottom;
+                        // lumine: iOS message menu, the pinned post is not clipped by the list edges
+                        if (lumineMenuColumn) {
+                            viewClipTop = -1000000f;
+                            viewClipBottom = 1000000f;
+                        }
 
                         if (cell == null || !cell.getTransitionParams().animateBackgroundBoundsInner) {
                             viewClipLeft = Math.max(viewClipLeft, chatListView.getLeft() + child.getX());
@@ -18913,6 +18932,8 @@ public class ChatActivity extends BaseFragment implements
                         }
                         drawReactionsAfter.clear();
                     }
+                    // lumine: iOS message menu, end of the shifted scrim pass
+                    canvas.restoreToCount(lumineScrimSave);
                 }
 
                 if (scrimViewReaction == null && scrimViewAlpha < 1f) {
@@ -32058,7 +32079,7 @@ public class ChatActivity extends BaseFragment implements
 
             popupLayout.setBackground(scrimBlur3Factory.create(popupLayout, true)
                 .setColorProvider(BlurredBackgroundProviderImpl.messageMenuBackground(resourceProvider))
-                .setRadius(dp(12))
+                .setRadius(dp(app.lumine.chat.LumineMenuColumn.radiusDp()))
                 .setPadding(dp(8)));
 
             boolean addGap = false;
@@ -33322,7 +33343,18 @@ public class ChatActivity extends BaseFragment implements
             if (reactionsLayout != null) {
                 reactionsLayout.setParentLayout(scrimPopupContainerLayout);
             }
-            scrimPopupWindow = new ActionBarPopupWindow(scrimPopupContainerLayout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT) {
+            // lumine: iOS message menu, card column aligned to the bubble
+            final app.lumine.chat.LumineMenuColumn.Column lumineColumn = v instanceof ChatMessageCell && scrimViewReaction == null && scrimViewTask == null
+                    ? app.lumine.chat.LumineMenuColumn.create(contentView.getContext(), (ChatMessageCell) v, scrimPopupContainerLayout, reactionsLayout, this::closeMenu)
+                    : null;
+            if (lumineColumn != null) {
+                lumineColumn.onChanged = () -> {
+                    lumineMenuShift = lumineColumn.shift;
+                    lumineMenuClipTop = lumineColumn.clipTop;
+                    contentView.invalidate();
+                };
+            }
+            scrimPopupWindow = new ActionBarPopupWindow(lumineColumn != null ? lumineColumn.getView() : scrimPopupContainerLayout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT) {
                 @Override
                 public void dismiss() {
                     super.dismiss();
@@ -33418,10 +33450,21 @@ public class ChatActivity extends BaseFragment implements
                 if (scrimPopupWindow == null || fragmentView == null || scrimPopupWindow.isShowing() || !AndroidUtilities.isActivityRunning(getParentActivity())) {
                     return;
                 }
-                scrimPopupWindow.showAtLocation(chatListView, Gravity.LEFT | Gravity.TOP, finalPopupX, finalPopupY);
+                // lumine: iOS message menu, full-screen window with the positioned card
+                if (lumineColumn != null) {
+                    lumineColumn.show(scrimPopupWindow, chatListView, contentView, AndroidUtilities.statusBarHeight + dp(12), contentView.getMeasuredHeight() - windowInsetsStateHolder.getCurrentMaxBottomInset() - dp(8));
+                    lumineMenuShift = lumineColumn.shift;
+                    lumineMenuClipTop = lumineColumn.clipTop;
+                    lumineMenuColumn = true;
+                } else {
+                    lumineMenuShift = 0;
+                    lumineMenuClipTop = 0;
+                    lumineMenuColumn = false;
+                }
+                scrimPopupWindow.showAtLocation(chatListView, Gravity.LEFT | Gravity.TOP, lumineColumn != null ? 0 : finalPopupX, lumineColumn != null ? 0 : finalPopupY);
                 keepScrimPopupAboveKeyboard(scrimPopupWindow);
                 if (isReactionsAvailableFinal && finalReactionsLayout != null) {
-                    finalReactionsLayout.startEnterAnimation(true);
+                    finalReactionsLayout.startEnterAnimation(lumineColumn == null);
                 }
                 AndroidUtilities.runOnUIThread(() -> {
                     if (scrimPopupWindowItems != null && scrimPopupWindowItems.length > 0 && scrimPopupWindowItems[0] != null) {
@@ -33438,7 +33481,7 @@ public class ChatActivity extends BaseFragment implements
             }
             chatListView.stopScroll();
             chatLayoutManager.setCanScrollVertically(false);
-            dimBehindView(v, true);
+            dimBehindView(v, app.lumine.chat.LumineMenuColumn.enabled(), true); // lumine: iOS message menu blurs the chat behind
             hideHints(false);
             if (topUndoView != null) {
                 topUndoView.hide(true, 1);
