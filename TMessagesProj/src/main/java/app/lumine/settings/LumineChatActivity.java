@@ -32,6 +32,12 @@ public class LumineChatActivity extends LumineSubPage {
                 LumineChatConfig.setIosInput(enabled);
             }
         });
+        LumineCards.toggleRow(context, inputCard, LumineStrings.get(R.string.LumineChatIosCompact), null, LumineChatConfig.getIosCompact(), new LumineCards.OnToggle() {
+            @Override
+            public void onToggle(boolean enabled) {
+                LumineChatConfig.setIosCompact(enabled);
+            }
+        });
         LumineCards.info(context, list, LumineStrings.get(R.string.LumineChatIosInputInfo));
 
         final LinearLayout card = LumineCards.card(context, list, null);

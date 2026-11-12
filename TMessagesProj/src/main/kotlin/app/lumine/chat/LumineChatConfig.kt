@@ -81,4 +81,9 @@ object LumineChatConfig {
     var iosList: Boolean
         get() = LumineConfig.getBoolean("LumineChatIosList", false)
         set(value) = LumineConfig.setBoolean("LumineChatIosList", value)
+
+    @JvmStatic
+    var iosCompact: Boolean
+        get() = LumineConfig.getBoolean("LumineChatIosCompact", false)
+        set(value) = LumineConfig.setBoolean("LumineChatIosCompact", value)
 }

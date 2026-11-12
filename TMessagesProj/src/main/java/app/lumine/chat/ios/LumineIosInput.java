@@ -32,7 +32,25 @@ import org.telegram.ui.Components.chat.ChatInputViewsContainer;
 
 public final class LumineIosInput {
 
+    /*
+     * Compact mode pulls the round bubbles closer to the field capsule: the
+     * gap between capsule edge and bubble drops from 6dp to 2dp and the glass
+     * buttons above the field sit tighter. Plain numbers, no new hooks.
+     */
+    public static final int PILL_INSET = 50;
+    public static final int PILL_INSET_COMPACT = 46;
+    public static final int GLASS_TOP_GAP = 10;
+    public static final int GLASS_TOP_GAP_COMPACT = 6;
+
     private LumineIosInput() {
+    }
+
+    public static boolean compact() {
+        return LumineChatConfig.getIosCompact();
+    }
+
+    public static int pillInset() {
+        return compact() ? PILL_INSET_COMPACT : PILL_INSET;
     }
 
     public static boolean active(ChatActivity fragment) {
@@ -132,7 +150,8 @@ public final class LumineIosInput {
             return;
         }
         final int extra = Math.max(0, sendWidth - dp(ChatActivityEnterView.DEFAULT_HEIGHT));
-        container.setInputBubbleOffsets(Math.round(dp(50) * progress), Math.round((dp(50) + extra) * progress));
+        final int inset = dp(pillInset());
+        container.setInputBubbleOffsets(Math.round(inset * progress), Math.round((inset + extra) * progress));
         container.getLocationInWindow(containerLoc);
         attachBubble.getLocationInWindow(bubbleLoc);
         final int left = bubbleLoc[0] - containerLoc[0];
@@ -202,7 +221,7 @@ public final class LumineIosInput {
         lp.width = dp(33);
         lp.height = dp(33);
         lp.gravity = gravity;
-        lp.topMargin = dp(10);
+        lp.topMargin = dp(compact() ? GLASS_TOP_GAP_COMPACT : GLASS_TOP_GAP);
         lp.leftMargin = dp(leftDp);
         lp.rightMargin = dp(rightDp);
         button.setLayoutParams(lp);
