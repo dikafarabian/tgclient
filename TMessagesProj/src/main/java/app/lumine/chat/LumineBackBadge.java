@@ -10,6 +10,7 @@ package app.lumine.chat;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.view.View;
 

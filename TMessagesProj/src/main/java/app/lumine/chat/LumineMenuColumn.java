@@ -113,8 +113,8 @@ public final class LumineMenuColumn {
                 final ViewGroup.LayoutParams lp = menuLayout.getChildAt(i).getLayoutParams();
                 if (lp instanceof ViewGroup.MarginLayoutParams) {
                     final ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) lp;
-                    margins.marginStart = 0;
-                    margins.marginEnd = 0;
+                    margins.setMarginStart(0);
+                    margins.setMarginEnd(0);
                     margins.leftMargin = 0;
                     margins.rightMargin = 0;
                 }
@@ -269,8 +269,8 @@ public final class LumineMenuColumn {
             window.setAnimationStyle(0);
             window.setAnimationEnabled(false);
             window.setLayoutInScreen(true);
-            window.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            window.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            window.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+            window.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
             menu.setAlpha(0f);
             menu.animate().alpha(1f).setDuration(180).start();
         }

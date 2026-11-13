@@ -24199,21 +24199,4 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             blurredPhotoImage.setImageBitmap((Bitmap) null);
         }
     }
-
-    // lumine: bubble bounds for the iOS message menu card
-    public int getBackgroundDrawableLeft() {
-        return backgroundDrawableLeft;
-    }
-
-    public int getBackgroundDrawableRight() {
-        return backgroundDrawableRight;
-    }
-
-    public int getBackgroundDrawableTop() {
-        return backgroundDrawableTop;
-    }
-
-    public int getBackgroundDrawableBottom() {
-        return backgroundDrawableBottom;
-    }
 }
