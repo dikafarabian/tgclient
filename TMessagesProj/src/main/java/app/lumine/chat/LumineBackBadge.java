@@ -10,7 +10,6 @@ package app.lumine.chat;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.view.View;
 
@@ -198,7 +197,7 @@ public final class LumineBackBadge {
         }
 
         private void applyTail() {
-            final Drawable arrow = bar.getBackButtonDrawable() instanceof BackDrawable ? (BackDrawable) bar.getBackButtonDrawable() : null;
+            final BackDrawable arrow = bar.getBackButtonDrawable() instanceof BackDrawable ? (BackDrawable) bar.getBackButtonDrawable() : null;
             if (arrow == null) {
                 return;
             }
