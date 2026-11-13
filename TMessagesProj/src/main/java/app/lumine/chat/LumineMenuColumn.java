@@ -77,6 +77,27 @@ public final class LumineMenuColumn {
             menu = menuLayout;
             reactions = reactionsLayout;
             dismiss = close;
+            final View first = menuLayout.getChildAt(0);
+            if (first != null) {
+                first.setMinimumWidth(dp(MIN_WIDTH));
+            }
+            for (int i = 0; i < menuLayout.getChildCount(); i++) {
+                final ViewGroup.LayoutParams lp = menuLayout.getChildAt(i).getLayoutParams();
+                if (lp instanceof ViewGroup.MarginLayoutParams) {
+                    final ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) lp;
+                    margins.setMarginStart(0);
+                    margins.setMarginEnd(0);
+                    margins.leftMargin = 0;
+                    margins.rightMargin = 0;
+                }
+            }
+            if (reactionsLayout != null) {
+                final ViewGroup parent = (ViewGroup) reactionsLayout.getParent();
+                if (parent != null) {
+                    parent.removeView(reactionsLayout);
+                }
+                menuLayout.setReactionsLayout(null);
+            }
             view = new Overlay(context, menuLayout, reactionsLayout, new Overlay.Listener() {
                 private final int[] location = new int[2];
 
@@ -105,27 +126,6 @@ public final class LumineMenuColumn {
                     Column.this.dismiss.run();
                 }
             });
-            final View first = menuLayout.getChildAt(0);
-            if (first != null) {
-                first.setMinimumWidth(dp(MIN_WIDTH));
-            }
-            for (int i = 0; i < menuLayout.getChildCount(); i++) {
-                final ViewGroup.LayoutParams lp = menuLayout.getChildAt(i).getLayoutParams();
-                if (lp instanceof ViewGroup.MarginLayoutParams) {
-                    final ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) lp;
-                    margins.setMarginStart(0);
-                    margins.setMarginEnd(0);
-                    margins.leftMargin = 0;
-                    margins.rightMargin = 0;
-                }
-            }
-            if (reactionsLayout != null) {
-                final ViewGroup parent = (ViewGroup) reactionsLayout.getParent();
-                if (parent != null) {
-                    parent.removeView(reactionsLayout);
-                }
-                menuLayout.setReactionsLayout(null);
-            }
         }
 
         public View getView() {

@@ -16,6 +16,8 @@ import android.view.View;
 import me.vkryl.android.animator.FactorAnimator;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.MessagesStorage;
+import org.telegram.messenger.NotificationCenter;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.Theme;
@@ -37,10 +39,29 @@ public final class LumineBackBadge {
             return;
         }
         if (!LumineChatConfig.getUnreadBadge()) {
+            restoreTail(bar);
             bar.lumineBackBadge = null;
+            bar.invalidate();
             return;
         }
         badgeOf(bar).setCount(MessagesStorage.getInstance(account).getMainUnreadCount(), true);
+    }
+
+    // lumine: a settings toggle wakes every open chat at once
+    public static void notifySettingChanged() {
+        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+            NotificationCenter.getInstance(a).postNotificationName(NotificationCenter.dialogsUnreadCounterChanged, MessagesStorage.getInstance(a).getMainUnreadCount());
+        }
+    }
+
+    private static void restoreTail(ActionBar bar) {
+        if (bar.getBackButtonDrawable() instanceof BackDrawable) {
+            final BackDrawable arrow = (BackDrawable) bar.getBackButtonDrawable();
+            if (arrow.lumineTail != 1f) {
+                arrow.lumineTail = 1f;
+                arrow.invalidateSelf();
+            }
+        }
     }
 
     private static BackBadge badgeOf(ActionBar bar) {

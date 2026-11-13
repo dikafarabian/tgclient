@@ -125,6 +125,7 @@ public class LumineChatActivity extends LumineSubPage {
             @Override
             public void onToggle(boolean enabled) {
                 LumineChatConfig.setUnreadBadge(enabled);
+                app.lumine.chat.LumineBackBadge.notifySettingChanged();
                 rebuild(160);
             }
         });
@@ -133,6 +134,7 @@ public class LumineChatActivity extends LumineSubPage {
                 @Override
                 public void onToggle(boolean enabled) {
                     LumineChatConfig.setUnreadBadgeIos(enabled);
+                    app.lumine.chat.LumineBackBadge.notifySettingChanged();
                 }
             });
         }
